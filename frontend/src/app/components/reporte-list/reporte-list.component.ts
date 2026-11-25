@@ -170,12 +170,12 @@ export class ReporteListComponent {
 
     const cabeceras = [
       'ID',
-      'Aula',
-      'Ubicacion',
+      'Servicio afectado',
+      'Ubicación',
       'Categoria',
       'Prioridad',
       'Estado',
-      'Reportado Por',
+      'Solicitante',
       'Fecha Registro',
       'Descripcion'
     ];
@@ -188,7 +188,7 @@ export class ReporteListComponent {
     const filas = lista.map(r =>
       [
         `#${this.formatCount(r.id)}`,
-        r.aulaId,
+        r.servicioAfectado || 'Servicio general',
         r.aulaUbicacion || 'Campus UTP',
         this.getCategoriaLabel(r.tipoProblema),
         this.getPrioridadLabel(r.prioridad),
@@ -206,7 +206,7 @@ export class ReporteListComponent {
     const url = URL.createObjectURL(blob);
     const enlace = document.createElement('a');
     enlace.href = url;
-    enlace.download = `reportes-classcare-utp-${new Date().toISOString().slice(0, 10)}.csv`;
+    enlace.download = `tickets-mesa-ayuda-utp-${new Date().toISOString().slice(0, 10)}.csv`;
     enlace.click();
     URL.revokeObjectURL(url);
   }
@@ -242,16 +242,23 @@ export class ReporteListComponent {
 
   getImpactoAula(prioridad: Prioridad, estado: EstadoReporte): string {
     if (estado === 'RESUELTO') {
-      return 'Aula 100% operativa';
+      return 'Ticket resuelto';
     }
     if (prioridad === 'ALTA') {
-      return 'Inhabilita uso en clase';
+      return 'Atención prioritaria';
     }
-    return 'Aula operativa con obs.';
+    return 'Atención según prioridad';
   }
 
   getCategoriaLabel(tipo: TipoProblema): string {
     switch (tipo) {
+      case 'AUTENTICACION': return 'Autenticación';
+      case 'PLATAFORMAS': return 'Plataformas';
+      case 'REDES': return 'Redes y Wi-Fi';
+      case 'CUENTAS': return 'Cuentas';
+      case 'SOFTWARE': return 'Software';
+      case 'CORREO': return 'Correo institucional';
+      case 'EQUIPOS': return 'Equipos';
       case 'TECNOLOGICO': return 'Tecnológico';
       case 'ELECTRICO': return 'Eléctrico';
       case 'MOBILIARIO': return 'Mobiliario';
@@ -262,7 +269,14 @@ export class ReporteListComponent {
 
   getCategoriaIcon(tipo: TipoProblema): string {
     switch (tipo) {
-      case 'TECNOLOGICO': return 'videocam_off';
+      case 'AUTENTICACION': return 'lock_open';
+      case 'PLATAFORMAS': return 'school';
+      case 'REDES': return 'wifi';
+      case 'CUENTAS': return 'manage_accounts';
+      case 'SOFTWARE': return 'install_desktop';
+      case 'CORREO': return 'mail';
+      case 'EQUIPOS': return 'devices';
+      case 'TECNOLOGICO': return 'devices';
       case 'ELECTRICO': return 'bolt';
       case 'MOBILIARIO': return 'chair';
       case 'INFRAESTRUCTURA': return 'ac_unit';

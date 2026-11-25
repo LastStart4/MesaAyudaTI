@@ -28,7 +28,7 @@ export class App {
   protected readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
 
-  protected readonly title = signal('ClassCare Campus');
+  protected readonly title = signal('Mesa de Ayuda TI');
   protected readonly isDarkMode = signal(false);
   protected readonly mostrarPanelJwt = this.authService.panelVisible;
 
@@ -37,7 +37,7 @@ export class App {
   protected readonly errorLogin = signal<string | null>(null);
 
   constructor() {
-    const savedMode = typeof localStorage !== 'undefined' ? localStorage.getItem('classcare-theme') : null;
+    const savedMode = typeof localStorage !== 'undefined' ? localStorage.getItem('mesa-ayuda-theme') : null;
     if (savedMode === 'dark') {
       this.isDarkMode.set(true);
       this.document.body.setAttribute('data-mode', 'dark');
@@ -109,7 +109,7 @@ export class App {
     const mode = nextDark ? 'dark' : 'light';
     this.document.body.setAttribute('data-mode', mode);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('classcare-theme', mode);
+      localStorage.setItem('mesa-ayuda-theme', mode);
     }
   }
 }

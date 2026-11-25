@@ -1,12 +1,19 @@
 package com.utp.herDesarrollo.reportes.domain.model;
 
 /**
- * Representa los tipos de problemas o incidencias que pueden ocurrir en un aula.
+ * Categorías de incidentes y solicitudes del Service Desk universitario.
  */
 public enum TipoProblema {
+    AUTENTICACION,
+    PLATAFORMAS,
+    REDES,
+    CUENTAS,
+    SOFTWARE,
+    CORREO,
+    EQUIPOS,
+    OTRO,
     ELECTRICO,
     TECNOLOGICO,
     MOBILIARIO,
-    INFRAESTRUCTURA,
-    OTRO
+    INFRAESTRUCTURA
 }

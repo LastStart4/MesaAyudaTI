@@ -20,7 +20,7 @@ public interface ReporteRepository extends JpaRepository<Reporte, Long> {
      * Obtiene todos los reportes junto con su aula asociada en una sola consulta JOIN FETCH (evita N+1).
      */
     @Override
-    @Query("SELECT r FROM Reporte r JOIN FETCH r.aula ORDER BY r.fechaRegistro DESC")
+    @Query("SELECT r FROM Reporte r LEFT JOIN FETCH r.aula ORDER BY r.fechaRegistro DESC")
     List<Reporte> findAll();
 
     /**
@@ -32,7 +32,7 @@ public interface ReporteRepository extends JpaRepository<Reporte, Long> {
     /**
      * Consulta personalizada en JPQL para filtrar incidencias por su nivel de urgencia/prioridad.
      */
-    @Query("SELECT r FROM Reporte r JOIN FETCH r.aula WHERE r.prioridad = :prioridad ORDER BY r.fechaRegistro DESC")
+    @Query("SELECT r FROM Reporte r LEFT JOIN FETCH r.aula WHERE r.prioridad = :prioridad ORDER BY r.fechaRegistro DESC")
     List<Reporte> findByPrioridad(@Param("prioridad") Prioridad prioridad);
 
     /**

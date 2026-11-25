@@ -3,9 +3,9 @@
   <!-- Bloque Hero Marino Institucional con KPIs Interactivos -->
   <header class="hero-banner">
     <div class="hero-copy">
-      <h2 class="hero-title">Reportes de Inspección de Aulas</h2>
+      <h2 class="hero-title">Mesa de Ayuda TI Universitaria</h2>
       <p class="hero-subtitle">
-        Supervisión operativa en tiempo real de averías y mantenimiento en aulas y laboratorios. Haz clic en cualquier indicador para filtrar por estado.
+        Registro y seguimiento de incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo.
       </p>
     </div>
 
@@ -17,7 +17,7 @@
         (click)="filterByEstado('')">
         <div class="kpi-data">
           <span class="kpi-num">{{ formatCount(totalIncidencias()) }}</span>
-          <span class="kpi-lbl">Total Reportes</span>
+          <span class="kpi-lbl">Tickets</span>
         </div>
         <span class="kpi-dot" style="background: #94A3B8"></span>
       </button>
@@ -66,10 +66,10 @@
       <mat-icon class="filter-icon">search</mat-icon>
       <input
         type="search"
-        placeholder="Buscar por código de aula (A-101, LAB-302) o avería..."
+        placeholder="Buscar por servicio, ubicación, usuario o descripción del ticket..."
         [ngModel]="searchQuery()"
         (ngModelChange)="onSearchChange($event)"
-        aria-label="Buscar por código de aula o descripción"
+        aria-label="Buscar tickets por servicio, ubicación o descripción"
       />
     </div>
 
@@ -92,7 +92,7 @@
       @if (mostrarMenuFiltros()) {
         <div class="filter-popover" role="dialog" aria-label="Opciones de filtrado y ordenamiento">
           <div class="filter-popover__header">
-            <strong>Filtrar y Ordenar Reportes</strong>
+            <strong>Filtrar y ordenar tickets</strong>
             <button type="button" class="popover-close-btn" (click)="cerrarMenuFiltros()" aria-label="Cerrar filtros">
               <mat-icon>close</mat-icon>
             </button>
@@ -107,10 +107,13 @@
                 [ngModel]="selectedCategoria()"
                 (ngModelChange)="onCategoriaChange($event)">
                 <option value="">Todas las categorías</option>
-                <option value="TECNOLOGICO">Tecnológico</option>
-                <option value="ELECTRICO">Eléctrico</option>
-                <option value="MOBILIARIO">Mobiliario</option>
-                <option value="INFRAESTRUCTURA">Infraestructura</option>
+                <option value="AUTENTICACION">Autenticación</option>
+                <option value="PLATAFORMAS">Plataformas</option>
+                <option value="REDES">Redes y Wi-Fi</option>
+                <option value="CUENTAS">Cuentas</option>
+                <option value="SOFTWARE">Software</option>
+                <option value="CORREO">Correo institucional</option>
+                <option value="EQUIPOS">Equipos</option>
                 <option value="OTRO">Otro</option>
               </select>
             </div>
@@ -163,7 +166,7 @@
         class="m3-btn-filter"
         [class.has-active]="soloMisReportes()"
         (click)="toggleMisReportes()"
-        title="Filtrar únicamente los reportes enviados con mi cuenta">
+        title="Filtrar únicamente los tickets enviados con mi cuenta">
         <mat-icon>person_search</mat-icon>
         <span>Mis Reportes</span>
       </button>
@@ -184,9 +187,9 @@
       <span>Restablecer</span>
     </button>
 
-    <a routerLink="/reportes/nuevo" class="m3-btn-new">
+    <a routerLink="/tickets/nuevo" class="m3-btn-new">
       <mat-icon>note_add</mat-icon>
-      <span>Nuevo Reporte</span>
+      <span>Nuevo ticket</span>
     </a>
   </div>
 
@@ -214,13 +217,13 @@
             <!-- Cabecera Tonal con Placa de Aula -->
             <div class="card-header">
               <div class="room-identity">
-                <span class="room-plaque">{{ reporte.aulaId }}</span>
+                <span class="room-plaque">#{{ formatCount(reporte.id) }}</span>
                 <div>
                   <span class="room-category-title">
                     <mat-icon>{{ getCategoriaIcon(reporte.tipoProblema) }}</mat-icon>
-                    <span>{{ getCategoriaLabel(reporte.tipoProblema) }}</span>
+                    <span>{{ reporte.servicioAfectado }} · {{ getCategoriaLabel(reporte.tipoProblema) }}</span>
                   </span>
-                  <span class="room-location">{{ reporte.aulaUbicacion || 'Pabellón Central • Campus UTP' }}</span>
+                  <span class="room-location">{{ reporte.aulaUbicacion || 'Ubicación no especificada' }}</span>
                 </div>
               </div>
 
@@ -233,7 +236,7 @@
 
               <div class="c2-unified-condition">
                 <span class="condition-left">
-                  <mat-icon>engineering</mat-icon>
+                  <mat-icon>support_agent</mat-icon>
                   <span>{{ getImpactoAula(reporte.prioridad, reporte.estado) }}</span>
                 </span>
                 <span class="condition-prio" [attr.data-prio]="reporte.prioridad">
@@ -249,13 +252,13 @@
               <time class="ticket-date" [attr.datetime]="reporte.fechaRegistro">
                 REGISTRO: {{ reporte.fechaRegistro | date:'dd MMM yyyy' }}
               </time>
-              <span class="ticket-author">
-                Por: {{ reporte.reportadoPor || 'Comunidad Académica UTP' }}
+                <span class="ticket-author">
+                Solicitante: {{ reporte.reportadoPor || 'Comunidad Académica UTP' }}
               </span>
             </div>
 
-            <a [routerLink]="['/reportes', reporte.id]" class="m3-btn-inspect">
-              <span>Abrir reporte</span>
+            <a [routerLink]="['/tickets', reporte.id]" class="m3-btn-inspect">
+              <span>Abrir ticket</span>
               <mat-icon>arrow_forward</mat-icon>
             </a>
           </div>
@@ -265,21 +268,21 @@
       @if (cargando()) {
         <div class="empty-state-box">
           <mat-icon class="empty-icon">sync</mat-icon>
-          <h3 class="empty-title">Sincronizando reportes del campus...</h3>
+          <h3 class="empty-title">Sincronizando tickets de soporte...</h3>
           <p class="empty-desc">
-            Consultando incidencias registradas en el servidor central.
+            Consultando incidentes y solicitudes registrados en el Service Desk.
           </p>
         </div>
       } @else {
         <div class="empty-state-box">
           <mat-icon class="empty-icon">search_off</mat-icon>
-          <h3 class="empty-title">No se encontraron reportes</h3>
+          <h3 class="empty-title">No se encontraron tickets</h3>
           <p class="empty-desc">
-            No existen reportes registrados que coincidan con los filtros seleccionados.
+            No hay tickets que coincidan con los filtros seleccionados.
           </p>
           <button type="button" class="m3-btn-inspect" (click)="resetFilters()">
             <mat-icon>refresh</mat-icon>
-            <span>Mostrar todos los reportes</span>
+            <span>Mostrar todos los tickets</span>
           </button>
         </div>
       }

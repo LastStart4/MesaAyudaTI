@@ -28,10 +28,11 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'A-101',
     aulaInternoId: 1,
     aulaUbicacion: 'Pabellón A • Piso 1',
-    tipoProblema: 'TECNOLOGICO',
+    tipoProblema: 'PLATAFORMAS',
+    servicioAfectado: 'Plataforma académica',
     prioridad: 'ALTA',
     estado: 'PENDIENTE',
-    descripcion: 'El proyector multimedia enciende pero no detecta señal HDMI desde el escritorio del docente.',
+    descripcion: 'La plataforma académica no permite iniciar sesión durante el periodo de evaluaciones.',
     fechaRegistro: '2026-10-29T08:30:00'
   },
   {
@@ -39,10 +40,11 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'LAB-302',
     aulaInternoId: 2,
     aulaUbicacion: 'Pabellón C • Piso 3',
-    tipoProblema: 'ELECTRICO',
+    tipoProblema: 'REDES',
+    servicioAfectado: 'Red Wi-Fi',
     prioridad: 'ALTA',
     estado: 'EN_ATENCION',
-    descripcion: 'Diferencial eléctrico de la bancada norte salta al encender los equipos de cómputo del laboratorio.',
+    descripcion: 'La red Wi-Fi presenta interrupciones frecuentes en el laboratorio de cómputo.',
     fechaRegistro: '2026-10-29T09:15:00'
   },
   {
@@ -50,10 +52,11 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'B-204',
     aulaInternoId: 3,
     aulaUbicacion: 'Pabellón B • Piso 2',
-    tipoProblema: 'MOBILIARIO',
+    tipoProblema: 'CUENTAS',
+    servicioAfectado: 'Cuenta institucional',
     prioridad: 'MEDIA',
     estado: 'PENDIENTE',
-    descripcion: 'Cuatro carpetas unipersonales presentan respaldar suelto cerca de la puerta posterior del salón.',
+    descripcion: 'El usuario docente no puede acceder a su cuenta institucional.',
     fechaRegistro: '2026-10-28T14:20:00'
   },
   {
@@ -61,10 +64,11 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'A-305',
     aulaInternoId: 4,
     aulaUbicacion: 'Pabellón A • Piso 3',
-    tipoProblema: 'INFRAESTRUCTURA',
+    tipoProblema: 'SOFTWARE',
+    servicioAfectado: 'Software autorizado',
     prioridad: 'MEDIA',
     estado: 'EN_ATENCION',
-    descripcion: 'Equipo de aire acondicionado presenta goteo leve sobre la esquina delantera derecha.',
+    descripcion: 'Se requiere instalar software autorizado para una actividad académica.',
     fechaRegistro: '2026-10-28T16:40:00'
   },
   {
@@ -72,10 +76,11 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'LAB-104',
     aulaInternoId: 5,
     aulaUbicacion: 'Pabellón C • Piso 1',
-    tipoProblema: 'TECNOLOGICO',
+    tipoProblema: 'AUTENTICACION',
+    servicioAfectado: 'Autenticación institucional',
     prioridad: 'BAJA',
     estado: 'RESUELTO',
-    descripcion: 'Access Point Wi-Fi reiniciado y actualizado; cobertura restablecida al 100% en el laboratorio.',
+    descripcion: 'Se restableció el acceso a la cuenta institucional tras validar la identidad del usuario.',
     fechaRegistro: '2026-10-27T11:15:00'
   },
   {
@@ -83,10 +88,11 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'D-401',
     aulaInternoId: 6,
     aulaUbicacion: 'Pabellón D • Piso 4',
-    tipoProblema: 'ELECTRICO',
+    tipoProblema: 'CORREO',
+    servicioAfectado: 'Correo institucional',
     prioridad: 'BAJA',
     estado: 'RESUELTO',
-    descripcion: 'Reemplazo de dos paneles LED sobre la pizarra acrílica completado sin observaciones.',
+    descripcion: 'Se recuperó el acceso al correo institucional y se confirmó su funcionamiento.',
     fechaRegistro: '2026-10-26T10:00:00'
   }
 ];
@@ -97,8 +103,8 @@ const REPORTES_INICIALES: Reporte[] = [
 export class ReporteService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
-  private readonly apiUrl = '/api/reportes';
-  private readonly aulasApiUrl = '/api/aulas';
+  private readonly apiUrl = '/api/tickets';
+  private readonly aulasApiUrl = '/api/ubicaciones';
 
   // Estado reactivo centralizado sincronizado con HttpClient (Semana 14)
   // Inicia vacío para evitar cualquier parpadeo (flash) de datos de respaldo al recargar con el backend encendido
@@ -118,7 +124,7 @@ export class ReporteService {
   }
 
   /**
-   * Corrección #3: GET /api/reportes sincroniza fielmente el estado del servidor cuando responde 200 OK.
+   * Sincroniza fielmente GET /api/tickets cuando el servidor responde 200 OK.
    * Solo usa el conjunto semilla local cuando el servidor backend está apagado.
    */
   cargarReportes(aulaId?: string, prioridad?: Prioridad): void {
@@ -156,8 +162,7 @@ export class ReporteService {
   }
 
   /**
-   * Corrección #4: GET /api/aulas obtiene las aulas reales registradas en la base de datos
-   * para que los chips rápidos de ReporteFormComponent siempre apunten a aulas existentes.
+   * Carga ubicaciones registradas para ofrecerlas como contexto opcional del ticket.
    */
   cargarAulasSugeridas(): void {
     this.http
@@ -183,7 +188,7 @@ export class ReporteService {
   }
 
   /**
-   * GET /api/reportes/{id} : Refresca un reporte puntual desde el backend.
+   * GET /api/tickets/{id} : Refresca un ticket puntual desde el backend.
    */
   sincronizarPorId(id: number): Observable<Reporte | undefined> {
     return this.http.get<Reporte>(`${this.apiUrl}/${id}`).pipe(
@@ -224,14 +229,14 @@ export class ReporteService {
   }
 
   /**
-   * Corrección #2: POST /api/reportes devuelve un Observable<Reporte>.
-   * - Si el backend devuelve 400 o 404 (ej. aula no existe en BD), propaga el error HTTP real sin guardar datos falsos.
+   * POST /api/tickets crea un ticket y propaga errores de negocio sin guardar datos falsos.
    * - Si el backend está apagado (status 0 / 502 / 504), guarda en memoria local para modo demostrativo.
    */
   crearReporte(payload: CrearReportePayload): Observable<Reporte> {
     const codigoNormalizado = payload.aulaId.trim().toUpperCase();
     const ubicacionCalculada =
-      payload.aulaUbicacion.trim() || this.deducirUbicacionDesdeCodigo(codigoNormalizado);
+      payload.aulaUbicacion.trim() ||
+      (codigoNormalizado ? this.deducirUbicacionDesdeCodigo(codigoNormalizado) : 'Ubicación no especificada');
 
     const autorSesion =
       this.authService.sesion()?.nombreCompleto ||
@@ -243,6 +248,7 @@ export class ReporteService {
       tipoProblema: payload.tipoProblema,
       descripcion: payload.descripcion.trim(),
       prioridad: payload.prioridad,
+      servicioAfectado: (payload.servicioAfectado || 'Servicio general').trim(),
       reportadoPor: autorSesion
     };
 
@@ -267,6 +273,7 @@ export class ReporteService {
           aulaId: codigoNormalizado,
           aulaUbicacion: ubicacionCalculada,
           tipoProblema: payload.tipoProblema,
+          servicioAfectado: (payload.servicioAfectado || 'Servicio general').trim(),
           prioridad: payload.prioridad,
           estado: 'PENDIENTE',
           descripcion: payload.descripcion.trim(),
@@ -280,7 +287,7 @@ export class ReporteService {
   }
 
   /**
-   * PUT /api/reportes/{id} : Actualiza el estado del reporte en el backend.
+   * PUT /api/tickets/{id} : Actualiza el estado del ticket en el backend.
    * Incluye reintento automático si el cliente tenía un DEMO_JWT previo a encender el backend.
    */
   actualizarEstado(id: number, nuevoEstado: EstadoReporte): Observable<Reporte> {
@@ -291,6 +298,7 @@ export class ReporteService {
 
     const requestDto: ActualizarReporteRequestDTO = {
       descripcion: actual.descripcion,
+      servicioAfectado: actual.servicioAfectado || 'Servicio general',
       tipoProblema: actual.tipoProblema,
       prioridad: actual.prioridad,
       estado: nuevoEstado
@@ -332,12 +340,12 @@ export class ReporteService {
   }
 
   /**
-   * PUT /api/reportes/{id} : Actualiza los detalles (categoría, prioridad y diagnóstico) de un reporte existente.
+   * PUT /api/tickets/{id} : Actualiza los detalles del ticket.
    * Protegido por JWT (requiere ROLE_TECNICO o ROLE_ADMIN).
    */
   actualizarDetallesReporte(
     id: number,
-    cambios: { tipoProblema: TipoProblema; prioridad: Prioridad; descripcion: string }
+    cambios: { tipoProblema: TipoProblema; prioridad: Prioridad; descripcion: string; servicioAfectado?: string }
   ): Observable<Reporte> {
     const actual = this.obtenerPorId(id);
     if (!actual) {
@@ -346,6 +354,7 @@ export class ReporteService {
 
     const requestDto: ActualizarReporteRequestDTO = {
       descripcion: cambios.descripcion.trim(),
+      servicioAfectado: (cambios.servicioAfectado || actual.servicioAfectado || 'Servicio general').trim(),
       tipoProblema: cambios.tipoProblema,
       prioridad: cambios.prioridad,
       estado: actual.estado
@@ -373,6 +382,7 @@ export class ReporteService {
         }
         const actualizadoLocal: Reporte = {
           ...actual,
+          servicioAfectado: (cambios.servicioAfectado || actual.servicioAfectado || 'Servicio general').trim(),
           tipoProblema: cambios.tipoProblema,
           prioridad: cambios.prioridad,
           descripcion: cambios.descripcion.trim()
@@ -386,7 +396,7 @@ export class ReporteService {
   }
 
   /**
-   * DELETE /api/reportes/{id} : Elimina un reporte en el backend y actualiza la señal reactiva.
+   * DELETE /api/tickets/{id} : Elimina un ticket y actualiza la señal reactiva.
    * Protegido en SecurityConfig exclusivamente para ROLE_ADMIN.
    */
   eliminarReporte(id: number): Observable<void> {
@@ -417,9 +427,11 @@ export class ReporteService {
   private normalizarReporte(item: Reporte, ubicacionRespaldo?: string, autorRespaldo?: string): Reporte {
     return {
       ...item,
+      servicioAfectado: item.servicioAfectado || 'Servicio general',
       aulaId: (item.aulaId ?? '').trim().toUpperCase(),
       aulaUbicacion:
         item.aulaUbicacion ||
+        (!item.aulaId?.trim() ? 'Ubicación no especificada' : undefined) ||
         ubicacionRespaldo ||
         this.deducirUbicacionDesdeCodigo(item.aulaId ?? ''),
       reportadoPor: item.reportadoPor || autorRespaldo || 'Comunidad Académica UTP'

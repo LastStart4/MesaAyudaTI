@@ -51,7 +51,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 "tecnico@utp.edu.pe",
                 passwordTecnico,
                 RolUsuario.TECNICO,
-                "Soporte Integral de Campus"
+                "Service Desk N1"
         );
         sembrarSiNoExiste(
                 "admin",
@@ -59,7 +59,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 "admin@utp.edu.pe",
                 passwordAdmin,
                 RolUsuario.ADMIN,
-                "Dirección de Infraestructura"
+                "Administración de Mesa de Ayuda"
         );
         sembrarSiNoExiste(
                 "alumno",
@@ -75,7 +75,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 "cmendoza@utp.edu.pe",
                 passwordTecnico,
                 RolUsuario.TECNICO,
-                "Audiovisual y Proyección"
+                "Plataformas y aplicaciones"
         );
         sembrarSiNoExiste(
                 "atorres",
@@ -83,7 +83,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 "atorres@utp.edu.pe",
                 passwordTecnico,
                 RolUsuario.TECNICO,
-                "Instalaciones Eléctricas"
+                "Cuentas institucionales"
         );
         sembrarSiNoExiste(
                 "lvargas",
@@ -91,7 +91,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 "lvargas@utp.edu.pe",
                 passwordTecnico,
                 RolUsuario.TECNICO,
-                "Climatización e Infraestructura"
+                "Equipos y software"
         );
         sembrarSiNoExiste(
                 "egomez",
@@ -99,7 +99,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 "egomez@utp.edu.pe",
                 passwordTecnico,
                 RolUsuario.TECNICO,
-                "Redes y Conectividad"
+                "Redes y conectividad"
         );
     }
 
@@ -189,7 +189,7 @@ public class UsuarioAuthService implements UserDetailsService {
         String especialidad = (dto.especialidad() != null && !dto.especialidad().trim().isEmpty())
                 ? dto.especialidad().trim()
                 : switch (rol) {
-                    case ADMIN -> "Gestión de Infraestructura";
+                    case ADMIN -> "Administración de Mesa de Ayuda";
                     case TECNICO -> "Soporte Técnico de Campus";
                     case ALUMNO -> "Comunidad Académica UTP";
                 };

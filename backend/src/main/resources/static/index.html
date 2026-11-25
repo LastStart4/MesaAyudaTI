@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Módulo de Reportes para la Plataforma de Gestión de Mantenimiento de Aulas Universitarias - Registro y consulta de incidencias.">
+    <meta name="description" content="Mesa de Ayuda TI Universitaria - registro y seguimiento de incidentes y solicitudes tecnológicas.">
     <meta name="author" content="Equipo de Desarrollo Web Integrado">
-    <title>ClassCare Campus | Módulo de Reportes</title>
+    <title>Mesa de Ayuda TI Universitaria | UTP</title>
     <link rel="stylesheet" href="/css/campus.css">
     <link rel="stylesheet" href="/css/reportes.css">
 </head>
@@ -21,21 +21,21 @@
                 </svg>
             </div>
             <div class="campus-brand__titles">
-                <h1 class="campus-brand__name">ClassCare Campus</h1>
-                <p class="campus-brand__desc">Gestión y Mantenimiento de Aulas Universitarias</p>
+                <h1 class="campus-brand__name">Mesa de Ayuda TI</h1>
+                <p class="campus-brand__desc">Soporte tecnológico universitario</p>
             </div>
         </div>
 
         <nav class="campus-nav" aria-label="Navegación principal de módulos">
             <ul class="campus-nav__list">
                 <li class="campus-nav__item">
-                    <a href="/" class="campus-nav__link campus-nav__link--active" aria-current="page">Reportes</a>
+                    <a href="/" class="campus-nav__link campus-nav__link--active" aria-current="page">Tickets</a>
                 </li>
                 <li class="campus-nav__item">
-                    <a href="/aulas/index.html" class="campus-nav__link">Aulas</a>
+                    <a href="/aulas/index.html" class="campus-nav__link">Ubicaciones</a>
                 </li>
                 <li class="campus-nav__item">
-                    <a href="/atenciones/index.html" class="campus-nav__link">Atenciones</a>
+                    <a href="/atenciones/index.html" class="campus-nav__link">Intervenciones</a>
                 </li>
             </ul>
         </nav>
@@ -46,26 +46,40 @@
 
         <!-- Sección Informativa del Módulo -->
         <section class="campus-intro" aria-labelledby="intro-title">
-            <h2 id="intro-title" class="campus-intro__title">Módulo de Reportes de Incidencias</h2>
+            <h2 id="intro-title" class="campus-intro__title">Mesa de Ayuda TI Universitaria</h2>
             <p class="campus-intro__text">
-                Canal centralizado para el reporte oportuno de averías e incidencias en aulas y laboratorios universitarios.
-                Permite registrar fallas operativas y monitorear su estado de atención técnica en tiempo real.
+                Punto único de contacto para registrar incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo.
+                Permite priorizar los tickets y seguir su atención por los niveles de soporte.
             </p>
         </section>
 
         <!-- Sección de Registro de Incidencias -->
         <section class="campus-card" aria-labelledby="form-title">
-            <h2 id="form-title" class="campus-card__title">Registrar Nueva Incidencia</h2>
-            <p class="campus-card__instruction">Complete los campos requeridos para notificar al equipo de mantenimiento del campus.</p>
+            <h2 id="form-title" class="campus-card__title">Registrar Nuevo Ticket</h2>
+            <p class="campus-card__instruction">Describa el servicio tecnológico afectado para que el Service Desk pueda atender su solicitud.</p>
 
             <form id="form-reporte" class="campus-form" novalidate>
                 <fieldset class="campus-fieldset">
-                    <legend class="campus-legend">Datos de la Incidencia</legend>
+                    <legend class="campus-legend">Datos del ticket</legend>
 
-                    <!-- Campo Aula -->
+                    <p class="form-group">
+                        <label for="servicioAfectado" class="form-label">Servicio afectado</label>
+                        <select id="servicioAfectado" name="servicioAfectado" class="form-select" required>
+                            <option value="Plataforma académica">Plataforma académica</option>
+                            <option value="Autenticación institucional">Autenticación institucional</option>
+                            <option value="Cuenta institucional">Cuenta institucional</option>
+                            <option value="Red Wi-Fi">Red Wi-Fi</option>
+                            <option value="Correo institucional">Correo institucional</option>
+                            <option value="Software autorizado">Software autorizado</option>
+                            <option value="Equipo de cómputo">Equipo de cómputo</option>
+                            <option value="Otro servicio">Otro servicio</option>
+                        </select>
+                    </p>
+
+                    <!-- Ubicación física opcional -->
                     <p class="form-group">
                         <label for="aulaId" class="form-label">
-                            Código del Aula <span class="form-required" aria-hidden="true">*</span>
+                            Ubicación física (opcional)
                         </label>
                         <input 
                             type="text" 
@@ -73,7 +87,6 @@
                             name="aulaId" 
                             class="form-input" 
                             list="aulas-datalist"
-                            required 
                             pattern="^[A-Za-z0-9\-_]{2,10}$"
                             minlength="2" 
                             maxlength="10" 
@@ -81,21 +94,24 @@
                             autocomplete="off"
                             aria-describedby="aulaId-help">
                         <datalist id="aulas-datalist"></datalist>
-                        <small id="aulaId-help" class="form-help">Seleccione o escriba un aula registrada en el campus.</small>
+                        <small id="aulaId-help" class="form-help">Puede asociar el ticket a un aula o laboratorio.</small>
                     </p>
 
                     <!-- Campo Tipo de Problema -->
                     <p class="form-group">
                         <label for="tipoProblema" class="form-label">
-                            Tipo de Problema <span class="form-required" aria-hidden="true">*</span>
+                            Categoría <span class="form-required" aria-hidden="true">*</span>
                         </label>
                         <select id="tipoProblema" name="tipoProblema" class="form-select" required aria-describedby="tipoProblema-help">
                             <option value="" disabled selected>Seleccione una categoría</option>
-                            <option value="TECNOLOGICO">Tecnológico (Proyector, PC, Audio, Red)</option>
-                            <option value="ELECTRICO">Eléctrico (Iluminación, Enchufes, Tablero)</option>
-                            <option value="MOBILIARIO">Mobiliario (Carpetas, Sillas, Pizarra)</option>
-                            <option value="INFRAESTRUCTURA">Infraestructura (Puertas, Ventanas, Techo)</option>
-                            <option value="OTRO">Otro tipo de eventualidad</option>
+                            <option value="AUTENTICACION">Autenticación</option>
+                            <option value="PLATAFORMAS">Plataformas académicas</option>
+                            <option value="REDES">Redes y Wi-Fi</option>
+                            <option value="CUENTAS">Cuentas institucionales</option>
+                            <option value="SOFTWARE">Software</option>
+                            <option value="CORREO">Correo institucional</option>
+                            <option value="EQUIPOS">Equipos</option>
+                            <option value="OTRO">Otro</option>
                         </select>
                         <small id="tipoProblema-help" class="form-help">Clasificación técnica para asignación del personal especializado.</small>
                     </p>
@@ -107,9 +123,9 @@
                         </label>
                         <select id="prioridad" name="prioridad" class="form-select" required aria-describedby="prioridad-help">
                             <option value="" disabled selected>Seleccione la urgencia</option>
-                            <option value="ALTA">Alta (Impide el dictado normal de clase)</option>
-                            <option value="MEDIA">Media (Afecta parcialmente la sesión)</option>
-                            <option value="BAJA">Baja (Mantenimiento preventivo o estético)</option>
+                            <option value="ALTA">Alta (impacto significativo en el servicio)</option>
+                            <option value="MEDIA">Media (afecta parcialmente al usuario)</option>
+                            <option value="BAJA">Baja (solicitud de atención estándar)</option>
                         </select>
                         <small id="prioridad-help" class="form-help">Determina el tiempo límite de atención por el equipo técnico.</small>
                     </p>
@@ -127,7 +143,7 @@
                             required 
                             minlength="10" 
                             maxlength="255" 
-                            placeholder="Describa el inconveniente específico observado en el aula..."
+                            placeholder="Describa el incidente o la solicitud y el impacto en sus actividades..."
                             aria-describedby="descripcion-help"></textarea>
                         <small id="descripcion-help" class="form-help">Mínimo 10 caracteres y máximo 255 caracteres.</small>
                     </p>
@@ -135,7 +151,7 @@
                     <!-- Botones de Acción -->
                     <p class="form-actions form-group--full">
                         <button type="submit" class="btn btn--primary" id="btn-submit">
-                            Registrar Incidencia
+                            Registrar ticket
                         </button>
                         <button type="reset" class="btn btn--secondary" id="btn-reset">
                             Limpiar Formulario
@@ -147,11 +163,11 @@
 
         <!-- Sección de Filtros de Búsqueda -->
         <section class="campus-card" aria-labelledby="filter-title">
-            <h2 id="filter-title" class="campus-card__title">Consultar Incidencias</h2>
-            <p class="campus-card__instruction">Filtre las incidencias por código de aula para verificar el historial o avance.</p>
+            <h2 id="filter-title" class="campus-card__title">Consultar tickets</h2>
+            <p class="campus-card__instruction">Filtre los tickets por ubicación para verificar el historial o avance.</p>
             <form id="form-filtro" class="filter-inline">
                 <p class="form-group">
-                    <label for="filtroAula" class="form-label">Filtrar por Aula:</label>
+                    <label for="filtroAula" class="form-label">Filtrar por ubicación:</label>
                     <input type="search" id="filtroAula" class="form-input" placeholder="Ej: A-101 o B-202">
                 </p>
                 <p class="form-actions">
@@ -163,8 +179,8 @@
 
         <!-- Tablero de Incidencias -->
         <section class="campus-card" aria-labelledby="board-title">
-            <h2 id="board-title" class="campus-card__title">Historial de Incidencias Registradas</h2>
-            <p class="campus-card__instruction">Incidencias reportadas en el campus clasificadas por severidad operativa.</p>
+            <h2 id="board-title" class="campus-card__title">Tickets registrados</h2>
+            <p class="campus-card__instruction">Incidentes y solicitudes clasificados por prioridad y estado de atención.</p>
 
             <div class="campus-grid" id="contenedor-reportes" aria-live="polite">
                 <!-- Tarjeta 1 -->
@@ -174,9 +190,9 @@
                         <span class="badge badge--pendiente">Pendiente</span>
                     </header>
                     <div class="item-card__body">
-                        <h3 class="item-card__title">Aula A-101</h3>
-                        <p class="item-card__meta"><strong>Tipo:</strong> Tecnológico</p>
-                        <p class="item-card__desc">El proyector multimedia no emite señal HDMI ni enciende con el control remoto.</p>
+                        <h3 class="item-card__title">Plataforma académica</h3>
+                        <p class="item-card__meta"><strong>Tipo:</strong> Plataformas</p>
+                        <p class="item-card__desc">La plataforma académica no permite iniciar sesión durante las evaluaciones.</p>
                     </div>
                     <footer class="item-card__footer">
                         <time datetime="2026-09-10T08:30:00">Hoy, 08:30 AM</time>
@@ -191,9 +207,9 @@
                         <span class="badge badge--en-atencion">En Atención</span>
                     </header>
                     <div class="item-card__body">
-                        <h3 class="item-card__title">Aula B-202</h3>
-                        <p class="item-card__meta"><strong>Tipo:</strong> Eléctrico</p>
-                        <p class="item-card__desc">Foco fluorescente parpadea constantemente en la fila delantera del aula.</p>
+                        <h3 class="item-card__title">Red Wi-Fi</h3>
+                        <p class="item-card__meta"><strong>Tipo:</strong> Redes y conectividad</p>
+                        <p class="item-card__desc">La red inalámbrica presenta interrupciones en el laboratorio de cómputo.</p>
                     </div>
                     <footer class="item-card__footer">
                         <time datetime="2026-09-09T14:15:00">Ayer, 02:15 PM</time>
@@ -208,9 +224,9 @@
                         <span class="badge badge--resuelto">Resuelto</span>
                     </header>
                     <div class="item-card__body">
-                        <h3 class="item-card__title">Aula C-305</h3>
-                        <p class="item-card__meta"><strong>Tipo:</strong> Mobiliario</p>
-                        <p class="item-card__desc">Silla ergonómica del docente con tornillo flojo en el soporte del respaldo.</p>
+                        <h3 class="item-card__title">Cuenta institucional</h3>
+                        <p class="item-card__meta"><strong>Tipo:</strong> Acceso</p>
+                        <p class="item-card__desc">El usuario docente recuperó el acceso a su cuenta institucional.</p>
                     </div>
                     <footer class="item-card__footer">
                         <time datetime="2026-09-08T11:00:00">Hace 2 días</time>
@@ -225,8 +241,8 @@
     <!-- Pie de Página Institucional Unificado -->
     <footer class="campus-footer">
         <div class="footer-content">
-            <p><strong>ClassCare Campus</strong> &copy; 2026 Universidad Tecnológica del Perú (UTP).</p>
-            <p>Plataforma Integrada de Mantenimiento y Aulas Universitarias | APF2</p>
+            <p><strong>Mesa de Ayuda TI</strong> &copy; 2026 Universidad Tecnológica del Perú (UTP).</p>
+            <p>Gestión de incidentes y solicitudes de servicios tecnológicos</p>
             <p class="footer-status">
                 <span class="status-dot" aria-hidden="true"></span>
                 Servidor de API REST activo y sincronizado en puerto 8080

@@ -1,7 +1,7 @@
 package com.utp.herDesarrollo.security.dto;
 
 /**
- * DTO para el registro de un nuevo usuario en ClassCare Campus.
+ * DTO para el registro de un usuario de la Mesa de Ayuda TI.
  */
 public record RegistroUsuarioDTO(
         String username,

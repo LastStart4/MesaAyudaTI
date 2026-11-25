@@ -22,6 +22,6 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.campus-brand__name')?.textContent).toContain('ClassCare Campus');
+    expect(compiled.querySelector('.campus-brand__name')?.textContent).toContain('Mesa de Ayuda TI');
   });
 });

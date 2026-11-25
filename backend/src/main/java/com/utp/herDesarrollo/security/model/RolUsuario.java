@@ -1,7 +1,7 @@
 package com.utp.herDesarrollo.security.model;
 
 /**
- * Roles institucionales del sistema ClassCare Campus (RBAC).
+ * Roles institucionales de la Mesa de Ayuda TI (RBAC).
  */
 public enum RolUsuario {
     ADMIN,

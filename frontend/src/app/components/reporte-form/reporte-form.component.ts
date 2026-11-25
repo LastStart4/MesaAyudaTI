@@ -80,21 +80,35 @@ export class ReporteFormComponent {
   readonly reporteEditandoId = signal<number | null>(null);
   readonly modoEdicion = computed(() => this.reporteEditandoId() !== null);
 
-  // Aulas sugeridas sincronizadas con GET /api/aulas desde ReporteService
+  // Ubicaciones sugeridas sincronizadas desde ReporteService
   readonly aulasSugeridas = this.reporteService.aulasSugeridas;
 
   readonly categorias: { valor: TipoProblema; label: string; icono: string }[] = [
-    { valor: 'TECNOLOGICO', label: 'Tecnológico', icono: 'videocam_off' },
-    { valor: 'ELECTRICO', label: 'Eléctrico', icono: 'bolt' },
-    { valor: 'MOBILIARIO', label: 'Mobiliario', icono: 'chair' },
-    { valor: 'INFRAESTRUCTURA', label: 'Infraestructura', icono: 'ac_unit' },
+    { valor: 'AUTENTICACION', label: 'Autenticación', icono: 'lock_open' },
+    { valor: 'PLATAFORMAS', label: 'Plataformas', icono: 'school' },
+    { valor: 'REDES', label: 'Redes y Wi-Fi', icono: 'wifi' },
+    { valor: 'CUENTAS', label: 'Cuentas', icono: 'manage_accounts' },
+    { valor: 'SOFTWARE', label: 'Software', icono: 'install_desktop' },
+    { valor: 'CORREO', label: 'Correo institucional', icono: 'mail' },
+    { valor: 'EQUIPOS', label: 'Equipos', icono: 'devices' },
     { valor: 'OTRO', label: 'Otro', icono: 'build' }
+  ];
+
+  readonly servicios = [
+    'Plataforma académica',
+    'Autenticación institucional',
+    'Cuenta institucional',
+    'Red Wi-Fi',
+    'Correo institucional',
+    'Software autorizado',
+    'Equipo de cómputo',
+    'Otro servicio'
   ];
 
   readonly prioridades: { valor: Prioridad; label: string; impacto: string }[] = [
     { valor: 'ALTA', label: 'Prioridad Alta', impacto: 'Inhabilita uso en clase' },
     { valor: 'MEDIA', label: 'Prioridad Media', impacto: 'Aula operativa con obs.' },
-    { valor: 'BAJA', label: 'Prioridad Baja', impacto: 'Mantenimiento preventivo' }
+    { valor: 'BAJA', label: 'Prioridad Baja', impacto: 'Atención según prioridad' }
   ];
 
   // Formulario Reactivo con Validaciones Nivel 1 y Nivel 2
@@ -103,16 +117,15 @@ export class ReporteFormComponent {
       aulaId: [
         '',
         [
-          Validators.required,
           Validators.maxLength(12),
           codigoAulaCampusValidator()
         ]
       ],
       aulaUbicacion: [
-        'Se asigna automáticamente según el código de aula',
-        [Validators.required]
+        ''
       ],
-      tipoProblema: ['TECNOLOGICO' as TipoProblema, [Validators.required]],
+      servicioAfectado: ['Plataforma académica', [Validators.required]],
+      tipoProblema: ['PLATAFORMAS' as TipoProblema, [Validators.required]],
       prioridad: ['ALTA' as Prioridad, [Validators.required]],
       descripcion: [
         '',
@@ -137,7 +150,7 @@ export class ReporteFormComponent {
       this.f.aulaUbicacion.setValue(ubicacionCalculada, { emitEvent: false });
     });
 
-    // Detectar si viene parámetro ?aula=A-101 desde el módulo de Aulas
+    // Detectar si viene una ubicación preseleccionada desde el catálogo del campus
     this.route.queryParamMap.subscribe(queryParams => {
       const aulaPreseleccionada = queryParams.get('aula');
       if (aulaPreseleccionada && !this.modoEdicion()) {
@@ -148,7 +161,7 @@ export class ReporteFormComponent {
       }
     });
 
-    // Detectar si estamos en ruta /reportes/:id/editar (Modo Edición CRUD)
+    // Detectar si estamos editando un ticket
     this.route.paramMap.subscribe(params => {
       const rawId = params.get('id');
       const numericId = rawId ? Number(rawId) : null;
@@ -175,18 +188,19 @@ export class ReporteFormComponent {
   private precargarFormulario(reporte: Reporte): void {
     if (reporte.estado === 'RESUELTO') {
       this.snackBar.open(
-        `El Reporte #${this.formatCount(reporte.id)} ya se encuentra resuelto y cerrado; no admite ediciones.`,
+        `El ticket #${this.formatCount(reporte.id)} ya está resuelto y cerrado; no admite ediciones.`,
         'Cerrar',
         { duration: 4500, horizontalPosition: 'end', verticalPosition: 'bottom' }
       );
-      this.router.navigate(['/reportes', reporte.id]);
+      this.router.navigate(['/tickets', reporte.id]);
       return;
     }
 
     this.reporteForm.patchValue({
       aulaId: reporte.aulaId,
-      aulaUbicacion: reporte.aulaUbicacion || this.deducirUbicacionDesdeCodigo(reporte.aulaId),
+      aulaUbicacion: reporte.aulaUbicacion || '',
       tipoProblema: reporte.tipoProblema,
+      servicioAfectado: reporte.servicioAfectado,
       prioridad: reporte.prioridad,
       descripcion: reporte.descripcion
     });
@@ -233,7 +247,7 @@ export class ReporteFormComponent {
 
     const match = limpio.match(/^([A-E]|LAB)-([1-9])\d{2}$/);
     if (!match) {
-      return 'Ingresa un código válido (ej. A-101, LAB-302)';
+      return limpio ? 'Ingresa un código válido (ej. A-101, LAB-302)' : 'Ubicación no especificada';
     }
     const prefijo = match[1];
     const piso = match[2];
@@ -272,8 +286,9 @@ export class ReporteFormComponent {
 
     this.reporteForm.reset({
       aulaId: '',
-      aulaUbicacion: 'Ingresa un código válido (ej. A-101, LAB-302)',
-      tipoProblema: 'TECNOLOGICO',
+      aulaUbicacion: '',
+      tipoProblema: 'PLATAFORMAS',
+      servicioAfectado: 'Plataforma académica',
       prioridad: 'ALTA',
       descripcion: ''
     });
@@ -287,7 +302,7 @@ export class ReporteFormComponent {
 
     const idEdicion = this.reporteEditandoId();
 
-    // Modo Edición: PUT /api/reportes/{id} (protegido por JWT TECNICO o ADMIN)
+    // Modo edición: requiere JWT de soporte técnico o administrador.
     if (idEdicion !== null) {
       if (!this.authService.puedeActualizarReportes()) {
         this.snackBar
@@ -308,21 +323,22 @@ export class ReporteFormComponent {
         .actualizarDetallesReporte(idEdicion, {
           tipoProblema: raw.tipoProblema,
           prioridad: raw.prioridad,
-          descripcion: raw.descripcion
+          descripcion: raw.descripcion,
+          servicioAfectado: raw.servicioAfectado
         })
         .subscribe({
           next: actualizado => {
             this.snackBar.open(
-              `Reporte #${this.formatCount(actualizado.id)} (${actualizado.aulaId}) actualizado correctamente`,
+              `Ticket #${this.formatCount(actualizado.id)} actualizado correctamente`,
               'Cerrar',
               { duration: 3500, horizontalPosition: 'end', verticalPosition: 'bottom' }
             );
-            this.router.navigate(['/reportes', actualizado.id]);
+            this.router.navigate(['/tickets', actualizado.id]);
           },
           error: (err: HttpErrorResponse) => {
             const msg =
               err?.error?.message ||
-              `Error (${err.status}) al guardar los cambios del reporte.`;
+              `Error (${err.status}) al guardar los cambios del ticket.`;
             this.snackBar.open(msg, 'Cerrar', {
               duration: 4500,
               horizontalPosition: 'end',
@@ -333,27 +349,27 @@ export class ReporteFormComponent {
       return;
     }
 
-    // Modo Creación: POST /api/reportes
+    // Modo creación: POST /api/tickets.
     this.reporteService.crearReporte(this.reporteForm.getRawValue()).subscribe({
       next: creado => {
         const numOrden = String(creado.id).padStart(2, '0');
         this.snackBar
           .open(
-            `Reporte #${numOrden} (${creado.aulaId}) registrado exitosamente`,
+            `Ticket #${numOrden} registrado exitosamente`,
             'Ver detalle',
             { duration: 4000, horizontalPosition: 'end', verticalPosition: 'bottom' }
           )
           .onAction()
           .subscribe(() => {
-            this.router.navigate(['/reportes', creado.id]);
+            this.router.navigate(['/tickets', creado.id]);
           });
 
-        this.router.navigate(['/reportes']);
+        this.router.navigate(['/tickets']);
       },
       error: (err: HttpErrorResponse) => {
         const mensajeBackend =
           err?.error?.message ||
-          `No se pudo registrar el reporte (${err.status}): Verifica que el aula exista en el sistema.`;
+          `No se pudo registrar el ticket (${err.status}): revisa los datos ingresados.`;
         this.snackBar.open(mensajeBackend, 'Cerrar', {
           duration: 5000,
           horizontalPosition: 'end',

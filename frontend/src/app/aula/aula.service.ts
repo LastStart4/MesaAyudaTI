@@ -3,7 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Aula, AulaFormData } from './aula.model';
 
-const AULAS_CACHE_KEY = 'classcare-aulas-cache';
+const AULAS_CACHE_KEY = 'mesa-ayuda-ubicaciones-cache';
 
 @Injectable({ providedIn: 'root' })
 export class AulaService {
@@ -19,7 +19,7 @@ export class AulaService {
     this.cargando.set(true);
     this.error.set(null);
     try {
-      const aulas = await firstValueFrom(this.http.get<Aula[]>('/api/aulas'));
+      const aulas = await firstValueFrom(this.http.get<Aula[]>('/api/ubicaciones'));
       if (!Array.isArray(aulas)) {
         throw new Error('La respuesta de la API no contiene una lista de aulas válida.');
       }
@@ -64,15 +64,15 @@ export class AulaService {
   }
 
   async registrar(datos: AulaFormData): Promise<Aula> {
-    return firstValueFrom(this.http.post<Aula>('/api/aulas', datos));
+    return firstValueFrom(this.http.post<Aula>('/api/ubicaciones', datos));
   }
 
   async actualizar(id: number, datos: AulaFormData): Promise<Aula> {
-    return firstValueFrom(this.http.put<Aula>(`/api/aulas/${encodeURIComponent(id)}`, datos));
+    return firstValueFrom(this.http.put<Aula>(`/api/ubicaciones/${encodeURIComponent(id)}`, datos));
   }
 
   async eliminar(id: number): Promise<void> {
-    await firstValueFrom(this.http.delete<void>(`/api/aulas/${encodeURIComponent(id)}`));
+    await firstValueFrom(this.http.delete<void>(`/api/ubicaciones/${encodeURIComponent(id)}`));
   }
 
   mensajeError(error: unknown, fallback: string): string {

@@ -39,11 +39,11 @@ public class ReporteServiceImpl implements ReporteService {
         if (dto == null) {
             throw new ReglaNegocioException("La solicitud para crear el reporte no puede ser nula");
         }
-        if (dto.getAulaId() == null || dto.getAulaId().isBlank()) {
-            throw new ReglaNegocioException("El código o identificador del aula es obligatorio");
-        }
         if (dto.getDescripcion() == null || dto.getDescripcion().isBlank()) {
             throw new ReglaNegocioException("La descripción del problema es obligatoria");
+        }
+        if (dto.getServicioAfectado() == null || dto.getServicioAfectado().isBlank()) {
+            throw new ReglaNegocioException("El servicio tecnológico afectado es obligatorio");
         }
         if (dto.getTipoProblema() == null) {
             throw new ReglaNegocioException("El tipo de problema es obligatorio");
@@ -52,8 +52,8 @@ public class ReporteServiceImpl implements ReporteService {
             throw new ReglaNegocioException("La prioridad del reporte es obligatoria");
         }
 
-        String aulaParam = dto.getAulaId().trim();
-        Aula aula = aulaRepository.findByCodigoIgnoreCase(aulaParam)
+        String aulaParam = dto.getAulaId() != null ? dto.getAulaId().trim() : "";
+        Aula aula = aulaParam.isBlank() ? null : aulaRepository.findByCodigoIgnoreCase(aulaParam)
                 .or(() -> {
                     try {
                         Long aulaIdNum = Long.parseLong(aulaParam);
@@ -62,22 +62,16 @@ public class ReporteServiceImpl implements ReporteService {
                         return Optional.empty();
                     }
                 })
-                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un aula registrada con código o ID: " + aulaParam));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una ubicación registrada con código o ID: " + aulaParam));
 
         // Regla de negocio: impedir duplicados activos (PENDIENTE o EN_ATENCION) del mismo tipo de problema en la misma aula
-        if (aula.getId() != null && reporteRepository.existsByAula_IdAndTipoProblemaAndEstadoNot(
+        if (aula != null && aula.getId() != null && reporteRepository.existsByAula_IdAndTipoProblemaAndEstadoNot(
                 aula.getId(),
                 dto.getTipoProblema(),
                 EstadoReporte.RESUELTO)) {
             throw new ReglaNegocioException(
                     "Ya existe un reporte activo (" + dto.getTipoProblema() + ") pendiente de solución en el aula " + aula.getCodigo()
             );
-        }
-
-        // Regla cruzada: si la incidencia es de prioridad ALTA, el aula pasa a Mantenimiento automáticamente
-        if (dto.getPrioridad() == Prioridad.ALTA) {
-            aula.setEstado("Mantenimiento");
-            aulaRepository.save(aula);
         }
 
         Reporte nuevoReporte = new Reporte(
@@ -88,6 +82,7 @@ public class ReporteServiceImpl implements ReporteService {
                 EstadoReporte.PENDIENTE,
                 LocalDateTime.now()
         );
+        nuevoReporte.setServicioAfectado(dto.getServicioAfectado().trim());
         String autor = (dto.getReportadoPor() != null && !dto.getReportadoPor().isBlank())
                 ? dto.getReportadoPor().trim()
                 : "Comunidad Académica UTP";
@@ -165,6 +160,9 @@ public class ReporteServiceImpl implements ReporteService {
         if (dto.getDescripcion() != null && !dto.getDescripcion().isBlank()) {
             reporteExistente.setDescripcion(dto.getDescripcion().trim());
         }
+        if (dto.getServicioAfectado() != null && !dto.getServicioAfectado().isBlank()) {
+            reporteExistente.setServicioAfectado(dto.getServicioAfectado().trim());
+        }
         if (dto.getTipoProblema() != null) {
             if (reporteExistente.getAula() != null
                     && reporteExistente.getAula().getId() != null
@@ -186,26 +184,6 @@ public class ReporteServiceImpl implements ReporteService {
             reporteExistente.setEstado(dto.getEstado());
         }
 
-        // Sincronización cruzada del estado del Aula según la etapa de atención y prioridad
-        if (reporteExistente.getAula() != null) {
-            Aula aula = reporteExistente.getAula();
-            if (reporteExistente.getEstado() == EstadoReporte.RESUELTO) {
-                long reportesActivosRestantes = reporteRepository.countByAula_IdAndEstadoNotAndIdNot(
-                        aula.getId(),
-                        EstadoReporte.RESUELTO,
-                        reporteExistente.getId()
-                );
-                if (reportesActivosRestantes == 0) {
-                    aula.setEstado("Disponible");
-                    aulaRepository.save(aula);
-                }
-            } else if (reporteExistente.getEstado() == EstadoReporte.EN_ATENCION
-                    || reporteExistente.getPrioridad() == Prioridad.ALTA) {
-                aula.setEstado("Mantenimiento");
-                aulaRepository.save(aula);
-            }
-        }
-
         Reporte actualizado = reporteRepository.save(reporteExistente);
         return ReporteResponseDTO.fromDomain(actualizado);
     }
@@ -220,19 +198,6 @@ public class ReporteServiceImpl implements ReporteService {
         Reporte reporteExistente = reporteRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el reporte con ID: " + id));
 
-        Aula aulaAsociada = reporteExistente.getAula();
         reporteRepository.delete(reporteExistente);
-
-        if (aulaAsociada != null) {
-            long reportesActivosRestantes = reporteRepository.countByAula_IdAndEstadoNotAndIdNot(
-                    aulaAsociada.getId(),
-                    EstadoReporte.RESUELTO,
-                    id
-            );
-            if (reportesActivosRestantes == 0 && "Mantenimiento".equalsIgnoreCase(aulaAsociada.getEstado())) {
-                aulaAsociada.setEstado("Disponible");
-                aulaRepository.save(aulaAsociada);
-            }
-        }
     }
 }

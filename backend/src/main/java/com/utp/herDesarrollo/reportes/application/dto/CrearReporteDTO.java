@@ -11,6 +11,7 @@ public class CrearReporteDTO {
     private String aulaId;
     private TipoProblema tipoProblema;
     private String descripcion;
+    private String servicioAfectado = "Servicio general";
     private Prioridad prioridad;
     private String reportadoPor;
 
@@ -54,6 +55,14 @@ public class CrearReporteDTO {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getServicioAfectado() {
+        return servicioAfectado;
+    }
+
+    public void setServicioAfectado(String servicioAfectado) {
+        this.servicioAfectado = servicioAfectado;
     }
 
     public Prioridad getPrioridad() {

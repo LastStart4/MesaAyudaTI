@@ -8,13 +8,10 @@ import com.utp.herDesarrollo.atenciones.exception.ReglaNegocioAtencionException;
 import com.utp.herDesarrollo.atenciones.model.Atencion;
 import com.utp.herDesarrollo.atenciones.model.EstadoAtencion;
 import com.utp.herDesarrollo.atenciones.repository.AtencionRepository;
-import com.utp.herDesarrollo.aulas.model.Aula;
-import com.utp.herDesarrollo.aulas.repository.AulaRepository;
 import com.utp.herDesarrollo.reportes.application.exception.RecursoNoEncontradoException;
 import com.utp.herDesarrollo.reportes.domain.model.EstadoReporte;
 import com.utp.herDesarrollo.reportes.domain.model.Reporte;
 import com.utp.herDesarrollo.reportes.domain.repository.ReporteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,20 +23,10 @@ public class AtencionServiceImpl implements AtencionService {
 
     private final AtencionRepository atencionRepository;
     private final ReporteRepository reporteRepository;
-    private final AulaRepository aulaRepository;
-
     public AtencionServiceImpl(AtencionRepository atencionRepository,
                                ReporteRepository reporteRepository) {
-        this(atencionRepository, reporteRepository, null);
-    }
-
-    @Autowired
-    public AtencionServiceImpl(AtencionRepository atencionRepository,
-                               ReporteRepository reporteRepository,
-                               AulaRepository aulaRepository) {
         this.atencionRepository = atencionRepository;
         this.reporteRepository = reporteRepository;
-        this.aulaRepository = aulaRepository;
     }
 
     @Override
@@ -164,32 +151,15 @@ public class AtencionServiceImpl implements AtencionService {
             atencion.setFechaResolucion(LocalDateTime.now());
         }
 
-        // Sincronización transversal: Atencion -> Reporte -> Aula
+        // Sincroniza el estado de la intervención con el ticket asociado.
         Reporte reporte = atencion.getReporte();
         if (reporte != null) {
             if (dto.getNuevoEstado() == EstadoAtencion.EN_ATENCION) {
                 reporte.setEstado(EstadoReporte.EN_ATENCION);
                 reporteRepository.save(reporte);
-                if (aulaRepository != null && reporte.getAula() != null) {
-                    Aula aula = reporte.getAula();
-                    aula.setEstado("Mantenimiento");
-                    aulaRepository.save(aula);
-                }
             } else if (dto.getNuevoEstado() == EstadoAtencion.RESUELTO) {
                 reporte.setEstado(EstadoReporte.RESUELTO);
                 reporteRepository.save(reporte);
-                if (aulaRepository != null && reporte.getAula() != null) {
-                    Aula aula = reporte.getAula();
-                    long activosRestantes = reporteRepository.countByAula_IdAndEstadoNotAndIdNot(
-                            aula.getId(),
-                            EstadoReporte.RESUELTO,
-                            reporte.getId()
-                    );
-                    if (activosRestantes == 0) {
-                        aula.setEstado("Disponible");
-                        aulaRepository.save(aula);
-                    }
-                }
             }
         }
 

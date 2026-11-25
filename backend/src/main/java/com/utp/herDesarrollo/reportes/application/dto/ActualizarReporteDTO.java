@@ -10,6 +10,7 @@ import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
 public class ActualizarReporteDTO {
 
     private String descripcion;
+    private String servicioAfectado;
     private TipoProblema tipoProblema;
     private Prioridad prioridad;
     private EstadoReporte estado;
@@ -30,6 +31,14 @@ public class ActualizarReporteDTO {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getServicioAfectado() {
+        return servicioAfectado;
+    }
+
+    public void setServicioAfectado(String servicioAfectado) {
+        this.servicioAfectado = servicioAfectado;
     }
 
     public TipoProblema getTipoProblema() {

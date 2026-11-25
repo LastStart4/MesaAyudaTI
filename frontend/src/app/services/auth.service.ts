@@ -10,8 +10,8 @@ import {
   UsuarioPerfil
 } from '../models/auth.model';
 
-const STORAGE_KEY = 'classcare-jwt-session';
-const LOCAL_USERS_KEY = 'classcare-local-users';
+const STORAGE_KEY = 'mesa-ayuda-jwt-session';
+const LOCAL_USERS_KEY = 'mesa-ayuda-local-users';
 
 interface CuentaLocalDemo extends LoginRequest {
   nombreCompleto: string;
@@ -81,7 +81,7 @@ export class AuthService {
   readonly panelVisible = signal(false);
 
   /**
-   * Según SecurityConfig.java, solo ROLE_TECNICO y ROLE_ADMIN pueden ejecutar PUT /api/reportes/{id}.
+   * Según SecurityConfig.java, solo ROLE_TECNICO y ROLE_ADMIN pueden actualizar tickets.
    */
   readonly puedeActualizarReportes = computed(() => {
     const roles = this.sesionState()?.roles ?? [];
@@ -89,7 +89,7 @@ export class AuthService {
   });
 
   /**
-   * Según SecurityConfig.java, exclusivamente ROLE_ADMIN puede ejecutar DELETE /api/reportes/{id}.
+   * Según SecurityConfig.java, solo ROLE_ADMIN puede eliminar tickets.
    */
   readonly puedeEliminarReportes = computed(() => {
     const roles = this.sesionState()?.roles ?? [];
@@ -123,12 +123,12 @@ export class AuthService {
       return 'Acceso de Consulta';
     }
     if (actual.roles.includes('ROLE_ADMIN')) {
-      return 'Administrador de Infraestructura';
+      return 'Administrador de Mesa de Ayuda';
     }
     if (actual.roles.includes('ROLE_TECNICO')) {
       return 'Especialista de Soporte Técnico';
     }
-    return 'Docente / Estudiante';
+    return 'Solicitante académico';
   });
 
   readonly rolEtiqueta = computed(() => {
@@ -472,9 +472,9 @@ export class AuthService {
       JSON.stringify({
         sub: username,
         roles: roles.join(','),
-        iss: 'classcare-utp-client'
+        iss: 'mesa-ayuda-utp-client'
       })
     );
-    return `${header}.${payload}.classcare-signature`;
+    return `${header}.${payload}.mesa-ayuda-signature`;
   }
 }

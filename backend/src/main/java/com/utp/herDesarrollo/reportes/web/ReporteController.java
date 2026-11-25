@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador REST para la gestión de incidencias en aulas universitarias.
- * Expone endpoints REST bajo /api/reportes con soporte para filtrado avanzado JPQL.
+ * Controlador REST de tickets del Service Desk universitario.
+ * Expone /api/tickets y mantiene /api/reportes como alias de compatibilidad.
  */
 @RestController
-@RequestMapping("/api/reportes")
+@RequestMapping({"/api/tickets", "/api/reportes"})
 public class ReporteController {
 
     private final ReporteService reporteService;
@@ -26,7 +26,7 @@ public class ReporteController {
     }
 
     /**
-     * GET /api/reportes : Listar incidencias con soporte opcional para filtros avanzados en JPQL (?aulaId=...&prioridad=...).
+     * Lista tickets con filtros opcionales por ubicación y prioridad.
      */
     @GetMapping
     public ResponseEntity<List<ReporteResponseDTO>> listarTodos(
@@ -41,7 +41,7 @@ public class ReporteController {
     }
 
     /**
-     * GET /api/reportes/{id} : Consultar una incidencia específica por ID.
+     * Consulta un ticket por ID.
      */
     @GetMapping("/{id}")
     public ResponseEntity<ReporteResponseDTO> buscarPorId(@PathVariable Long id) {
@@ -50,16 +50,16 @@ public class ReporteController {
     }
 
     /**
-     * GET /api/reportes/aula/{aulaId} : Consultar incidencias asociadas a un aula.
+     * Consulta tickets asociados a una ubicación.
      */
-    @GetMapping("/aula/{aulaId}")
+    @GetMapping({"/ubicacion/{aulaId}", "/aula/{aulaId}"})
     public ResponseEntity<List<ReporteResponseDTO>> listarPorAula(@PathVariable String aulaId) {
         List<ReporteResponseDTO> reportes = reporteService.listarPorAulaId(aulaId);
         return ResponseEntity.ok(reportes);
     }
 
     /**
-     * POST /api/reportes : Registrar nuevo problema/incidencia.
+     * Registra un ticket nuevo.
      */
     @PostMapping
     public ResponseEntity<ReporteResponseDTO> crearReporte(@RequestBody CrearReporteDTO dto) {
@@ -68,7 +68,7 @@ public class ReporteController {
     }
 
     /**
-     * PUT /api/reportes/{id} : Actualizar estado o detalles de la incidencia.
+     * Actualiza estado o detalles del ticket.
      */
     @PutMapping("/{id}")
     public ResponseEntity<ReporteResponseDTO> actualizarReporte(@PathVariable Long id, @RequestBody ActualizarReporteDTO dto) {
@@ -77,7 +77,7 @@ public class ReporteController {
     }
 
     /**
-     * DELETE /api/reportes/{id} : Eliminar un reporte por ID (Solo rol ADMIN).
+     * Elimina un ticket (solo rol ADMIN).
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarReporte(@PathVariable Long id) {

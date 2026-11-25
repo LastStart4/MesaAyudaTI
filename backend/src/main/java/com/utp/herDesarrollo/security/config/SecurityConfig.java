@@ -59,6 +59,17 @@ public class SecurityConfig {
                         // Autenticación JWT, registro de usuarios y directorio de técnicos
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // Ubicaciones físicas asociadas opcionalmente a tickets
+                        .requestMatchers(HttpMethod.GET, "/api/ubicaciones/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ubicaciones/**").hasAnyRole("TECNICO", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/ubicaciones/**").hasAnyRole("TECNICO", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/ubicaciones/**").hasAnyRole("TECNICO", "ADMIN")
+
+                        // Intervenciones y asignaciones del equipo de soporte
+                        .requestMatchers(HttpMethod.GET, "/api/intervenciones/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/intervenciones").hasAnyRole("TECNICO", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/intervenciones/**").hasAnyRole("TECNICO", "ADMIN")
+
                         // Módulo de Aulas: consultas públicas
                         .requestMatchers(HttpMethod.GET, "/api/aulas/**").permitAll()
 
@@ -67,19 +78,25 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/aulas/**").hasAnyRole("TECNICO", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/aulas/**").hasAnyRole("TECNICO", "ADMIN")
 
-                        // Módulo de Reportes: consulta y registro libre
+                        // Mesa de Ayuda: consulta y registro libre
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/tickets").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/tickets/**").hasAnyRole("TECNICO", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tickets/**").hasRole("ADMIN")
+
+                        // Alias temporal para clientes existentes
                         .requestMatchers(HttpMethod.GET, "/api/reportes/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/reportes").permitAll()
 
-                        // Módulo de Reportes: actualización restringida a personal técnico o admin
+                        // Alias de compatibilidad para clientes existentes
                         .requestMatchers(HttpMethod.PUT, "/api/reportes/**").hasAnyRole("TECNICO", "ADMIN")
 
-                        // Eliminación de reportes: exclusivamente administrador
+                        // El alias conserva el mismo permiso administrativo que los tickets
                         .requestMatchers(HttpMethod.DELETE, "/api/reportes/**").hasRole("ADMIN")
 
                         // Módulo de Atenciones: consulta y registro libre
                         .requestMatchers(HttpMethod.GET, "/api/atenciones/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/atenciones").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/atenciones").hasAnyRole("TECNICO", "ADMIN")
 
                         // Módulo de Atenciones: actualización restringida a personal técnico o admin
                         .requestMatchers(HttpMethod.PUT, "/api/atenciones/**").hasAnyRole("TECNICO", "ADMIN")

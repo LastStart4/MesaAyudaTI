@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador de autenticación y gestión de cuentas institucionales ClassCare Campus.
+ * Controlador de autenticación y gestión de cuentas institucionales de Mesa de Ayuda TI.
  * Expone endpoints para inicio de sesión JWT, registro de nuevos usuarios y consulta de técnicos.
  */
 @RestController

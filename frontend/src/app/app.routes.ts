@@ -8,14 +8,18 @@ import { ReporteFormComponent } from './components/reporte-form/reporte-form.com
 import { ReporteListComponent } from './components/reporte-list/reporte-list.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'reportes', pathMatch: 'full' },
+  { path: '', redirectTo: 'tickets', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'reportes', component: ReporteListComponent },
-  { path: 'reportes/nuevo', component: ReporteFormComponent },
-  { path: 'reportes/:id/editar', component: ReporteFormComponent },
-  { path: 'reportes/:id', component: ReporteDetailComponent },
+  { path: 'tickets', component: ReporteListComponent },
+  { path: 'tickets/nuevo', component: ReporteFormComponent },
+  { path: 'tickets/:id/editar', component: ReporteFormComponent },
+  { path: 'tickets/:id', component: ReporteDetailComponent },
+  { path: 'reportes/nuevo', redirectTo: 'tickets/nuevo' },
+  { path: 'reportes/:id/editar', redirectTo: 'tickets/:id/editar' },
+  { path: 'reportes/:id', redirectTo: 'tickets/:id' },
+  { path: 'reportes', redirectTo: 'tickets' },
   { path: 'atenciones', component: AtencionListComponent },
   { path: 'aulas/seguimiento', component: SeguimientoAulasComponent },
   { path: 'aulas', component: AulaComponent },
-  { path: '**', redirectTo: 'reportes' }
+  { path: '**', redirectTo: 'tickets' }
 ];

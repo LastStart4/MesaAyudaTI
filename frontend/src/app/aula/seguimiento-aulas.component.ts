@@ -237,6 +237,20 @@ export class SeguimientoAulasComponent implements OnInit {
 
   private etiquetaTipoProblema(tipo: TipoProblema): string {
     switch (tipo) {
+      case 'AUTENTICACION':
+        return 'Autenticación';
+      case 'PLATAFORMAS':
+        return 'Plataformas';
+      case 'REDES':
+        return 'Redes y Wi-Fi';
+      case 'CUENTAS':
+        return 'Cuentas';
+      case 'SOFTWARE':
+        return 'Software';
+      case 'CORREO':
+        return 'Correo institucional';
+      case 'EQUIPOS':
+        return 'Equipos';
       case 'TECNOLOGICO':
         return 'Tecnológico';
       case 'ELECTRICO':

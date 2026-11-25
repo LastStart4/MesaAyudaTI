@@ -28,7 +28,7 @@ public class JwtTokenProvider {
     private final long expirationMs;
 
     public JwtTokenProvider(
-            @Value("${app.jwt.secret:ClassCareCampusSecretKeyForJwtTokenGenerationSecurity2026!}") String secret,
+            @Value("${app.jwt.secret:MesaAyudaTiSecretKeyForJwtTokenGenerationSecurity2026!}") String secret,
             @Value("${app.jwt.expiration-ms:86400000}") long expirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;

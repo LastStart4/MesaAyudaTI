@@ -81,24 +81,25 @@ class ReporteEndToEndIntegrationTest {
     }
 
     @Test
-    @DisplayName("E2E 1: Flujo operativo completo de 3 etapas (PENDIENTE -> EN_ATENCION -> RESUELTO), sincronización de Aula y bloqueo de reporte cerrado")
+    @DisplayName("E2E 1: Flujo de ticket de tres etapas, seguimiento y bloqueo de ticket cerrado")
     void debeEjecutarCicloOperativoCompletoDeTresEtapasYSincronizarAula() throws Exception {
         // 1. Verificar catálogo de aulas disponible para los chips de Angular (GET /api/aulas)
         mockMvc.perform(get("/api/aulas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.codigo == 'A-101')].estado", contains("Disponible")));
 
-        // 2. Crear reporte desde el formulario reactivo (POST /api/reportes) con Prioridad ALTA
+        // 2. Crear ticket desde el formulario de Mesa de Ayuda con prioridad alta
         String crearReporteJson = """
                 {
                     "aulaId": "A-101",
-                    "tipoProblema": "TECNOLOGICO",
-                    "descripcion": "El proyector multimedia no detecta señal HDMI en el escritorio docente.",
+                    "tipoProblema": "PLATAFORMAS",
+                    "servicioAfectado": "Plataforma académica",
+                    "descripcion": "La plataforma académica no permite iniciar sesión durante las evaluaciones.",
                     "prioridad": "ALTA"
                 }
                 """;
 
-        MvcResult postResult = mockMvc.perform(post("/api/reportes")
+        MvcResult postResult = mockMvc.perform(post("/api/tickets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(crearReporteJson))
                 .andExpect(status().isCreated())
@@ -111,12 +112,12 @@ class ReporteEndToEndIntegrationTest {
 
         Long reporteId = ((Number) JsonPath.read(postResult.getResponse().getContentAsString(), "$.id")).longValue();
 
-        // 3. Verificar que el Aula A-101 pasó automáticamente a estado "Mantenimiento"
+        // 3. El estado físico de una ubicación no se modifica por el estado de un ticket.
         Aula aulaTrasCreacion = aulaRepository.findByCodigoIgnoreCase("A-101").orElseThrow();
-        assertEquals("Mantenimiento", aulaTrasCreacion.getEstado());
+        assertEquals("Disponible", aulaTrasCreacion.getEstado());
 
         // 4. Verificar regla de negocio: bloquear duplicado activo en la misma aula y misma categoría (HTTP 400)
-        mockMvc.perform(post("/api/reportes")
+        mockMvc.perform(post("/api/tickets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(crearReporteJson))
                 .andExpect(status().isBadRequest())
@@ -128,37 +129,39 @@ class ReporteEndToEndIntegrationTest {
         String pasarAEnAtencionJson = """
                 {
                     "descripcion": "Técnico revisando cableado HDMI y matriz de video del proyector.",
-                    "tipoProblema": "TECNOLOGICO",
+                    "tipoProblema": "PLATAFORMAS",
+                    "servicioAfectado": "Plataforma académica",
                     "prioridad": "ALTA",
                     "estado": "EN_ATENCION"
                 }
                 """;
 
-        mockMvc.perform(put("/api/reportes/" + reporteId)
+        mockMvc.perform(put("/api/tickets/" + reporteId)
                         .header("Authorization", "Bearer " + tokenTecnico)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(pasarAEnAtencionJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estado", is("EN_ATENCION")));
 
-        // 6. Avanzar a Etapa 3: RESUELTO (Liberar Aula)
+        // 6. Avanzar al cierre del ticket: RESUELTO
         String pasarAResueltoJson = """
                 {
                     "descripcion": "Transceptor HDMI reemplazado y señal de video verificada al 100%.",
-                    "tipoProblema": "TECNOLOGICO",
+                    "tipoProblema": "PLATAFORMAS",
+                    "servicioAfectado": "Plataforma académica",
                     "prioridad": "ALTA",
                     "estado": "RESUELTO"
                 }
                 """;
 
-        mockMvc.perform(put("/api/reportes/" + reporteId)
+        mockMvc.perform(put("/api/tickets/" + reporteId)
                         .header("Authorization", "Bearer " + tokenTecnico)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(pasarAResueltoJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estado", is("RESUELTO")));
 
-        // 7. Verificar que el Aula A-101 fue liberada automáticamente a "Disponible"
+        // 7. La resolución de un ticket tampoco cambia el estado de la ubicación.
         Aula aulaTrasResolucion = aulaRepository.findByCodigoIgnoreCase("A-101").orElseThrow();
         assertEquals("Disponible", aulaTrasResolucion.getEstado());
 
@@ -166,13 +169,14 @@ class ReporteEndToEndIntegrationTest {
         String intentoEditarCerradoJson = """
                 {
                     "descripcion": "Intento de alterar expediente histórico ya cerrado.",
-                    "tipoProblema": "TECNOLOGICO",
+                    "tipoProblema": "PLATAFORMAS",
+                    "servicioAfectado": "Plataforma académica",
                     "prioridad": "BAJA",
                     "estado": "RESUELTO"
                 }
                 """;
 
-        mockMvc.perform(put("/api/reportes/" + reporteId)
+        mockMvc.perform(put("/api/tickets/" + reporteId)
                         .header("Authorization", "Bearer " + tokenTecnico)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(intentoEditarCerradoJson))
@@ -181,44 +185,45 @@ class ReporteEndToEndIntegrationTest {
     }
 
     @Test
-    @DisplayName("E2E 2: Control de acceso RBAC en eliminación (DELETE /api/reportes/{id}) exclusivo para ROLE_ADMIN y liberación de Aula")
+    @DisplayName("E2E 2: RBAC para eliminar tickets; las ubicaciones no cambian de estado")
     void debePermitirEliminacionSoloAAdminYLiberarAulaAsociada() throws Exception {
         // 1. Registrar reporte de prioridad ALTA en LAB-302
         String crearJson = """
                 {
                     "aulaId": "LAB-302",
-                    "tipoProblema": "ELECTRICO",
-                    "descripcion": "Diferencial eléctrico salta en la bancada norte del laboratorio.",
+                    "tipoProblema": "REDES",
+                    "servicioAfectado": "Red Wi-Fi",
+                    "descripcion": "La red Wi-Fi presenta interrupciones frecuentes en el laboratorio.",
                     "prioridad": "ALTA"
                 }
                 """;
 
-        MvcResult postResult = mockMvc.perform(post("/api/reportes")
+        MvcResult postResult = mockMvc.perform(post("/api/tickets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(crearJson))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         Long reporteId = ((Number) JsonPath.read(postResult.getResponse().getContentAsString(), "$.id")).longValue();
-        assertEquals("Mantenimiento", aulaRepository.findByCodigoIgnoreCase("LAB-302").orElseThrow().getEstado());
+        assertEquals("Disponible", aulaRepository.findByCodigoIgnoreCase("LAB-302").orElseThrow().getEstado());
 
         // 2. Sin token -> 401 Unauthorized
-        mockMvc.perform(delete("/api/reportes/" + reporteId))
+        mockMvc.perform(delete("/api/tickets/" + reporteId))
                 .andExpect(status().isUnauthorized());
 
         // 3. Con token de TECNICO -> 403 Forbidden (solo ADMIN puede eliminar)
         String tokenTecnico = obtenerTokenJwt("tecnico", "tecnico123");
-        mockMvc.perform(delete("/api/reportes/" + reporteId)
+        mockMvc.perform(delete("/api/tickets/" + reporteId)
                         .header("Authorization", "Bearer " + tokenTecnico))
                 .andExpect(status().isForbidden());
 
         // 4. Con token de ADMIN -> 204 No Content
         String tokenAdmin = obtenerTokenJwt("admin", "admin123");
-        mockMvc.perform(delete("/api/reportes/" + reporteId)
+        mockMvc.perform(delete("/api/tickets/" + reporteId)
                         .header("Authorization", "Bearer " + tokenAdmin))
                 .andExpect(status().isNoContent());
 
-        // 5. Verificar que ya no existe en BD y que LAB-302 volvió a "Disponible"
+        // 5. Verificar que el ticket fue eliminado y la ubicación sigue disponible.
         assertFalse(reporteRepository.existsById(reporteId));
         assertEquals("Disponible", aulaRepository.findByCodigoIgnoreCase("LAB-302").orElseThrow().getEstado());
     }

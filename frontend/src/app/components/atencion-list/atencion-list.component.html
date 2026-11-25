@@ -5,7 +5,7 @@
     <div class="hero-copy">
       <h2 class="hero-title">Bandeja de Atenciones Técnicas</h2>
       <p class="hero-subtitle">
-        Gestión técnica de incidencias en campus, asignaciones por especialista y cumplimiento de SLA. Haz clic en cualquier indicador para filtrar por estado.
+        Asignación de especialistas y seguimiento de intervenciones de soporte. Haz clic en cualquier indicador para filtrar por estado.
       </p>
     </div>
 
@@ -71,7 +71,7 @@
 
   <!-- Bandeja de Entrada / Triaje de Reportes del Campus (Rediseñada con Tickets de Despacho M3) -->
   @if (reportesPendientes().length > 0) {
-    <section class="triage-panel" aria-label="Reportes del campus pendientes de asignación técnica">
+    <section class="triage-panel" aria-label="Tickets pendientes de asignación a soporte técnico">
       <div class="triage-header">
         <div class="triage-title-group">
           <div class="triage-pill">
@@ -79,7 +79,7 @@
             <span>Bandeja de Despacho Campus</span>
           </div>
           <h3 class="triage-heading">
-            {{ formatCount(reportesPendientes().length) }} {{ reportesPendientes().length === 1 ? 'Reporte entrante esperando asignación técnica' : 'Reportes entrantes esperando asignación técnica' }}
+            {{ formatCount(reportesPendientes().length) }} {{ reportesPendientes().length === 1 ? 'Ticket esperando asignación' : 'Tickets esperando asignación' }}
           </h3>
         </div>
         <span class="triage-subtitle">Asume la orden en 1 clic o derívala a un especialista del equipo.</span>
@@ -90,7 +90,7 @@
           <article class="triage-ticket" [attr.data-prio]="rep.prioridad">
             <header class="triage-ticket__head">
               <div class="triage-room-group">
-                <span class="triage-room-plaque">{{ rep.aulaId }}</span>
+                <span class="triage-room-plaque">{{ rep.aulaId || 'Sin ubicación' }}</span>
                 <div class="triage-meta-copy">
                   <span class="triage-cat">{{ rep.tipoProblema }}</span>
                   <span class="triage-prio-text" [attr.data-prio]="rep.prioridad">
@@ -99,7 +99,7 @@
                 </div>
               </div>
 
-              <a class="triage-rep-tag" [routerLink]="['/reportes', rep.id]" title="Ver expediente del Reporte #{{ rep.id }}">
+              <a class="triage-rep-tag" [routerLink]="['/tickets', rep.id]" title="Ver ticket #{{ rep.id }}">
                 #{{ formatCount(rep.id) }}
               </a>
             </header>
@@ -139,8 +139,8 @@
       <input
         type="search"
         id="search-atencion"
-        placeholder="Buscar por técnico, aula, observaciones o #ID de orden..."
-        aria-label="Buscar atenciones por técnico, código de aula, observaciones o número de ticket"
+        placeholder="Buscar por técnico, ubicación, observaciones o #ID de intervención..."
+        aria-label="Buscar intervenciones por técnico, ubicación, observaciones o número de ticket"
         [ngModel]="searchQuery()"
         (ngModelChange)="onSearchChange($event)"
       />
@@ -253,7 +253,7 @@
                 {{ getMantenimientoLabel(atencion.tipoMantenimiento).toUpperCase() }}
               </span>
               <span class="workorder-room-line">
-                Aula {{ atencion.aulaCodigo || 'N/A' }}
+                {{ atencion.aulaCodigo || 'Ubicación no especificada' }}
               </span>
               <span class="urgency-pill"
                 [class.urgencia-alta]="getNivelUrgencia(atencion).clase === 'urgencia-alta'"
@@ -270,8 +270,8 @@
               <span class="state-diamond" aria-hidden="true"></span>
               <span>{{ getEstadoLabel(atencion.estado) }}</span>
             </span>
-            <a class="origin-ticket-pill" [routerLink]="['/reportes', atencion.reporteId]" title="Abrir expediente del Reporte #{{ atencion.reporteId }}">
-              <span>REPORTE #{{ formatCount(atencion.reporteId) }}</span>
+            <a class="origin-ticket-pill" [routerLink]="['/tickets', atencion.reporteId]" title="Abrir ticket #{{ atencion.reporteId }}">
+              <span>TICKET #{{ formatCount(atencion.reporteId) }}</span>
             </a>
           </div>
         </header>
@@ -284,7 +284,7 @@
             </span>
             <span class="trace-sep" aria-hidden="true">&bull;</span>
             <span class="trace-node" [class.done]="getPasoActivo(atencion.estado) >= 2" [class.current]="getPasoActivo(atencion.estado) === 2">
-              2. En Sitio
+              2. En atención
             </span>
             <span class="trace-sep" aria-hidden="true">&bull;</span>
             <span class="trace-node" [class.done]="getPasoActivo(atencion.estado) >= 3" [class.current]="getPasoActivo(atencion.estado) === 3">
@@ -357,7 +357,7 @@
                   type="button"
                   class="btn-action btn-action--start"
                   (click)="iniciarAtencion(atencion)"
-                  title="Comenzar inspección técnica en el aula">
+                  title="Iniciar la intervención de soporte">
                   <mat-icon>play_arrow</mat-icon>
                   <span>Iniciar Atención</span>
                 </button>
@@ -368,7 +368,7 @@
                   type="button"
                   class="btn-action btn-action--resolve"
                   (click)="abrirModalResolucion(atencion)"
-                  title="Registrar diagnóstico de solución y certificar aula">
+                  title="Registrar la resolución del ticket">
                   <mat-icon>task_alt</mat-icon>
                   <span>Resolver Caso</span>
                 </button>
@@ -377,7 +377,7 @@
               @if (atencion.estado === 'RESUELTO') {
                 <span class="resolved-seal">
                   <mat-icon>verified</mat-icon>
-                  <span>Certificado</span>
+                  <span>Resuelto</span>
                 </span>
               }
 
@@ -425,9 +425,9 @@
               ORDEN #{{ formatCount(atencionSeleccionada()?.id || 0) }}
             </span>
             <div class="modal-header-info">
-              <h3 id="modal-res-title" class="modal-title">Certificar Solución y Liberar Aula</h3>
+              <h3 id="modal-res-title" class="modal-title">Registrar resolución del ticket</h3>
               <p class="modal-sub">
-                Ambiente: <strong>Aula {{ atencionSeleccionada()?.aulaCodigo }}</strong> &bull; Especialista: <strong>{{ atencionSeleccionada()?.tecnicoEncargado }}</strong>
+                Ticket #{{ atencionSeleccionada()?.reporteId }} &bull; Especialista: <strong>{{ atencionSeleccionada()?.tecnicoEncargado }}</strong>
               </p>
             </div>
           </div>
@@ -441,7 +441,7 @@
           <div class="trace-steps-pill">
             <span class="trace-node done">1. Asignado</span>
             <span class="trace-sep">&bull;</span>
-            <span class="trace-node done">2. En Sitio</span>
+            <span class="trace-node done">2. En atención</span>
             <span class="trace-sep">&bull;</span>
             <span class="trace-node current">3. Certificación</span>
           </div>
@@ -468,11 +468,11 @@
                     class="form-select"
                     [ngModel]="resolucionTipoSolucion()"
                     (ngModelChange)="resolucionTipoSolucion.set($event)">
-                    <option value="Reemplazo de componente">Reemplazo de componente / repuesto</option>
-                    <option value="Ajuste y fijación de soportes">Ajuste y fijación de soportes</option>
-                    <option value="Calibración y configuración lógica">Calibración y configuración lógica</option>
-                    <option value="Reparación de cableado y conectores">Reparación de cableado y conectores</option>
-                    <option value="Mantenimiento preventivo y limpieza">Mantenimiento preventivo y limpieza</option>
+                    <option value="Restablecimiento de acceso">Restablecimiento de acceso</option>
+                    <option value="Configuración de red">Configuración de red</option>
+                    <option value="Instalación de software autorizado">Instalación de software autorizado</option>
+                    <option value="Reparación de equipo">Reparación de equipo</option>
+                    <option value="Actualización de configuración">Actualización de configuración</option>
                   </select>
                 </div>
               </div>
@@ -485,7 +485,7 @@
                     type="text"
                     id="resolucion-repuesto"
                     class="form-input"
-                    placeholder="Ej.: Cable HDMI 5m, Módulo láser..."
+                    placeholder="Ej.: Adaptador, memoria o cable utilizado..."
                     [ngModel]="resolucionRepuesto()"
                     (ngModelChange)="resolucionRepuesto.set($event)"
                   />
@@ -505,7 +505,7 @@
                   id="resolucion-obs"
                   class="form-textarea"
                   rows="3"
-                  placeholder="Detalla el procedimiento técnico ejecutado y las pruebas de funcionamiento realizadas en el aula..."
+                  placeholder="Describe el diagnóstico, las acciones realizadas y cómo verificaste la solución..."
                   [ngModel]="resolucionObservaciones()"
                   (ngModelChange)="resolucionObservaciones.set($event)">
                 </textarea>
@@ -523,7 +523,7 @@
                 <mat-icon>{{ resolucionConfirmacion() ? 'verified' : 'radio_button_unchecked' }}</mat-icon>
               </span>
               <span class="checkbox-text">
-                Certifico que el <strong>Aula {{ atencionSeleccionada()?.aulaCodigo }}</strong> queda <strong>100% operativa</strong>; al confirmar, el reporte pasará a <strong>Resuelto</strong> y el aula a <strong>Disponible</strong>.
+                Confirmo que las acciones descritas resolvieron el problema del ticket y que el servicio solicitado fue verificado.
               </span>
             </label>
           </div>
@@ -539,7 +539,7 @@
               [disabled]="resolucionObservaciones().trim().length < 10 || !resolucionConfirmacion()"
               (click)="guardarResolucion()">
               <mat-icon>verified</mat-icon>
-              <span>Finalizar y Liberar Aula</span>
+              <span>Finalizar intervención</span>
             </button>
           </footer>
         </div>
@@ -565,8 +565,8 @@
               DESPACHO
             </span>
             <div class="modal-header-info">
-              <h3 id="modal-nueva-title" class="modal-title">Generar Orden de Atención Técnica</h3>
-              <p class="modal-sub">Asigna un especialista para atender un reporte de incidencia activo en el campus.</p>
+              <h3 id="modal-nueva-title" class="modal-title">Asignar intervención de soporte</h3>
+              <p class="modal-sub">Asigna un especialista a un ticket pendiente de atención.</p>
             </div>
           </div>
           <button type="button" class="btn-close-modal" (click)="cerrarModalNueva()" aria-label="Cerrar ventana">
@@ -579,7 +579,7 @@
           <div class="trace-steps-pill">
             <span class="trace-node current">1. Asignación</span>
             <span class="trace-sep">&bull;</span>
-            <span class="trace-node">2. En Sitio</span>
+            <span class="trace-node">2. En atención</span>
             <span class="trace-sep">&bull;</span>
             <span class="trace-node">3. Certificación</span>
           </div>
@@ -599,7 +599,7 @@
 
             <div class="form-row-2">
               <div class="form-group">
-                <label for="nueva-rep-id" class="form-label">ID de Reporte Origen *</label>
+                <label for="nueva-rep-id" class="form-label">ID del ticket *</label>
                 <div class="m3-modal-field">
                   <mat-icon>tag</mat-icon>
                   <input
@@ -614,7 +614,7 @@
               </div>
 
               <div class="form-group">
-                <label for="nueva-aula" class="form-label">Aula / Laboratorio</label>
+                <label for="nueva-aula" class="form-label">Ubicación (opcional)</label>
                 <div class="m3-modal-field">
                   <mat-icon>meeting_room</mat-icon>
                   <input
@@ -647,7 +647,7 @@
               </div>
 
               <div class="form-group">
-                <label for="nueva-mantenimiento" class="form-label">Tipo de Mantenimiento</label>
+                <label for="nueva-mantenimiento" class="form-label">Tipo de intervención</label>
                 <div class="m3-modal-field">
                   <mat-icon>handyman</mat-icon>
                   <select
@@ -688,7 +688,7 @@
               [disabled]="!nuevoReporteId()"
               (click)="crearNuevaAtencion()">
               <mat-icon>add_task</mat-icon>
-              <span>Crear Orden Técnica</span>
+              <span>Asignar intervención</span>
             </button>
           </footer>
         </div>
@@ -715,23 +715,23 @@
                 <strong class="acta-num">{{ generarCodigoActa(atencionActual) }}</strong>
               </div>
             </div>
-            <h3 id="modal-ficha-title" class="ficha-title">Certificado de Conformidad Técnica de Aula</h3>
-            <p class="ficha-subtitle">Documento oficial de control de calidad y mantenimiento técnico de ambientes universitarios.</p>
+            <h3 id="modal-ficha-title" class="ficha-title">Registro de intervención de soporte</h3>
+            <p class="ficha-subtitle">Resumen de la atención técnica asociada al ticket.</p>
           </header>
 
           <div class="ficha-body">
             <!-- Cuadrícula de Datos Oficiales -->
             <div class="ficha-grid">
               <div class="ficha-cell">
-                <span class="cell-label">Ambiente Académico</span>
-                <strong class="cell-val">Aula {{ atencionActual.aulaCodigo || 'N/A' }}</strong>
+                <span class="cell-label">Ubicación</span>
+                <strong class="cell-val">{{ atencionActual.aulaCodigo || 'No especificada' }}</strong>
               </div>
               <div class="ficha-cell">
                 <span class="cell-label">Ticket de Origen</span>
-                <strong class="cell-val">Reporte #{{ formatCount(atencionActual.reporteId) }}</strong>
+                <strong class="cell-val">Ticket #{{ formatCount(atencionActual.reporteId) }}</strong>
               </div>
               <div class="ficha-cell">
-                <span class="cell-label">Tipo de Mantenimiento</span>
+                <span class="cell-label">Tipo de intervención</span>
                 <strong class="cell-val">{{ getMantenimientoLabel(atencionActual.tipoMantenimiento) }}</strong>
               </div>
               <div class="ficha-cell">

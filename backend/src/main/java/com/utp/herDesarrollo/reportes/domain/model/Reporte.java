@@ -20,15 +20,15 @@ import java.util.Objects;
  * Entidad central del dominio mapeada con JPA para persistencia en base de datos PostgreSQL.
  */
 @Entity
-@Table(name = "reportes")
+@Table(name = "mesa_ayuda_tickets")
 public class Reporte {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "aula_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ubicacion_id")
     private Aula aula;
 
     @Enumerated(EnumType.STRING)
@@ -37,6 +37,9 @@ public class Reporte {
 
     @Column(name = "descripcion", nullable = false, length = 255)
     private String descripcion;
+
+    @Column(name = "servicio_afectado", nullable = false, length = 100)
+    private String servicioAfectado = "Servicio general";
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prioridad", nullable = false, length = 20)
@@ -105,6 +108,14 @@ public class Reporte {
         this.descripcion = descripcion;
     }
 
+    public String getServicioAfectado() {
+        return servicioAfectado;
+    }
+
+    public void setServicioAfectado(String servicioAfectado) {
+        this.servicioAfectado = servicioAfectado;
+    }
+
     public Prioridad getPrioridad() {
         return prioridad;
     }
@@ -156,6 +167,7 @@ public class Reporte {
                 "id=" + id +
                 ", aula=" + (aula != null ? aula.getCodigo() : "null") +
                 ", tipoProblema=" + tipoProblema +
+                ", servicioAfectado='" + servicioAfectado + '\'' +
                 ", descripcion='" + descripcion + '\'' +
                 ", prioridad=" + prioridad +
                 ", estado=" + estado +

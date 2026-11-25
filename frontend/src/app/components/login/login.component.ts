@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
 
   readonly modoActivo = signal<'login' | 'registro'>('login');
-  readonly returnUrl = signal<string>('/reportes');
+  readonly returnUrl = signal<string>('/tickets');
 
   // Solo un Administrador autenticado puede asignar roles de Técnico o Admin y ver el directorio
   readonly esAdmin = this.authService.puedeEliminarReportes;

@@ -12,62 +12,60 @@ import {
 import { AuthService } from './auth.service';
 import { ReporteService } from './reporte.service';
 
-const STORAGE_KEY = 'classcare-atenciones-cache';
+const STORAGE_KEY = 'mesa-ayuda-intervenciones-cache';
 
 const ATENCIONES_SEMILLA: Atencion[] = [
   {
     id: 1,
-    reporteId: 1,
-    tecnicoEncargado: 'tecnico01',
-    estado: 'PENDIENTE',
-    observaciones: 'Caso asignado para inspección de proyector multimedia en aula A-101.',
-    fechaRegistro: '2026-11-10T09:00:00',
-    fechaResolucion: null,
-    aulaCodigo: 'A-101',
-    tipoProblema: 'Tecnológico',
-    prioridad: 'ALTA',
-    tipoMantenimiento: 'CORRECTIVO',
-    impactoAcademico: 'Requiere aula alterna'
-  },
-  {
-    id: 2,
     reporteId: 2,
     tecnicoEncargado: 'tecnico02',
     estado: 'EN_ATENCION',
-    observaciones: 'Técnico en sitio realizando reemplazo de luminaria fluorescente.',
+    observaciones: 'Diagnóstico de conectividad Wi-Fi en curso en el laboratorio.',
+    fechaRegistro: '2026-11-10T09:00:00',
+    fechaResolucion: null,
+    aulaCodigo: 'LAB-302',
+    tipoProblema: 'REDES',
+    prioridad: 'ALTA',
+    tipoMantenimiento: 'CORRECTIVO',
+    impactoAcademico: 'Interrupciones de conectividad'
+  },
+  {
+    id: 2,
+    reporteId: 4,
+    tecnicoEncargado: 'tecnico01',
+    estado: 'EN_ATENCION',
+    observaciones: 'Validación de instalación de software autorizado en curso.',
     fechaRegistro: '2026-11-11T14:30:00',
     fechaResolucion: null,
-    aulaCodigo: 'B-202',
-    tipoProblema: 'Eléctrico',
+    aulaCodigo: 'A-305',
+    tipoProblema: 'SOFTWARE',
     prioridad: 'MEDIA',
     tipoMantenimiento: 'CORRECTIVO',
-    impactoAcademico: 'Clase en curso con luz natural'
+    impactoAcademico: 'Software requerido para actividad académica'
   },
   {
     id: 3,
-    reporteId: 3,
+    reporteId: 5,
     tecnicoEncargado: 'tecnico01',
     estado: 'RESUELTO',
-    observaciones: 'Soporte y tornillería de respaldo ajustados correctamente. Aula 100% operativa. [Solución: Ajuste y fijación de soportes]',
+    observaciones: 'Se restableció y verificó el acceso a la cuenta institucional.',
     fechaRegistro: '2026-11-09T11:15:00',
     fechaResolucion: '2026-11-09T12:00:00',
-    aulaCodigo: 'C-305',
-    tipoProblema: 'Mobiliario',
+    aulaCodigo: 'LAB-104',
+    tipoProblema: 'AUTENTICACION',
     prioridad: 'BAJA',
-    tipoMantenimiento: 'PREVENTIVO',
-    impactoAcademico: 'Sin afectación académica'
+    tipoMantenimiento: 'CORRECTIVO',
+    impactoAcademico: 'Acceso recuperado'
   }
 ];
 
 const METADATA_REPORTES: Record<number, Partial<Atencion>> = {
-  1: { aulaCodigo: 'A-101', tipoProblema: 'Tecnológico', prioridad: 'ALTA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Requiere proyector operativo' },
-  2: { aulaCodigo: 'LAB-302', tipoProblema: 'Eléctrico', prioridad: 'ALTA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Bancada norte sin energía' },
-  3: { aulaCodigo: 'B-204', tipoProblema: 'Mobiliario', prioridad: 'MEDIA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Carpetas con respaldar suelto' },
-  4: { aulaCodigo: 'A-305', tipoProblema: 'Infraestructura', prioridad: 'MEDIA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Filtración cerca de pizarra' },
-  5: { aulaCodigo: 'LAB-104', tipoProblema: 'Tecnológico', prioridad: 'BAJA', tipoMantenimiento: 'PREVENTIVO', impactoAcademico: 'Revisión preventiva de access point' },
-  6: { aulaCodigo: 'D-401', tipoProblema: 'Eléctrico', prioridad: 'BAJA', tipoMantenimiento: 'PREVENTIVO', impactoAcademico: 'Mantenimiento de luminarias LED' },
-  7: { aulaCodigo: 'A-101', tipoProblema: 'Mobiliario', prioridad: 'MEDIA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Mobiliario docente desajustado' },
-  8: { aulaCodigo: 'LAB-302', tipoProblema: 'Tecnológico', prioridad: 'ALTA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Equipo de cómputo no enciende' }
+  1: { aulaCodigo: 'A-101', tipoProblema: 'PLATAFORMAS', prioridad: 'ALTA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Acceso a plataforma académica' },
+  2: { aulaCodigo: 'LAB-302', tipoProblema: 'REDES', prioridad: 'ALTA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Interrupciones de conectividad' },
+  3: { aulaCodigo: 'B-204', tipoProblema: 'CUENTAS', prioridad: 'MEDIA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Acceso a cuenta institucional' },
+  4: { aulaCodigo: 'A-305', tipoProblema: 'SOFTWARE', prioridad: 'MEDIA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Software para actividad académica' },
+  5: { aulaCodigo: 'LAB-104', tipoProblema: 'AUTENTICACION', prioridad: 'BAJA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Acceso institucional restablecido' },
+  6: { aulaCodigo: 'D-401', tipoProblema: 'CORREO', prioridad: 'BAJA', tipoMantenimiento: 'CORRECTIVO', impactoAcademico: 'Acceso al correo institucional' }
 };
 
 @Injectable({
@@ -77,7 +75,7 @@ export class AtencionService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   private readonly reporteService = inject(ReporteService);
-  private readonly apiUrl = '/api/atenciones';
+  private readonly apiUrl = '/api/intervenciones';
 
   readonly atenciones = signal<Atencion[]>(this.cargarCacheInicial());
   readonly reportesPendientes = signal<ReportePendienteAsignacion[]>([]);
@@ -91,7 +89,7 @@ export class AtencionService {
   }
 
   /**
-   * Carga todas las atenciones desde el backend de Spring Boot (GET /api/atenciones).
+   * Carga las intervenciones desde GET /api/intervenciones.
    * Si el backend está apagado o no responde, utiliza la caché local o datos semilla.
    */
   cargarAtenciones(estado?: EstadoAtencion): Observable<Atencion[]> {
@@ -127,21 +125,21 @@ export class AtencionService {
   }
 
   /**
-   * Consulta los reportes del campus (GET /api/reportes) y detecta aquellos que aún
+   * Consulta los tickets (GET /api/tickets) y detecta aquellos que aún
    * no cuentan con una orden de atención asignada en curso.
    */
   cargarReportesPendientes(): Observable<ReportePendienteAsignacion[]> {
-    return this.http.get<any[]>('/api/reportes').pipe(
+    return this.http.get<any[]>('/api/tickets').pipe(
       map(reportes => {
         const idsConAtencion = new Set(this.atenciones().map(a => a.reporteId));
         return reportes
           .filter(r => !idsConAtencion.has(r.id) && r.estado !== 'RESUELTO')
           .map(r => ({
             id: r.id,
-            aulaId: r.aulaId || `Aula #${r.id}`,
+            aulaId: r.aulaId || '',
             tipoProblema: r.tipoProblema || 'General',
             prioridad: r.prioridad || 'MEDIA',
-            descripcion: r.descripcion || 'Incidencia reportada en campus UTP.',
+            descripcion: r.descripcion || 'Ticket registrado para atención de soporte TI.',
             fechaRegistro: r.fechaRegistro,
             aulaUbicacion: r.aulaUbicacion,
             estado: r.estado
@@ -169,8 +167,8 @@ export class AtencionService {
       tipoProblema: reporte.tipoProblema,
       prioridad: prioridadValida,
       tipoMantenimiento: 'CORRECTIVO',
-      observaciones: `Orden generada desde la bandeja de entrada del campus. Motivo: ${reporte.descripcion}`,
-      impactoAcademico: 'Inspección técnica solicitada por reporte de campus'
+      observaciones: `Intervención generada desde la bandeja de tickets. Motivo: ${reporte.descripcion}`,
+      impactoAcademico: 'Atención solicitada por el ticket'
     };
 
     return this.crearAtencion(payload).pipe(
@@ -181,7 +179,7 @@ export class AtencionService {
   }
 
   /**
-   * Consulta una atención específica por su identificador (GET /api/atenciones/{id}).
+   * Consulta una intervención específica por su identificador.
    */
   buscarPorId(id: number): Observable<Atencion> {
     return this.http.get<AtencionBackendDTO>(`${this.apiUrl}/${id}`).pipe(
@@ -198,7 +196,7 @@ export class AtencionService {
 
   /**
    * Inicia el proceso de atención cambiando su estado de PENDIENTE a EN_ATENCION.
-   * Utiliza PUT /api/atenciones/{id}/estado con cabecera JWT provista por authInterceptor.
+   * Usa PUT /api/intervenciones/{id}/estado con el JWT del interceptor.
    */
   iniciarAtencion(id: number, solicitadoPor?: string): Observable<Atencion> {
     const usuarioActual = solicitadoPor || this.authService.sesion()?.username || 'tecnico01';
@@ -259,7 +257,7 @@ export class AtencionService {
   }
 
   /**
-   * Registra una nueva orden de atención técnica (POST /api/atenciones).
+   * Registra una nueva intervención de soporte (POST /api/intervenciones).
    */
   crearAtencion(payload: CrearAtencionPayload): Observable<Atencion> {
     const bodyBackend = {
@@ -296,7 +294,7 @@ export class AtencionService {
           observaciones: payload.observaciones || 'Nueva orden generada localmente.',
           fechaRegistro: new Date().toISOString(),
           fechaResolucion: null,
-          aulaCodigo: payload.aulaCodigo || `A-${100 + nuevoId}`,
+          aulaCodigo: payload.aulaCodigo || '',
           tipoProblema: payload.tipoProblema || 'Tecnológico',
           prioridad: payload.prioridad || 'MEDIA',
           tipoMantenimiento: payload.tipoMantenimiento || 'CORRECTIVO',
@@ -322,7 +320,7 @@ export class AtencionService {
     const meta = METADATA_REPORTES[dto.reporteId] || {};
     return {
       ...dto,
-      aulaCodigo: reporteActivo?.aulaId || meta.aulaCodigo || `Aula #${dto.reporteId}`,
+      aulaCodigo: reporteActivo?.aulaId || meta.aulaCodigo || '',
       tipoProblema: reporteActivo?.tipoProblema || meta.tipoProblema || 'General',
       prioridad: (reporteActivo?.prioridad as 'ALTA' | 'MEDIA' | 'BAJA') || meta.prioridad || 'MEDIA',
       tipoMantenimiento: meta.tipoMantenimiento || 'CORRECTIVO',

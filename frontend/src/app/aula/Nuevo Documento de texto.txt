@@ -1,0 +1,353 @@
+MESA DE AYUDA TI UNIVERSITARIA
+Informe final del proyecto integrador
+Universidad Tecnológica del Perú (UTP)
+Curso: Gestión de Servicios TI
+
+1. Resumen ejecutivo
+El presente proyecto desarrolla una propuesta de modelo de Mesa de Ayuda TI Universitaria orientada a mejorar la atención de incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo de la Universidad Tecnológica del Perú (UTP).
+La propuesta surge ante la necesidad de organizar la atención de problemas relacionados con el acceso a plataformas académicas, autenticación de cuentas institucionales, conectividad, redes Wi-Fi, equipos y aplicaciones utilizadas en las actividades académicas y administrativas.
+Para atender esta necesidad, se plantea un Service Desk como punto único de contacto, encargado de centralizar los reportes, registrar las solicitudes, clasificarlas, asignarlas y realizar su seguimiento. Asimismo, se establecen niveles de soporte, un catálogo de solicitudes, criterios de priorización, controles de acceso por roles y actividades de monitoreo y continuidad de los servicios tecnológicos.
+El proyecto toma como referencia ITIL 4 para organizar la gestión de servicios, complementándolo con los lineamientos de ISO/IEC 20000-1:2018. También incorpora indicadores y un enfoque de mejora continua basado en el ciclo PDCA.
+Como parte del diagnóstico del modelo, se identificaron brechas relacionadas con el diagnóstico inicial de incidentes de autenticación, la conexión entre las alertas de monitoreo y los tickets, y la dependencia del administrador de TI para determinadas solicitudes. Frente a estas situaciones, se plantearon acciones de mejora orientadas a fortalecer la atención y reducir los posibles retrasos.
+Finalmente, el proyecto establece una línea base simulada del 70 % de incidentes resueltos dentro del tiempo objetivo y una meta propuesta de al menos 90 %. Estos valores permiten ilustrar cómo se evaluaría la mejora del servicio, sin representar mediciones oficiales de la universidad.
+
+2. Contexto del proyecto y alcance
+2.1. Contexto
+Las actividades académicas y administrativas de una universidad dependen del funcionamiento de diferentes servicios tecnológicos, como las plataformas académicas, las cuentas institucionales, los sistemas de autenticación, las redes y las aplicaciones internas.
+Cuando alguno de estos servicios presenta problemas, los estudiantes, docentes y trabajadores pueden experimentar dificultades para ingresar a sus cuentas, acceder a materiales académicos, realizar evaluaciones o desarrollar sus actividades habituales.
+Uno de los escenarios que requiere mayor atención corresponde a los problemas de acceso durante periodos de alta demanda, como matrículas, evaluaciones e inicio de clases. En estas situaciones, la falta de una atención organizada puede generar demoras, duplicidad de reportes y dificultades para realizar el seguimiento de los incidentes.
+Ante esta situación, el proyecto plantea una Mesa de Ayuda TI Universitaria que permita centralizar la atención y establecer procedimientos para gestionar incidentes y solicitudes de manera ordenada.
+
+2.2. Objetivo general
+Desarrollar una propuesta de modelo de Mesa de Ayuda TI Universitaria que permita organizar la atención de incidentes y solicitudes tecnológicas, mejorar el seguimiento de los casos y contribuir a la continuidad de los servicios utilizados por la comunidad universitaria.
+
+2.3. Usuarios del servicio
+El modelo considera los siguientes grupos de usuarios:
+•	Estudiantes: requieren acceso a plataformas académicas, cuentas institucionales, redes y servicios tecnológicos.
+•	Docentes: necesitan acceder a herramientas académicas, aplicaciones y recursos tecnológicos para desarrollar sus actividades.
+•	Personal administrativo: utiliza los servicios tecnológicos necesarios para realizar sus funciones.
+•	Personal técnico y administrador de TI: participa en la recepción, atención, escalamiento, supervisión y administración de los servicios.
+
+2.4. Alcance del proyecto
+La propuesta contempla las siguientes actividades:
+•	Registro y seguimiento de incidentes y solicitudes.
+•	Validación, clasificación y priorización de los casos.
+•	Asignación y escalamiento según los niveles de soporte.
+•	Atención de incidentes relacionados con autenticación, conectividad, cuentas y plataformas.
+•	Gestión de solicitudes de acceso, restablecimiento de contraseñas y software autorizado.
+•	Control de accesos mediante roles y permisos.
+•	Identificación de problemas recurrentes.
+•	Monitoreo de componentes tecnológicos y actividades de continuidad.
+•	Evaluación de indicadores y aplicación de mejoras.
+El proyecto se concentra en el diseño y análisis del modelo de gestión del servicio. Los procedimientos, tiempos de atención y actividades planteados corresponden a la propuesta académica y no deben interpretarse como políticas institucionales ya implementadas.
+
+3. Marcos y buenas prácticas utilizados
+3.1. ITIL 4
+ITIL 4 constituye el principal marco de referencia utilizado en el proyecto, debido a que proporciona orientación para gestionar los servicios de TI y generar valor mediante la organización de personas, procesos, tecnología y proveedores.
+Se utilizaron conceptos y prácticas de ITIL 4 para estructurar la propuesta de Mesa de Ayuda, especialmente en los siguientes aspectos:
+•	Service Desk: permite establecer un punto único de contacto entre los usuarios y el área de TI.
+•	Gestión de incidentes: busca restaurar el funcionamiento normal del servicio lo antes posible.
+•	Gestión de solicitudes de servicio: organiza la atención de requerimientos frecuentes y previamente definidos.
+•	Gestión de problemas: permite investigar las causas de incidentes recurrentes.
+•	Monitoreo y gestión de eventos: facilita la supervisión de los componentes tecnológicos y la identificación de posibles interrupciones.
+•	Gestión de seguridad de la información: permite establecer controles para proteger la información y los recursos tecnológicos. En la propuesta, se relaciona con la validación de identidad, la asignación y revisión de permisos y el principio de mínimo privilegio.
+•	Mejora continua: permite identificar oportunidades de mejora y evaluar los resultados mediante indicadores.
+Además, se consideraron los siete principios guía de ITIL 4, el Sistema de Valor del Servicio (SVS), las cuatro dimensiones de la gestión de servicios y la cadena de valor del servicio, con el propósito de mantener una visión integral de la Mesa de Ayuda.
+ 
+a) Siete principios guía de ITIL 4
+Los principios guía permiten orientar las decisiones y actividades relacionadas con la gestión de servicios. En el proyecto se consideraron de la siguiente manera:
+1.	Enfocarse en el valor: la Mesa de Ayuda busca facilitar la atención de los problemas y solicitudes tecnológicas de estudiantes, docentes y personal administrativo, considerando la importancia que tienen estos servicios para sus actividades académicas y administrativas.
+2.	Comenzar donde se está: se tomó como punto de partida la problemática identificada en la atención de servicios tecnológicos, evitando plantear una solución sin considerar las necesidades y recursos que podrían existir en el entorno universitario.
+3.	Progresar iterativamente con retroalimentación: la propuesta se desarrolló mediante mejoras progresivas, incorporando nuevos elementos como niveles de soporte, catálogo de solicitudes, controles de seguridad e indicadores.
+4.	Colaborar y promover la visibilidad: se plantea una atención coordinada entre el Service Desk, el personal técnico y los especialistas, manteniendo información sobre el estado de los tickets y las actividades realizadas.
+5.	Pensar y trabajar holísticamente: la Mesa de Ayuda no se considera únicamente un portal de registro, sino un modelo que relaciona usuarios, personal de soporte, tecnología, proveedores y procedimientos de atención.
+6.	Mantenerlo simple y práctico: se propone un flujo de atención organizado en etapas comprensibles: registro, validación, aprobación cuando corresponda, ejecución, comunicación y cierre.
+7.	Optimizar y automatizar: se consideran oportunidades para mejorar las actividades de atención mediante el registro centralizado de tickets, el seguimiento de solicitudes, el uso de indicadores y la automatización de tareas que puedan estandarizarse.
+
+b) Sistema de Valor del Servicio (SVS)
+El Sistema de Valor del Servicio (SVS) de ITIL 4 permite comprender cómo los diferentes componentes de una organización se relacionan para facilitar la creación de valor mediante los servicios.
+El SVS recibe como entradas la oportunidad y la demanda, que representan las necesidades y posibilidades de generar valor. En el proyecto, estas entradas se relacionan con las necesidades de soporte tecnológico de estudiantes, docentes y personal administrativo, como problemas de acceso, conectividad, cuentas y aplicaciones.
+Para transformar estas entradas en valor, se consideran los siguientes componentes del SVS:
+•	Principios guía: orientan las decisiones relacionadas con la organización y mejora del servicio.
+•	Gobernanza: permite establecer criterios de dirección, responsabilidades y supervisión de las actividades propuestas.
+•	Cadena de valor del servicio: organiza las actividades necesarias para atender las necesidades de los usuarios y facilitar la entrega del servicio.
+•	Prácticas: proporcionan las capacidades necesarias para desarrollar actividades como la atención de incidentes, solicitudes, problemas, monitoreo y mejora continua.
+•	Mejora continua: permite evaluar el funcionamiento del modelo, identificar brechas y plantear acciones correctivas.
+Estos componentes se relacionan entre sí para orientar la propuesta hacia una atención organizada y una mejora progresiva del servicio, en lugar de considerar cada actividad de manera aislada. Como resultado, se busca generar valor mediante una atención más ordenada, un mejor seguimiento de los casos y una mayor continuidad de los servicios tecnológicos.
+
+c) Cuatro dimensiones de la gestión de servicios
+ITIL 4 establece cuatro dimensiones que deben considerarse para mantener una visión integral de la gestión de servicios. En la propuesta de Mesa de Ayuda se relacionan de la siguiente manera:
+•	Organización y personas: comprende a los usuarios del servicio, al personal del Service Desk, los técnicos y los administradores. Se consideran sus responsabilidades, funciones y capacidades para atender los incidentes y solicitudes.
+•	Información y tecnología: comprende los recursos tecnológicos necesarios para prestar el servicio, como el portal de atención, la autenticación, la base de datos, la red Wi-Fi, el correo electrónico y las plataformas académicas. También considera el manejo de registros, la seguridad de la información y el seguimiento de los tickets.
+•	Socios y proveedores: considera la participación de proveedores externos y especialistas cuando una incidencia requiere conocimientos o recursos que no se encuentran disponibles en los primeros niveles de soporte. Esta dimensión se relaciona principalmente con el escalamiento hacia el nivel N3.
+•	Flujos de valor y procesos: comprende las actividades necesarias para atender cada solicitud o incidente, desde el registro y clasificación hasta la asignación, resolución, comunicación con el usuario y cierre. También incluye la evaluación de los resultados para identificar oportunidades de mejora.
+El análisis de estas dimensiones permite reconocer que la atención de los servicios tecnológicos depende de la coordinación entre personas, información, tecnología y procesos. En el diagnóstico del modelo se presta especial atención a la dimensión de información y tecnología, debido a su relación con los problemas de acceso, conectividad y disponibilidad de los servicios considerados en el proyecto.
+
+3.2. ISO/IEC 20000-1:2018
+Se tomó como referencia la norma ISO/IEC 20000-1:2018, relacionada con los requisitos para establecer, implementar, mantener y mejorar un sistema de gestión de servicios.
+Su incorporación permitió orientar la propuesta hacia una gestión organizada, con responsabilidades definidas, procedimientos, seguimiento y mejora continua.
+En el proyecto, esta referencia se relaciona principalmente con la organización de los procesos de atención, la definición de responsabilidades, el seguimiento de los indicadores y la identificación de oportunidades de mejora. De esta manera, complementa el enfoque de ITIL 4 y permite considerar la importancia de mantener un servicio controlado y evaluable.
+
+3.3. Aplicación de los marcos en el proyecto
+ITIL 4 permitió estructurar las prácticas y actividades de la Mesa de Ayuda, mientras que ISO/IEC 20000-1:2018 sirvió como referencia para mantener un enfoque ordenado de gestión y mejora del servicio.
+La aplicación de estos marcos se refleja en la propuesta mediante la centralización de la atención, la organización de los niveles de soporte, la clasificación de incidentes, el catálogo de solicitudes, los controles de seguridad, el monitoreo y el uso de indicadores para evaluar el servicio.
+Asimismo, los principios guía, el SVS y las cuatro dimensiones de ITIL 4 permitieron analizar la Mesa de Ayuda desde una perspectiva integral, considerando tanto la atención directa al usuario como los recursos, responsabilidades y procesos necesarios para mantener el servicio.
+La propuesta no desarrolla una implementación independiente de COBIT o PMBOK, por lo que estos marcos no se consideran parte de las metodologías aplicadas en el proyecto.
+
+4. Evolución y mejoras del proyecto
+Durante el desarrollo del proyecto, la propuesta inicial de una plataforma de gestión de servicios y solicitudes se fue ampliando hasta establecer un modelo de Mesa de Ayuda TI Universitaria. Este proceso permitió pasar de una descripción general del servicio a una propuesta más estructurada, incorporando procedimientos, responsabilidades, controles e indicadores para organizar la atención de los usuarios.
+Las principales mejoras se presentan a continuación.
+
+
+4.1. Centralización de la atención
+Se estableció el Service Desk como punto único de contacto (SPOC) entre los usuarios y el área de TI. Su función consiste en recibir los reportes, registrar los casos, recopilar información y facilitar su seguimiento.
+También se consideró que los incidentes comunicados por canales alternativos deben registrarse en el sistema central, evitando que la atención dependa de conversaciones aisladas o reportes sin trazabilidad.
+
+4.2. Organización de los niveles de soporte
+Se definió una estructura de atención distribuida en cuatro niveles, de acuerdo con la complejidad de los casos:
+•	N0 – Autoservicio: proporciona orientación y soluciones básicas mediante información disponible para los usuarios.
+•	N1 – Service Desk: recibe los reportes, registra los tickets, realiza verificaciones iniciales y resuelve incidentes frecuentes.
+•	N2 – Gestión Técnica: atiende casos que requieren conocimientos técnicos o intervenciones especializadas.
+•	N3 – Proveedores o especialistas: participa cuando el incidente supera las capacidades de atención internas.
+Esta estructura permite establecer responsabilidades y criterios de escalamiento, procurando que cada caso sea atendido por el nivel adecuado.
+ 
+4.3. Clasificación y priorización de incidentes
+Se incorporaron criterios de clasificación y priorización para organizar los incidentes según su impacto y urgencia. Esto permite diferenciar los problemas que afectan a un usuario de aquellos que pueden comprometer el acceso de varios usuarios o la disponibilidad de un servicio importante.
+La priorización busca orientar los recursos de soporte hacia los incidentes que requieren atención más rápida, especialmente durante periodos de alta demanda académica.
+
+4.4. Catálogo y flujo de solicitudes de servicio
+Se desarrolló un catálogo para organizar las solicitudes frecuentes de los usuarios. Se incluyeron cinco tipos principales:
+•	SR-01: restablecimiento de contraseña.
+•	SR-02: solicitud de acceso a plataformas.
+•	SR-03: atención de problemas de conexión Wi-Fi.
+•	SR-04: instalación de software autorizado.
+•	SR-05: creación de cuenta institucional.
+Para cada solicitud se definieron condiciones de atención, validaciones y tiempos objetivo. Asimismo, se estableció un flujo que comprende el registro, validación, aprobación cuando corresponda, ejecución, comunicación al usuario y cierre.
+Esta mejora permite diferenciar las solicitudes de servicio de los incidentes y establecer una forma organizada de atender los requerimientos recurrentes.
+
+4.5. Control de accesos y responsabilidades
+Se incorporó una matriz de permisos para diferenciar las capacidades de estudiantes, docentes, técnicos y administradores. Su diseño considera el principio de mínimo privilegio, de manera que cada usuario tenga únicamente los permisos necesarios para realizar sus actividades.
+También se contemplaron mecanismos de validación de identidad, revisión de permisos y control de accesos temporales, con el propósito de reducir riesgos relacionados con el uso inadecuado de las cuentas institucionales.
+4.6. Monitoreo y continuidad de los servicios tecnológicos
+Se consideraron los componentes tecnológicos necesarios para la prestación del servicio, entre ellos el portal de Mesa de Ayuda, el sistema de autenticación, la base de datos, la red Wi-Fi, el correo institucional y las plataformas académicas.
+A partir de estos componentes, se propusieron actividades de supervisión y continuidad, como la revisión de registros, el monitoreo de disponibilidad, las copias de seguridad y las pruebas de restauración. Estas actividades permiten establecer controles para detectar posibles interrupciones y reducir sus efectos.
+
+4.7. Integración de prácticas y capacidades
+Se seleccionaron siete prácticas de ITIL 4 para estructurar el modelo: Service Desk, gestión de incidentes, gestión de solicitudes de servicio, gestión de problemas, monitoreo y gestión de eventos, gestión de seguridad de la información y mejora continua.
+Dentro de la gestión de seguridad de la información se consideran los controles de acceso, la validación de identidad y la asignación de permisos según los roles.
+Además, se relacionaron las entradas, salidas, responsables, capacidades y métricas de las prácticas seleccionadas. Esta integración permitió reconocer las dependencias entre las actividades, especialmente la comunicación entre el Service Desk y los equipos responsables de la gestión de incidentes y las aplicaciones.
+
+4.8. Incorporación de la mejora continua
+Finalmente, se incorporó un enfoque de mejora continua basado en el ciclo PDCA. Este permite identificar problemas, planificar acciones, evaluar sus resultados y realizar ajustes cuando sea necesario.
+Como parte de este enfoque, se estableció una línea base simulada del 70 % de incidentes resueltos dentro del tiempo objetivo y una meta propuesta de al menos 90 %. Estos valores sirven como referencia para ejemplificar la evaluación del desempeño del modelo.
+
+5. Resultados del proyecto e impacto esperado
+5.1. Resultados obtenidos en el desarrollo del modelo
+Como resultado del desarrollo del proyecto, se estructuró una propuesta de Mesa de Ayuda TI Universitaria que integra los principales elementos necesarios para organizar la gestión de incidentes y solicitudes tecnológicas.
+Entre los principales resultados del trabajo se encuentran:
+•	Definición del objetivo, alcance y usuarios del servicio.
+•	Identificación de los principales problemas tecnológicos que afectan a la comunidad universitaria.
+•	Diseño del Service Desk como punto único de contacto.
+•	Organización de los niveles de soporte N0–N3 y sus responsabilidades.
+•	Establecimiento de criterios de clasificación y priorización de incidentes.
+•	Elaboración de un catálogo de solicitudes de servicio y su flujo de atención.
+•	Definición de una matriz de accesos y permisos por roles.
+•	Identificación de componentes tecnológicos y actividades propuestas de monitoreo y continuidad.
+•	Selección e integración de prácticas de ITIL 4.
+•	Definición de indicadores para evaluar el desempeño del servicio.
+•	Identificación de brechas y formulación de acciones de mejora.
+Estos resultados corresponden al diseño y análisis del modelo, que busca establecer una estructura organizada para la atención de los servicios tecnológicos.
+
+5.2. Catálogo y tiempos objetivo de atención
+Para organizar las solicitudes frecuentes, se establecieron tiempos objetivo de atención según el tipo de requerimiento y las condiciones necesarias para su ejecución.
+Código	Solicitud	Tiempo objetivo
+SR-01	Restablecimiento de contraseña	Hasta 4 horas hábiles, después de validar la identidad.
+SR-02	Acceso a plataformas	Hasta 1 día hábil, después de obtener la aprobación correspondiente.
+SR-03	Atención de problemas de conexión Wi-Fi	Hasta 8 horas.
+SR-04	Instalación de software autorizado	Hasta 2 días hábiles, después de obtener la aprobación.
+SR-05	Creación de cuenta institucional	Hasta 1 día hábil, después de recibir la solicitud completa y aprobada.
+Los tiempos establecidos son objetivos propuestos para el modelo y permiten orientar la atención de las solicitudes. No representan acuerdos de nivel de servicio (SLA) oficiales de la universidad.
+También se plantearon indicadores para evaluar el funcionamiento del catálogo, entre ellos alcanzar al menos un 90 % de solicitudes atendidas dentro del tiempo objetivo y mantener por debajo del 10 % las solicitudes devueltas por información incompleta o errores de registro.
+
+5.3. Indicadores de desempeño del servicio
+Se definieron indicadores para evaluar diferentes aspectos de la gestión de la Mesa de Ayuda. Estos permitirían realizar un seguimiento de la atención, identificar dificultades y orientar las acciones de mejora.
+Indicador	Propósito
+Porcentaje de incidentes resueltos dentro del tiempo objetivo	Medir el cumplimiento de los tiempos de atención.
+Tiempo medio de resolución	Conocer cuánto tiempo requiere resolver un incidente.
+Porcentaje de incidentes reabiertos	Identificar casos que no fueron solucionados correctamente en el primer cierre.
+Porcentaje de solicitudes atendidas dentro del tiempo establecido	Evaluar el cumplimiento de los tiempos del catálogo.
+Porcentaje de solicitudes devueltas	Identificar problemas en el registro o en la información proporcionada.
+Disponibilidad de los componentes tecnológicos	Supervisar la continuidad de los servicios principales.
+Tickets pendientes o reasignados	Identificar acumulación de trabajo y dificultades de asignación.
+Porcentaje de accesos revisados	Evaluar el cumplimiento de los controles de acceso.
+Recurrencia de incidentes	Reconocer problemas que se presentan repetidamente.
+Para mantener una interpretación adecuada de los resultados, se establecieron las siguientes metas diferenciadas:
+•	Incidentes resueltos dentro del tiempo objetivo: alcanzar al menos el 90 % de cumplimiento.
+•	Solicitudes atendidas dentro del tiempo establecido: alcanzar al menos el 90 % de cumplimiento.
+•	Solicitudes devueltas: mantener un porcentaje inferior al 10 %, considerando aquellas que presentan información incompleta o errores de registro.
+•	Tickets devueltos por diagnóstico incompleto en N1: mantener un porcentaje inferior al 5 %, como indicador específico de la calidad del diagnóstico inicial.
+Estos indicadores no representan resultados medidos en una operación real, sino criterios propuestos para evaluar el desempeño del modelo. Su seguimiento permitiría reconocer retrasos, problemas de registro y dificultades en los procedimientos de atención.
+
+
+5.4. Línea base y meta de mejora
+Para ejemplificar la evaluación del desempeño, se estableció un escenario de línea base simulado relacionado con los incidentes de acceso a plataformas.
+Elemento	Valor
+Total de incidentes considerados	20
+Incidentes resueltos dentro del tiempo objetivo	14
+Línea base simulada	70 %
+Meta propuesta	≥ 90 %
+Diferencia respecto a la meta	20 puntos porcentuales
+La línea base representa un escenario simulado utilizado para analizar la situación inicial del indicador. La meta del 90 % plantea el nivel de cumplimiento que se espera alcanzar mediante las acciones de mejora.
+Para comprobar estos resultados en una aplicación real, sería necesario recopilar información de los tickets y registros de autenticación y monitoreo durante el periodo de medición establecido, propuesto en dos semanas.
+
+5.5. Análisis de la cadena de valor del servicio
+Para analizar cómo la Mesa de Ayuda puede generar valor, se consideró un escenario en el que un estudiante o docente no puede acceder a una plataforma académica. Este caso permite observar la relación entre las actividades de atención y las prácticas seleccionadas de ITIL 4.
+El flujo comienza cuando el usuario comunica el problema mediante el Service Desk. A partir de ese momento, se consideran las siguientes actividades de la cadena de valor:
+•	Engage (Involucrar): el Service Desk recibe el reporte, registra la información del usuario, identifica el servicio afectado y mantiene la comunicación durante la atención del caso.
+•	Deliver & Support (Entregar y dar soporte): se realiza la clasificación y priorización del incidente. El nivel N1 ejecuta las verificaciones iniciales relacionadas con la cuenta, la autenticación y la conectividad. Si el problema requiere una intervención especializada, se escala hacia Gestión de Aplicaciones u Operaciones TI.
+•	Improve (Mejorar): una vez atendido el incidente, se revisa la información registrada para identificar posibles causas recurrentes, dificultades en el diagnóstico o retrasos durante el escalamiento. Estos datos permiten plantear mejoras en los procedimientos de atención.
+Durante el análisis se identificó una posible fricción en la comunicación entre el Service Desk y los equipos de Gestión de Aplicaciones u Operaciones TI. Cuando un incidente se escala sin información suficiente sobre las verificaciones iniciales, puede ser necesario solicitar datos adicionales o repetir algunas comprobaciones, lo que podría incrementar el tiempo de resolución.
+Por esta razón, se considera necesario fortalecer el diagnóstico inicial del nivel N1 mediante una guía de verificación y el registro de las pruebas realizadas antes de escalar el caso. Esta medida permitiría mejorar la calidad de la información transferida entre los niveles de soporte y reducir las devoluciones de tickets por diagnóstico incompleto.
+El análisis muestra que la generación de valor no depende únicamente de resolver el incidente, sino también de mantener una comunicación adecuada, registrar las actividades realizadas y utilizar la información obtenida para mejorar el servicio.
+
+5.6. Impacto esperado
+La aplicación del modelo podría generar mejoras en la organización y atención de los servicios tecnológicos de la universidad.
+Entre los principales impactos esperados se encuentran:
+•	Mejor organización de la atención: la centralización de los reportes permitiría mantener un registro de los incidentes y solicitudes.
+•	Mayor trazabilidad: el uso de tickets facilitaría conocer el estado de cada caso, su responsable y las acciones realizadas.
+•	Atención más ordenada: los niveles de soporte y criterios de prioridad permitirían asignar los casos de acuerdo con su complejidad e impacto.
+•	Mejor control de accesos: la matriz de roles ayudaría a definir permisos y responsabilidades.
+•	Identificación de problemas recurrentes: el análisis de incidentes permitiría reconocer situaciones que requieren una solución más permanente.
+•	Mejor supervisión tecnológica: las actividades propuestas de monitoreo y continuidad ayudarían a identificar posibles interrupciones.
+•	Evaluación del desempeño: los indicadores permitirían analizar el cumplimiento de los tiempos objetivo y orientar las acciones de mejora.
+•	Mejor coordinación entre los niveles de soporte: el fortalecimiento del diagnóstico inicial y del proceso de escalamiento permitiría transferir información más completa y reducir posibles retrasos.
+En conjunto, estos beneficios buscan contribuir a una atención más organizada, mejorar el seguimiento de los casos y favorecer la continuidad de los servicios tecnológicos utilizados por la comunidad universitaria.
+
+6. Brechas, riesgos y diagnóstico
+Como parte de la evaluación del modelo de Mesa de Ayuda TI Universitaria, se realizó un diagnóstico orientado a identificar debilidades que podrían afectar la atención de incidentes, la continuidad de los servicios y el cumplimiento de los tiempos objetivo.
+El análisis permitió reconocer tres brechas principales relacionadas con el diagnóstico inicial de incidentes de autenticación, la integración entre el monitoreo y la gestión de tickets, y la dependencia del administrador de TI para determinadas solicitudes.
+
+6.1. Identificación y priorización de brechas
+Las brechas identificadas se clasificaron según su importancia y el efecto que podrían generar en la atención del servicio.
+Código	Brecha identificada	Descripción	Prioridad
+B01	Diagnóstico inicial incompleto en N1	El modelo analizado requiere una guía más definida para que el personal de primer nivel realice las verificaciones iniciales de los incidentes de autenticación.	Alta
+B02	Desconexión entre monitoreo y tickets	En el modelo analizado no se contempla una integración directa entre las alertas de monitoreo y el registro y seguimiento de incidentes.	Media
+B03	Dependencia del administrador de TI	El procedimiento propuesto para SR-01 concentra el restablecimiento de contraseñas en el administrador de TI, lo que podría generar demoras ante una cantidad elevada de solicitudes.	Baja
+
+6.2. Análisis de las brechas
+B01. Diagnóstico inicial incompleto en N1
+Se identificó que la atención de incidentes de autenticación requiere un procedimiento de diagnóstico inicial más definido. Cuando el personal de N1 no dispone de una guía de verificación, puede realizar escalamientos incompletos o solicitar información adicional al usuario.
+Esta situación podría incrementar el tiempo de resolución y generar devoluciones de tickets entre los niveles de soporte.
+Por su impacto en la atención de los incidentes de acceso, esta brecha fue considerada de prioridad alta.
+
+B02. Desconexión entre monitoreo y tickets
+En el modelo analizado se identificó como brecha la falta de integración entre las alertas generadas por los componentes tecnológicos y el registro de incidentes.
+Cuando se presenta un evento que afecta a varios usuarios, la ausencia de una relación directa entre la alerta y los tickets puede dificultar la identificación de una causa común y generar reportes individuales que requieren un seguimiento separado.
+Por este motivo, se considera necesario fortalecer la coordinación entre el monitoreo tecnológico y la gestión de incidentes.
+
+B03. Dependencia del administrador de TI
+En el procedimiento planteado para la solicitud SR-01, el restablecimiento de contraseñas se concentra en el administrador de TI.
+Esta dependencia puede convertirse en una limitación cuando existe una cantidad elevada de solicitudes, debido a que concentra una actividad frecuente en un único responsable.
+Por ello, se considera conveniente evaluar la posibilidad de delegar determinadas actividades al nivel N1, siempre que se mantengan los controles de validación de identidad y seguridad correspondientes.
+
+6.3. Riesgos asociados
+Las brechas identificadas pueden generar los siguientes riesgos para el funcionamiento del modelo:
+Riesgo	Posible consecuencia
+Diagnóstico insuficiente en el primer nivel	Mayor tiempo de resolución y escalamientos innecesarios.
+Falta de relación entre alertas y tickets	Dificultad para identificar incidentes que afectan a varios usuarios.
+Concentración de actividades en el administrador	Acumulación de solicitudes y retrasos en la atención.
+Registros incompletos	Dificultad para elaborar indicadores confiables.
+Problemas de autenticación durante periodos de alta demanda	Restricciones de acceso a plataformas y afectación de actividades académicas.
+Adicionalmente, se consideró como hipótesis que una capacidad insuficiente del sistema de autenticación o de la infraestructura podría contribuir a los problemas de acceso durante periodos de alta demanda. Sin embargo, esta situación requiere ser comprobada mediante la revisión de logs, registros de incidentes y datos de monitoreo.
+
+6.4. Trazabilidad de las decisiones del proyecto
+Como parte de la auditoría integrada, se revisaron las principales decisiones tomadas durante el desarrollo del modelo, considerando su relación con las necesidades identificadas y las brechas encontradas en el diagnóstico.
+Esta revisión permitió establecer la siguiente trazabilidad:
+Código	Decisión del proyecto	Justificación	Evidencia relacionada
+D1	Establecer el Service Desk como punto único de contacto (SPOC).	Centralizar los reportes y evitar que los incidentes y solicitudes queden registrados en canales aislados.	Modelo de Service Desk y flujo de registro y seguimiento de tickets.
+D2	Organizar la atención mediante cuatro niveles de soporte (N0–N3) y criterios de priorización.	Distribuir las responsabilidades según la complejidad e impacto de los incidentes, facilitando su atención y escalamiento.	Estructura de niveles de soporte y criterios de clasificación y priorización.
+D3	Aplicar el principio de mínimo privilegio en la asignación de accesos.	Reducir los riesgos relacionados con permisos innecesarios y establecer responsabilidades según el rol de cada usuario.	Matriz de accesos por roles y controles de seguridad.
+D4	Incorporar actividades de monitoreo y continuidad de los servicios tecnológicos.	Facilitar la identificación de posibles interrupciones y establecer medidas para proteger la disponibilidad de los componentes tecnológicos.	Plan de monitoreo, registros considerados y propuesta de copias de seguridad y restauración.
+D5	Fortalecer el diagnóstico inicial del nivel N1 mediante una guía de verificación y un checklist.	Reducir los escalamientos incompletos y mejorar la información transferida a los equipos técnicos.	Propuesta de guía de diagnóstico inicial y checklist de verificaciones previas al escalamiento, pendientes de elaboración como entregables.
+D6	Incorporar el ciclo PDCA y una meta de mejora del 70 % a al menos 90 % de incidentes atendidos dentro del tiempo objetivo.	Establecer un mecanismo de evaluación que permita comparar el desempeño de referencia con la meta propuesta.	Ciclo PDCA, indicadores del servicio y escenario de línea base simulada.
+La revisión de estas decisiones permitió comprobar su relación con las principales necesidades del modelo. Asimismo, se identificó que algunas decisiones requieren procedimientos y herramientas adicionales para poder aplicarse adecuadamente.
+En particular, la decisión D5 se relaciona directamente con la brecha B01, debido a que el fortalecimiento del diagnóstico inicial necesita una guía de verificación, capacitación del personal y un checklist que permita registrar las pruebas realizadas antes de escalar un incidente.
+Por otro lado, la decisión D4 se relaciona con la brecha B02, ya que las actividades de monitoreo necesitan complementarse con un mecanismo que permita vincular las alertas relevantes con los tickets de incidentes. De igual manera, la decisión D3 debe mantenerse como criterio de seguridad al evaluar la delegación controlada de actividades de restablecimiento de contraseñas planteada para atender la brecha B03.
+En conclusión, la trazabilidad permitió relacionar las decisiones de diseño con las necesidades, evidencias y acciones correctivas del proyecto. También permitió reconocer que definir una solución no garantiza por sí solo su aplicación, por lo que es necesario acompañar las decisiones con procedimientos, responsables, registros e indicadores que permitan evaluar su cumplimiento.
+
+7. Acciones y soluciones propuestas
+A partir de las brechas identificadas durante el diagnóstico, se plantearon acciones orientadas a fortalecer la capacidad de atención del modelo de Mesa de Ayuda TI Universitaria. Estas propuestas buscan reducir los tiempos de resolución, mejorar la coordinación entre los niveles de soporte y mantener controles adecuados sobre los servicios tecnológicos.
+
+7.1. Fortalecimiento del diagnóstico inicial en N1
+Brecha relacionada: B01 – Diagnóstico inicial incompleto en N1.
+Se propone elaborar una guía de diagnóstico para los incidentes relacionados con autenticación y acceso a plataformas. Esta herramienta permitirá que el personal de primer nivel realice verificaciones iniciales antes de escalar un caso.
+La guía deberá considerar las siguientes actividades:
+•	Recopilar los datos necesarios para identificar el incidente.
+•	Verificar la identidad del usuario mediante el procedimiento establecido.
+•	Comprobar el estado de la cuenta institucional.
+•	Revisar posibles problemas de conectividad.
+•	Identificar si el incidente afecta a un usuario o a varios.
+•	Registrar las verificaciones realizadas en el ticket.
+•	Escalar el caso cuando requiera una intervención especializada.
+También se propone capacitar al personal de N1 y establecer un checklist obligatorio para registrar las verificaciones efectuadas antes de realizar un escalamiento.
+Responsables propuestos: Service Desk y responsable de Gestión Técnica.
+Indicadores de seguimiento:
+•	Al menos 90 % de incidentes resueltos dentro del tiempo objetivo.
+•	Menos de 5 % de tickets devueltos por diagnóstico incompleto.
+
+7.2. Integración del monitoreo con la gestión de incidentes
+Brecha relacionada: B02 – Desconexión entre monitoreo y tickets.
+Se propone fortalecer la coordinación entre el monitoreo de los componentes tecnológicos y el registro de incidentes.
+Cuando se identifique una alerta que represente una interrupción importante o que afecte a varios usuarios, se plantea generar un incidente mayor y asociar los reportes individuales con un ticket principal.
+Esta medida permitiría:
+•	Identificar incidentes que tienen una causa común.
+•	Evitar el seguimiento aislado de reportes relacionados.
+•	Mejorar la comunicación entre el personal técnico y el Service Desk.
+•	Mantener un registro de las alertas y acciones realizadas.
+•	Facilitar el análisis posterior de los incidentes.
+Responsables propuestos: Gestión Técnica y responsables de monitoreo y Operaciones TI.
+Indicador de seguimiento: porcentaje de eventos relevantes de monitoreo que cuentan con un ticket o registro de incidente asociado.
+
+7.3. Reducción de la dependencia del administrador de TI
+Brecha relacionada: B03 – Dependencia del administrador de TI.
+Se propone evaluar la delegación de determinadas actividades de restablecimiento de contraseñas al nivel N1, siempre que existan mecanismos adecuados para validar la identidad del usuario y proteger las cuentas institucionales.
+La delegación deberá estar acompañada de un procedimiento documentado, permisos limitados y controles de seguridad, considerando el uso de autenticación multifactor cuando corresponda.
+Esta medida permitiría distribuir mejor las actividades de atención y reducir la concentración de solicitudes en el administrador de TI.
+Responsables propuestos: Administrador de TI y Service Desk.
+Indicadores de seguimiento:
+•	Tiempo medio de atención de las solicitudes SR-01.
+•	Porcentaje de solicitudes SR-01 resueltas dentro del tiempo objetivo.
+7.4. Fortalecimiento del seguimiento y control del servicio
+Además de las acciones dirigidas a las brechas principales, se propone mantener un seguimiento periódico de los indicadores definidos para el modelo.
+Esta actividad permitirá identificar retrasos, solicitudes devueltas, incidentes recurrentes y problemas relacionados con la disponibilidad de los componentes tecnológicos.
+Para ello, se plantea:
+•	Revisar periódicamente los tickets pendientes y reasignados.
+•	Analizar los incidentes que superen los tiempos objetivo.
+•	Identificar las causas de los incidentes recurrentes.
+•	Revisar los accesos y permisos asignados.
+•	Evaluar la disponibilidad de los componentes tecnológicos.
+•	Documentar las acciones de mejora y sus resultados.
+Responsables propuestos: Service Desk, Gestión Técnica y administrador de TI, según sus funciones.
+Indicadores de seguimiento: cumplimiento de los tiempos objetivo, incidentes reabiertos, solicitudes devueltas, disponibilidad y recurrencia de incidentes.
+
+7.5. Aplicación del ciclo de mejora continua
+Las acciones propuestas se relacionan con el ciclo PDCA, que permite organizar la mejora continua mediante cuatro etapas:
+•	Planificar: identificar la brecha, analizar sus causas y definir la acción de mejora.
+•	Hacer: aplicar la solución planteada y documentar las actividades realizadas.
+•	Verificar: evaluar los resultados mediante indicadores y registros del servicio.
+•	Actuar: mantener las mejoras que demuestren resultados favorables o realizar ajustes cuando sea necesario.
+En el caso de la Mesa de Ayuda, este ciclo permitiría revisar periódicamente el cumplimiento de los tiempos de atención, la calidad del diagnóstico inicial y la coordinación entre los niveles de soporte.
+Por ejemplo, la guía de diagnóstico propuesta para N1 podría evaluarse mediante el porcentaje de tickets devueltos por información incompleta. Si el indicador no alcanza la meta establecida, sería necesario revisar el procedimiento y realizar los ajustes correspondientes.
+Este enfoque permite que la Mesa de Ayuda no se limite a atender incidentes de manera individual, sino que también utilice la información obtenida para mejorar sus procedimientos y fortalecer la calidad del servicio.
+En conjunto, las acciones propuestas buscan atender las principales debilidades identificadas y establecer mecanismos para evaluar su efectividad.
+8. Conclusiones
+1.	El desarrollo del proyecto permitió estructurar una propuesta de Mesa de Ayuda TI Universitaria orientada a organizar la atención de incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo. Para ello, se definieron los objetivos, el alcance, los usuarios y los principales componentes del servicio.
+2.	La incorporación del Service Desk como punto único de contacto y la organización de los niveles de soporte N0–N3 permitieron establecer una estructura de atención con responsabilidades y criterios de escalamiento. Estos elementos buscan mejorar la trazabilidad de los casos y facilitar su seguimiento.
+3.	La utilización de ITIL 4 como principal marco de referencia y de ISO/IEC 20000-1:2018 como referencia complementaria permitió organizar las prácticas de gestión de incidentes, solicitudes, problemas, seguridad de la información, monitoreo y mejora continua dentro del modelo propuesto.
+4.	El catálogo de solicitudes y la matriz de accesos permitieron definir condiciones de atención, tiempos objetivo y permisos según los roles de los usuarios. Estos elementos proporcionan una base para organizar los requerimientos frecuentes y fortalecer el control de los servicios tecnológicos.
+5.	El diagnóstico y la auditoría integrada permitieron identificar tres brechas principales: el diagnóstico inicial incompleto de incidentes de autenticación en N1, la falta de integración entre las alertas de monitoreo y los tickets, y la dependencia del administrador de TI para el restablecimiento de contraseñas. Estas situaciones permitieron establecer prioridades para orientar las mejoras del modelo.
+6.	Las acciones propuestas, como la elaboración de una guía de diagnóstico, la incorporación de un checklist, la relación entre alertas y tickets y la evaluación de una delegación controlada de actividades, permiten plantear soluciones relacionadas directamente con las brechas identificadas.
+7.	La línea base simulada del 70 % y la meta propuesta de al menos 90 % de incidentes resueltos dentro del tiempo objetivo permiten ejemplificar cómo se evaluaría el desempeño del servicio. Sin embargo, para comprobar una mejora real sería necesario recopilar y analizar registros operativos durante el periodo de medición establecido.
+8.	Finalmente, el proyecto integra los principales elementos necesarios para organizar una Mesa de Ayuda TI Universitaria y establece una propuesta de gestión orientada a mejorar la atención, fortalecer el seguimiento de incidentes y contribuir a la continuidad de los servicios tecnológicos de la comunidad universitaria.
+
+

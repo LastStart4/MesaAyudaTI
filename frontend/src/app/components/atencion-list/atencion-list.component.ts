@@ -30,9 +30,9 @@ export class AtencionListComponent {
 
   constructor() {
     this.route.queryParamMap.subscribe(params => {
-      const reporteIdParam = params.get('reporte');
-      if (reporteIdParam) {
-        this.searchQuery.set(reporteIdParam.trim());
+      const ticketIdParam = params.get('ticket') || params.get('reporte');
+      if (ticketIdParam) {
+        this.searchQuery.set(ticketIdParam.trim());
       }
     });
   }
@@ -59,7 +59,7 @@ export class AtencionListComponent {
   // Modal de Nueva Orden de Atención Técnica (Semana 13)
   readonly mostrarModalNueva = signal<boolean>(false);
   readonly nuevoReporteId = signal<number | null>(null);
-  readonly nuevoAulaCodigo = signal<string>('A-101');
+  readonly nuevoAulaCodigo = signal<string>('');
   readonly nuevoTecnico = signal<string>('tecnico01');
   readonly nuevoTipoMantenimiento = signal<TipoMantenimiento>('CORRECTIVO');
   readonly nuevaPrioridad = signal<'ALTA' | 'MEDIA' | 'BAJA'>('MEDIA');
@@ -237,7 +237,7 @@ export class AtencionListComponent {
     }
 
     if (!this.resolucionConfirmacion()) {
-      this.errorResolucion.set('Debes marcar la casilla certificando la operatividad del aula.');
+      this.errorResolucion.set('Confirma que el servicio solicitado funciona después de la intervención.');
       return;
     }
 
@@ -247,7 +247,7 @@ export class AtencionListComponent {
     this.atencionService.resolverAtencion(atencion.id, obs, detalle, usuario).subscribe({
       next: () => {
         this.cerrarModalResolucion();
-        this.mostrarExito(`Orden #${atencion.id} resuelta y certificada correctamente. ¡Aula 100% operativa!`);
+        this.mostrarExito(`Intervención #${atencion.id} finalizada; el ticket quedó resuelto.`);
       },
       error: (err) => {
         this.errorResolucion.set(`No se pudo resolver la atención: ${err.message || 'Error en el servidor.'}`);
@@ -266,10 +266,10 @@ export class AtencionListComponent {
     const usuario = this.tecnicoLogueado();
     this.atencionService.autoAsignarReporte(rep, usuario).subscribe({
       next: (nueva) => {
-        this.mostrarExito(`Orden #${nueva.id} generada y asignada a ${usuario} para el Aula ${nueva.aulaCodigo}.`);
+        this.mostrarExito(`Intervención #${nueva.id} asignada a ${usuario}.`);
       },
       error: (err) => {
-        this.mostrarAlerta(`Error al asignar reporte: ${err.message || 'Verifica el servidor.'}`);
+        this.mostrarAlerta(`Error al asignar el ticket: ${err.message || 'Verifica el servidor.'}`);
       }
     });
   }
@@ -298,7 +298,7 @@ export class AtencionListComponent {
     }
 
     this.nuevoReporteId.set(null);
-    this.nuevoAulaCodigo.set('A-101');
+    this.nuevoAulaCodigo.set('');
     this.nuevoTecnico.set(this.tecnicoLogueado());
     this.nuevoTipoMantenimiento.set('CORRECTIVO');
     this.nuevaPrioridad.set('MEDIA');
@@ -315,7 +315,7 @@ export class AtencionListComponent {
   crearNuevaAtencion(): void {
     const repId = this.nuevoReporteId();
     if (!repId || repId <= 0) {
-      this.errorNueva.set('Debes ingresar un número válido de Reporte / Ticket de origen.');
+      this.errorNueva.set('Debes seleccionar un ticket válido.');
       return;
     }
 
@@ -336,7 +336,7 @@ export class AtencionListComponent {
     }).subscribe({
       next: (nueva) => {
         this.cerrarModalNueva();
-        this.mostrarExito(`Nueva Orden #${nueva.id} para Aula ${nueva.aulaCodigo} generada con éxito.`);
+        this.mostrarExito(`Intervención #${nueva.id} creada correctamente.`);
       },
       error: (err) => {
         this.errorNueva.set(`No se pudo generar la orden: ${err.message || 'Error de validación.'}`);
@@ -396,7 +396,7 @@ export class AtencionListComponent {
   }
 
   getMantenimientoLabel(tipo?: TipoMantenimiento): string {
-    return tipo === 'PREVENTIVO' ? 'Mant. Preventivo' : 'Mant. Correctivo';
+    return tipo === 'PREVENTIVO' ? 'Preventivo' : 'Correctivo';
   }
 
   // --- Modal de Ficha Técnica / Acta de Conformidad (Opción 2) ---

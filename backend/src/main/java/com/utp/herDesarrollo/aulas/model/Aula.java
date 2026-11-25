@@ -4,7 +4,7 @@ package com.utp.herDesarrollo.aulas.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "aulas")
+@Table(name = "campus_ubicaciones")
 public class Aula {
 
     @Id

@@ -395,7 +395,7 @@
               @if (claveEstado(aula.estado) === 'mantenimiento') {
                 <a
                   class="m3-btn-inspect"
-                  [routerLink]="['/reportes']"
+                  [routerLink]="['/tickets']"
                   [queryParams]="{ aula: aula.codigo }">
                   <span>Ver reportes</span>
                   <mat-icon>arrow_forward</mat-icon>
@@ -403,7 +403,7 @@
               } @else {
                 <a
                   class="m3-btn-inspect"
-                  [routerLink]="['/reportes/nuevo']"
+                  [routerLink]="['/tickets/nuevo']"
                   [queryParams]="{ aula: aula.codigo }">
                   <span>Reportar falla</span>
                   <mat-icon>arrow_forward</mat-icon>

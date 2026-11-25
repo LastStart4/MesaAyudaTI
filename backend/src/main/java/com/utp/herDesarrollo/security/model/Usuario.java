@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Entidad JPA que representa a un usuario registrado en ClassCare Campus.
+ * Entidad JPA que representa a un usuario registrado en la Mesa de Ayuda TI.
  * Soporta autenticación JWT real y control de acceso basado en roles (RBAC).
  */
 @Entity
-@Table(name = "usuarios")
+@Table(name = "mesa_ayuda_usuarios")
 public class Usuario {
 
     @Id

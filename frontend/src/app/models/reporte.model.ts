@@ -1,4 +1,16 @@
-export type TipoProblema = 'TECNOLOGICO' | 'ELECTRICO' | 'MOBILIARIO' | 'INFRAESTRUCTURA' | 'OTRO';
+export type TipoProblema =
+  | 'AUTENTICACION'
+  | 'PLATAFORMAS'
+  | 'REDES'
+  | 'CUENTAS'
+  | 'SOFTWARE'
+  | 'CORREO'
+  | 'EQUIPOS'
+  | 'OTRO'
+  | 'TECNOLOGICO'
+  | 'ELECTRICO'
+  | 'MOBILIARIO'
+  | 'INFRAESTRUCTURA';
 export type Prioridad = 'ALTA' | 'MEDIA' | 'BAJA';
 export type EstadoReporte = 'PENDIENTE' | 'EN_ATENCION' | 'RESUELTO';
 
@@ -16,6 +28,7 @@ export interface Reporte {
   aulaInternoId?: number;
   aulaUbicacion?: string;
   tipoProblema: TipoProblema;
+  servicioAfectado?: string;
   prioridad: Prioridad;
   estado: EstadoReporte;
   descripcion: string;
@@ -29,24 +42,27 @@ export interface CrearReportePayload {
   tipoProblema: TipoProblema;
   prioridad: Prioridad;
   descripcion: string;
+  servicioAfectado?: string;
 }
 
 /**
- * Contrato exacto de CrearReporteDTO en Spring Boot (POST /api/reportes)
+ * Contrato de creación de un ticket en Spring Boot (POST /api/tickets).
  */
 export interface CrearReporteRequestDTO {
   aulaId: string;
   tipoProblema: TipoProblema;
   descripcion: string;
   prioridad: Prioridad;
+  servicioAfectado: string;
   reportadoPor?: string;
 }
 
 /**
- * Contrato exacto de ActualizarReporteDTO en Spring Boot (PUT /api/reportes/{id})
+ * Contrato de actualización de un ticket (PUT /api/tickets/{id}).
  */
 export interface ActualizarReporteRequestDTO {
   descripcion: string;
+  servicioAfectado?: string;
   tipoProblema: TipoProblema;
   prioridad: Prioridad;
   estado: EstadoReporte;

@@ -47,7 +47,9 @@ class ReporteServiceTest {
     }
 
     private CrearReporteDTO crearDTOValido() {
-        return new CrearReporteDTO("A-101", TipoProblema.TECNOLOGICO, "Proyector apagado", Prioridad.ALTA);
+        CrearReporteDTO dto = new CrearReporteDTO("A-101", TipoProblema.TECNOLOGICO, "Proyector apagado", Prioridad.ALTA);
+        dto.setServicioAfectado("Plataforma académica");
+        return dto;
     }
 
     @Test
@@ -64,6 +66,7 @@ class ReporteServiceTest {
                 EstadoReporte.PENDIENTE,
                 LocalDateTime.now()
         );
+        reporteSimulado.setServicioAfectado("Plataforma académica");
 
         when(aulaRepository.findByCodigoIgnoreCase("A-101")).thenReturn(Optional.of(aulaMock));
         when(reporteRepository.save(any(Reporte.class))).thenReturn(reporteSimulado);
@@ -73,6 +76,7 @@ class ReporteServiceTest {
         assertNotNull(respuesta);
         assertEquals(1L, respuesta.getId());
         assertEquals("A-101", respuesta.getAulaId());
+        assertEquals("Plataforma académica", respuesta.getServicioAfectado());
         assertEquals(EstadoReporte.PENDIENTE, respuesta.getEstado());
         assertNotNull(respuesta.getFechaRegistro());
 
@@ -81,6 +85,21 @@ class ReporteServiceTest {
         Reporte reporteEnviado = captor.getValue();
         assertEquals(EstadoReporte.PENDIENTE, reporteEnviado.getEstado());
         assertNotNull(reporteEnviado.getFechaRegistro());
+    }
+
+    @Test
+    @DisplayName("Debe crear un ticket sin ubicación física")
+    void debeCrearTicketSinUbicacionFisica() {
+        CrearReporteDTO dto = crearDTOValido();
+        dto.setAulaId("");
+        when(reporteRepository.save(any(Reporte.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        ReporteResponseDTO respuesta = reporteService.crearReporte(dto);
+
+        assertEquals("", respuesta.getAulaId());
+        assertEquals("Plataforma académica", respuesta.getServicioAfectado());
+        verifyNoInteractions(aulaRepository);
     }
 
     @Test
@@ -96,9 +115,6 @@ class ReporteServiceTest {
     @Test
     @DisplayName("Debe lanzar ReglaNegocioException si faltan datos requeridos al crear reporte")
     void debeLanzarExcepcionCuandoCamposSonInvalidos() {
-        CrearReporteDTO dtoSinAula = new CrearReporteDTO("", TipoProblema.TECNOLOGICO, "Falla", Prioridad.MEDIA);
-        assertThrows(ReglaNegocioException.class, () -> reporteService.crearReporte(dtoSinAula));
-
         CrearReporteDTO dtoSinDescripcion = new CrearReporteDTO("A-101", TipoProblema.TECNOLOGICO, "   ", Prioridad.MEDIA);
         assertThrows(ReglaNegocioException.class, () -> reporteService.crearReporte(dtoSinDescripcion));
 
@@ -271,8 +287,8 @@ class ReporteServiceTest {
     }
 
     @Test
-    @DisplayName("Debe cambiar el estado del Aula a Mantenimiento cuando un reporte pasa a EN_ATENCION")
-    void debeCambiarAulaAMantenimientoCuandoReportePasaAEnAtencion() {
+    @DisplayName("Debe mantener el estado de la ubicación al actualizar un ticket")
+    void debeMantenerEstadoUbicacionCuandoTicketPasaAEnAtencion() {
         Aula aula = crearAulaMock(2L, "B-204");
         Reporte existente = new Reporte(3L, aula, TipoProblema.MOBILIARIO, "Carpetas sueltas", Prioridad.MEDIA, EstadoReporte.PENDIENTE, LocalDateTime.now());
 
@@ -289,8 +305,8 @@ class ReporteServiceTest {
         ReporteResponseDTO respuesta = reporteService.actualizarReporte(3L, dto);
 
         assertEquals(EstadoReporte.EN_ATENCION, respuesta.getEstado());
-        assertEquals("Mantenimiento", aula.getEstado());
-        verify(aulaRepository).save(aula);
+        assertEquals("Disponible", aula.getEstado());
+        verify(aulaRepository, never()).save(any());
     }
 
     @Test

@@ -16,20 +16,22 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
       id: 1,
       aulaId: 'A-101',
       aulaUbicacion: 'Pabellón A • Piso 1',
-      tipoProblema: 'TECNOLOGICO',
+      tipoProblema: 'PLATAFORMAS',
+      servicioAfectado: 'Plataforma académica',
       prioridad: 'ALTA',
       estado: 'PENDIENTE',
-      descripcion: 'El proyector multimedia enciende pero no detecta señal HDMI.',
+      descripcion: 'La plataforma académica no permite iniciar sesión.',
       fechaRegistro: '2026-10-29T08:30:00'
     },
     {
       id: 2,
       aulaId: 'LAB-302',
       aulaUbicacion: 'Pabellón C • Piso 3',
-      tipoProblema: 'ELECTRICO',
+      tipoProblema: 'REDES',
+      servicioAfectado: 'Red Wi-Fi',
       prioridad: 'ALTA',
       estado: 'EN_ATENCION',
-      descripcion: 'Diferencial eléctrico de la bancada norte salta al encender equipos.',
+      descripcion: 'La red Wi-Fi presenta interrupciones frecuentes.',
       fechaRegistro: '2026-10-29T09:15:00'
     }
   ];
@@ -68,10 +70,10 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     }
 
     // Drenar las 2 peticiones iniciales del constructor de ReporteService
-    const reqReportesInicial = httpMock.expectOne('/api/reportes');
+    const reqReportesInicial = httpMock.expectOne('/api/tickets');
     reqReportesInicial.flush(reportesMockBackend);
 
-    const reqAulasInicial = httpMock.expectOne('/api/aulas');
+    const reqAulasInicial = httpMock.expectOne('/api/ubicaciones');
     reqAulasInicial.flush([
       { id: 1, codigo: 'A-101', ubicacion: 'Pabellón A • Piso 1', capacidad: 40, estado: 'Mantenimiento' }
     ]);
@@ -81,43 +83,46 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     httpMock.verify();
   });
 
-  it('debe sincronizar reportes desde PostgreSQL/Spring Boot al iniciar y activar backendConectado()', () => {
+  it('debe sincronizar tickets desde PostgreSQL/Spring Boot al iniciar y activar backendConectado()', () => {
     expect(reporteService.backendConectado()).toBe(true);
     expect(reporteService.cargando()).toBe(false);
     expect(reporteService.reportes().length).toBe(2);
     expect(reporteService.reportes()[0].aulaId).toBe('A-101');
   });
 
-  it('debe registrar un nuevo reporte vía POST /api/reportes y actualizar la señal reactiva', () => {
+  it('debe registrar un nuevo ticket vía POST /api/tickets y actualizar la señal reactiva', () => {
     let creadoResultado: Reporte | undefined;
 
     reporteService
       .crearReporte({
         aulaId: 'b-204',
         aulaUbicacion: 'Pabellón B • Piso 2',
-        tipoProblema: 'MOBILIARIO',
+        tipoProblema: 'REDES',
+        servicioAfectado: 'Red Wi-Fi',
         prioridad: 'MEDIA',
-        descripcion: 'Cuatro carpetas unipersonales presentan respaldar suelto.'
+        descripcion: 'La red Wi-Fi presenta interrupciones en el laboratorio.'
       })
       .subscribe(res => (creadoResultado = res));
 
-    const postReq = httpMock.expectOne('/api/reportes');
+    const postReq = httpMock.expectOne('/api/tickets');
     expect(postReq.request.method).toBe('POST');
     expect(postReq.request.body.aulaId).toBe('B-204');
+    expect(postReq.request.body.servicioAfectado).toBe('Red Wi-Fi');
 
     postReq.flush({
       id: 3,
       aulaId: 'B-204',
       aulaUbicacion: 'Pabellón B • Piso 2',
-      tipoProblema: 'MOBILIARIO',
+      tipoProblema: 'REDES',
+      servicioAfectado: 'Red Wi-Fi',
       prioridad: 'MEDIA',
       estado: 'PENDIENTE',
-      descripcion: 'Cuatro carpetas unipersonales presentan respaldar suelto.',
+      descripcion: 'La red Wi-Fi presenta interrupciones en el laboratorio.',
       fechaRegistro: '2026-10-30T10:00:00'
     });
 
     // Al crear un reporte se refresca también el catálogo de aulas
-    const aulasRefresh = httpMock.expectOne('/api/aulas');
+    const aulasRefresh = httpMock.expectOne('/api/ubicaciones');
     aulasRefresh.flush([]);
 
     expect(creadoResultado?.id).toBe(3);
@@ -138,10 +143,10 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     expect(authService.autenticado()).toBe(true);
     expect(authService.puedeActualizarReportes()).toBe(true);
 
-    // 2. Actualizar estado (PUT /api/reportes/1) -> debe llevar cabecera Authorization: Bearer
+    // 2. Actualizar estado (PUT /api/tickets/1) -> debe llevar cabecera Authorization: Bearer
     reporteService.actualizarEstado(1, 'EN_ATENCION').subscribe();
 
-    const putReq = httpMock.expectOne('/api/reportes/1');
+    const putReq = httpMock.expectOne('/api/tickets/1');
     expect(putReq.request.method).toBe('PUT');
     expect(putReq.request.headers.get('Authorization')).toBe(`Bearer ${tokenRealSimulado}`);
     expect(putReq.request.body.estado).toBe('EN_ATENCION');
@@ -151,7 +156,7 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
       estado: 'EN_ATENCION'
     });
 
-    const aulasRefresh = httpMock.expectOne('/api/aulas');
+    const aulasRefresh = httpMock.expectOne('/api/ubicaciones');
     aulasRefresh.flush([]);
 
     expect(reporteService.obtenerPorId(1)?.estado).toBe('EN_ATENCION');

@@ -2,9 +2,9 @@
 
   <!-- Barra Superior de Retorno -->
   <nav class="detail-nav-bar" aria-label="Navegación de retorno">
-    <a routerLink="/reportes" class="m3-btn-back">
+    <a routerLink="/tickets" class="m3-btn-back">
       <mat-icon>arrow_back</mat-icon>
-      <span>Volver al tablero de reportes</span>
+      <span>Volver a los tickets</span>
     </a>
 
     @if (reporte()) {
@@ -26,26 +26,26 @@
       <header class="print-sheet-header">
         <div class="print-institution">
           <h1>UNIVERSIDAD TECNOLÓGICA DEL PERÚ</h1>
-          <p>DIRECCIÓN DE INFRAESTRUCTURA, OPERACIONES Y MANTENIMIENTO DE CAMPUS</p>
+          <p>MESA DE AYUDA TI UNIVERSITARIA</p>
         </div>
         <div class="print-doc-code">
-          <strong>ACTA TÉCNICA N.° {{ formatCount(item.id) }}</strong>
-          <span>EXPEDIENTE DE INSPECCIÓN DE AULA</span>
+          <strong>TICKET DE SOPORTE N.° {{ formatCount(item.id) }}</strong>
+          <span>INCIDENTE O SOLICITUD DE SERVICIO</span>
         </div>
       </header>
 
       <section class="print-section">
-        <h2 class="print-section-title">I. DATOS GENERALES DEL AMBIENTE Y LA INCIDENCIA</h2>
+        <h2 class="print-section-title">I. DATOS GENERALES DEL TICKET</h2>
         <table class="print-table">
           <tbody>
             <tr>
-              <th>Código del Ambiente:</th>
-              <td>Aula {{ item.aulaId }}</td>
-              <th>Ubicación Física:</th>
-              <td>{{ item.aulaUbicacion || 'Pabellón Central • Campus UTP' }}</td>
+              <th>Servicio afectado:</th>
+              <td>{{ item.servicioAfectado || 'Servicio general' }}</td>
+              <th>Ubicación:</th>
+              <td>{{ item.aulaUbicacion || 'No especificada' }}</td>
             </tr>
             <tr>
-              <th>Categoría Técnica:</th>
+              <th>Categoría:</th>
               <td>{{ getCategoriaLabel(item.tipoProblema) }}</td>
               <th>Nivel de Prioridad:</th>
               <td>{{ getPrioridadLabel(item.prioridad) }}</td>
@@ -55,13 +55,13 @@
               <td colspan="3"><strong>{{ getEstadoFormalActa(item.estado) }}</strong></td>
             </tr>
             <tr>
-              <th>Condición Operativa del Aula:</th>
+              <th>Impacto del ticket:</th>
               <td>{{ getImpactoAula(item.prioridad, item.estado) }}</td>
               <th>Fecha y Hora de Registro:</th>
               <td>{{ item.fechaRegistro | date:'dd/MM/yyyy, HH:mm' }} hrs</td>
             </tr>
             <tr>
-              <th>Reportado / Solicitado por:</th>
+              <th>Solicitante:</th>
               <td colspan="3">{{ obtenerSolicitanteFormal(item.reportadoPor) }}</td>
             </tr>
           </tbody>
@@ -69,14 +69,14 @@
       </section>
 
       <section class="print-section">
-        <h2 class="print-section-title">II. DESCRIPCIÓN Y DIAGNÓSTICO DE LA INCIDENCIA</h2>
+        <h2 class="print-section-title">II. DESCRIPCIÓN DEL TICKET</h2>
         <div class="print-text-box">
           {{ item.descripcion }}
         </div>
       </section>
 
       <section class="print-section">
-        <h2 class="print-section-title">III. TRAZABILIDAD Y REGISTRO DE INTERVENCIÓN TÉCNICA</h2>
+        <h2 class="print-section-title">III. TRAZABILIDAD DE SOPORTE</h2>
         @if (atencionVinculada(); as orden) {
           <table class="print-table">
             <tbody>
@@ -89,7 +89,7 @@
               <tr>
                 <th>Fecha de Asignación:</th>
                 <td>{{ orden.fechaRegistro | date:'dd/MM/yyyy, HH:mm' }} hrs</td>
-                <th>Fecha de Certificación:</th>
+                <th>Fecha de resolución:</th>
                 <td>{{ orden.fechaResolucion ? ((orden.fechaResolucion | date:'dd/MM/yyyy, HH:mm') + ' hrs') : 'En proceso de intervención' }}</td>
               </tr>
               <tr>
@@ -105,11 +105,11 @@
                 <th>Estado de Despacho:</th>
                 <td>Registrado en Unidad de Soporte Técnico</td>
                 <th>Especialista Responsable:</th>
-                <td>Ing. Carlos Mendoza (Turno Operativo)</td>
+                <td>Pendiente de asignación</td>
               </tr>
               <tr>
                 <th>Observaciones de Despacho:</th>
-                <td colspan="3">Expediente verificado para inspección presencial y atención correctiva en el ambiente académico.</td>
+                <td colspan="3">Ticket registrado y disponible para asignación a un especialista de soporte TI.</td>
               </tr>
             </tbody>
           </table>
@@ -120,7 +120,7 @@
         <div class="print-sig-col">
           <div class="print-sig-rule"></div>
           <strong>{{ obtenerSolicitanteFormal(item.reportadoPor) }}</strong>
-          <span>Solicitante / Reportante de Incidencia</span>
+          <span>Solicitante</span>
         </div>
         <div class="print-sig-col">
           <div class="print-sig-rule"></div>
@@ -130,7 +130,7 @@
         <div class="print-sig-col">
           <div class="print-sig-rule"></div>
           <strong>Ing. Ricardo Salazar Vega</strong>
-          <span>Jefe de Infraestructura y Mantenimiento</span>
+          <span>Responsable de Mesa de Ayuda TI</span>
         </div>
       </section>
     </article>
@@ -139,25 +139,25 @@
       <!-- Solapa Superior Sólida Semántica (Folder Tab) -->
       <div class="folder-tab-row">
         <span class="folder-tab">
-          <span>REPORTE #{{ formatCount(item.id) }} &bull; {{ getEstadoLabel(item.estado) }}</span>
+          <span>TICKET #{{ formatCount(item.id) }} &bull; {{ getEstadoLabel(item.estado) }}</span>
           <span class="step-dots" aria-hidden="true">
             <span class="step-pip on"></span>
             <span class="step-pip" [class.on]="getPasoEstado(item.estado) >= 2"></span>
             <span class="step-pip" [class.on]="getPasoEstado(item.estado) >= 3"></span>
           </span>
         </span>
-        <span class="folder-stage-tag">ETAPA {{ getPasoEstado(item.estado) }} DE 3</span>
+        <span class="folder-stage-tag">FASE {{ getPasoEstado(item.estado) }} DE 3</span>
       </div>
 
       <article class="detail-card">
         <!-- Encabezado Tonal del Expediente -->
         <div class="detail-top">
           <div class="room-identity">
-            <span class="room-plaque">{{ item.aulaId }}</span>
+            <span class="room-plaque">#{{ formatCount(item.id) }}</span>
             <div>
-              <span class="room-location">{{ item.aulaUbicacion || 'PABELLÓN CENTRAL • CAMPUS UTP' }}</span>
+              <span class="room-location">{{ item.servicioAfectado || 'Servicio general' }} · {{ item.aulaUbicacion || 'Ubicación no especificada' }}</span>
               <h2 class="detail-title">
-                Incidencia de tipo {{ getCategoriaLabel(item.tipoProblema) }}
+              Ticket de {{ getCategoriaLabel(item.tipoProblema) }}
               </h2>
             </div>
           </div>
@@ -190,8 +190,8 @@
             (click)="cambiarEstado('EN_ATENCION')">
             <mat-icon>{{ getPasoEstado(item.estado) > 2 ? 'check_circle' : 'handyman' }}</mat-icon>
             <div class="step-copy">
-              <strong>2. En Intervención Técnica</strong>
-              <span>{{ item.estado === 'PENDIENTE' ? 'Haz clic para iniciar atención' : (item.estado === 'EN_ATENCION' ? 'Soporte técnico en el aula' : 'Etapa completada') }}</span>
+              <strong>2. En atención por Soporte TI</strong>
+              <span>{{ item.estado === 'PENDIENTE' ? 'Haz clic para iniciar atención' : (item.estado === 'EN_ATENCION' ? 'El Service Desk está atendiendo el ticket' : 'Etapa completada') }}</span>
             </div>
           </button>
 
@@ -202,8 +202,8 @@
             (click)="cambiarEstado('RESUELTO')">
             <mat-icon>verified</mat-icon>
             <div class="step-copy">
-              <strong>3. Aula Operativa y Liberada</strong>
-              <span>{{ item.estado === 'EN_ATENCION' ? 'Haz clic para finalizar y liberar' : (item.estado === 'RESUELTO' ? 'Incidencia subsanada (Cerrado)' : 'Requiere pasar por Etapa 2') }}</span>
+              <strong>3. Ticket resuelto</strong>
+              <span>{{ item.estado === 'EN_ATENCION' ? 'Haz clic para finalizar la atención' : (item.estado === 'RESUELTO' ? 'Ticket atendido y cerrado' : 'Pendiente de inicio de atención') }}</span>
             </div>
           </button>
         </div>
@@ -211,14 +211,14 @@
         <!-- Cuerpo de 2 Columnas -->
         <div class="detail-body">
           <section>
-            <h3 class="section-heading">Diagnóstico del Reporte</h3>
+            <h3 class="section-heading">Descripción del ticket</h3>
             <p class="diagnostic-box">
               {{ item.descripcion }}
             </p>
           </section>
 
           <section>
-            <h3 class="section-heading">Condición Operativa y Prioridad</h3>
+            <h3 class="section-heading">Impacto y prioridad</h3>
 
             <div class="c2-unified-condition condition-box-spaced">
               <span class="condition-left">
@@ -233,9 +233,9 @@
             <div class="c2-unified-condition condition-box-spaced">
               <span class="condition-left">
                 <mat-icon>place</mat-icon>
-                <span>{{ item.aulaUbicacion || 'Pabellón Central • Campus UTP' }}</span>
+                <span>{{ item.aulaUbicacion || 'Ubicación no especificada' }}</span>
               </span>
-              <span class="condition-prio">Aula {{ item.aulaId }}</span>
+              <span class="condition-prio">{{ item.aulaUbicacion || 'Ubicación no especificada' }}</span>
             </div>
 
             <div class="c2-unified-condition">
@@ -281,8 +281,8 @@
           } @else {
             <div class="audit-empty-row">
               <span>Este expediente se encuentra registrado y disponible en la bandeja de despacho para asignación de un especialista.</span>
-              <a [routerLink]="['/atenciones']" [queryParams]="{ reporte: item.id }" class="audit-dispatch-link">
-                <span>Ir a Bandeja de Atenciones</span>
+              <a [routerLink]="['/atenciones']" [queryParams]="{ ticket: item.id }" class="audit-dispatch-link">
+                <span>Ver intervenciones de soporte</span>
                 <mat-icon>arrow_forward</mat-icon>
               </a>
             </div>
@@ -301,7 +301,7 @@
                 type="button"
                 class="m3-btn-cancel-del"
                 (click)="imprimirActaReporte()"
-                title="Imprimir o guardar acta técnica del reporte en PDF">
+                title="Imprimir o guardar el resumen del ticket en PDF">
                 <mat-icon>print</mat-icon>
                 <span>Imprimir Acta</span>
               </button>
@@ -309,10 +309,10 @@
               <a
                 class="m3-btn-edit"
                 [routerLink]="['/atenciones']"
-                [queryParams]="{ reporte: item.id }"
-                title="Abrir Bandeja de Atenciones Técnicas para este reporte">
+                [queryParams]="{ ticket: item.id }"
+                title="Abrir las intervenciones de soporte de este ticket">
                 <mat-icon>assignment_turned_in</mat-icon>
-                <span>Ver en Atenciones</span>
+                <span>Ver intervención</span>
               </a>
 
               @if (authService.puedeActualizarReportes()) {
@@ -323,14 +323,14 @@
                   [attr.title]="item.estado === 'RESUELTO' ? 'Un reporte resuelto y cerrado no puede ser editado' : 'Editar diagnóstico, categoría o prioridad'"
                   (click)="irAEditarReporte()">
                   <mat-icon>{{ item.estado === 'RESUELTO' ? 'lock' : 'edit_note' }}</mat-icon>
-                  <span>{{ item.estado === 'RESUELTO' ? 'Reporte cerrado' : 'Editar reporte' }}</span>
+                  <span>{{ item.estado === 'RESUELTO' ? 'Ticket cerrado' : 'Editar ticket' }}</span>
                 </button>
               }
 
               @if (authService.puedeEliminarReportes()) {
                 <button type="button" class="m3-btn-delete" (click)="solicitarEliminacion()">
                   <mat-icon>delete_outline</mat-icon>
-                  <span>Eliminar reporte</span>
+                  <span>Eliminar ticket</span>
                 </button>
               }
             </div>
@@ -339,7 +339,7 @@
               <div class="delete-confirm-copy">
                 <mat-icon>warning_amber</mat-icon>
                 <span>
-                  ¿Confirmas eliminar permanentemente el <strong>Reporte #{{ formatCount(item.id) }} ({{ item.aulaId }})</strong> de la base de datos?
+                  ¿Confirmas eliminar permanentemente el <strong>ticket #{{ formatCount(item.id) }}</strong> de la base de datos?
                 </span>
               </div>
               <div class="crud-btn-group">
@@ -348,7 +348,7 @@
                 </button>
                 <button type="button" class="m3-btn-confirm-del" (click)="confirmarEliminacion()">
                   <mat-icon>delete_forever</mat-icon>
-                  <span>Sí, eliminar reporte</span>
+                  <span>Sí, eliminar ticket</span>
                 </button>
               </div>
             </div>
@@ -360,11 +360,11 @@
     <!-- Reporte No Encontrado -->
     <div class="not-found-box" role="alert">
       <mat-icon class="not-found-icon">error_outline</mat-icon>
-      <h2 class="not-found-title">Reporte no encontrado</h2>
+      <h2 class="not-found-title">Ticket no encontrado</h2>
       <p class="not-found-desc">
         No existe ningún reporte asociado al identificador <strong>#{{ reporteId() }}</strong>.
       </p>
-      <a routerLink="/reportes" class="m3-btn-back">
+      <a routerLink="/tickets" class="m3-btn-back">
         <mat-icon>arrow_back</mat-icon>
         <span>Regresar al tablero general</span>
       </a>

@@ -61,60 +61,25 @@ export class ReporteDetailComponent {
   getEstadoFormalActa(estado: EstadoReporte): string {
     switch (estado) {
       case 'PENDIENTE':
-        return 'Pendiente de Intervención Técnica';
+        return 'Pendiente de atención';
       case 'EN_ATENCION':
-        return 'En Intervención Técnica en Sitio';
+        return 'En atención por Soporte TI';
       case 'RESUELTO':
-        return 'Resuelto y Certificado (Ambiente Operativo)';
+        return 'Resuelto';
     }
   }
 
   obtenerSolicitanteFormal(autor?: string): string {
     const limpio = (autor || '').trim();
-    if (!limpio || limpio.toLowerCase() === 'alumno') {
-      return 'Docente de Turno — Comunidad Académica UTP';
-    }
-    if (
-      limpio.toLowerCase().includes('admin') ||
-      limpio.toLowerCase() === 'administrador'
-    ) {
-      return 'Ing. Ricardo Salazar Vega (Coordinación de Infraestructura)';
-    }
-    if (
-      limpio.toLowerCase() === 'tecnico' ||
-      limpio.toLowerCase() === 'tecnico01' ||
-      limpio.toLowerCase() === 'soporte técnico utp'
-    ) {
-      return 'Ing. Carlos Mendoza (Especialista de Soporte Técnico)';
-    }
-    return limpio;
+    return limpio || 'Comunidad universitaria';
   }
 
   obtenerEspecialistaFormal(tecnico?: string): string {
     const limpio = (tecnico || '').trim();
     if (!limpio) {
-      return 'Por asignar en Unidad de Mantenimiento';
+      return 'Pendiente de asignación por Soporte TI';
     }
-    if (
-      limpio.toLowerCase().includes('admin') ||
-      limpio.toLowerCase() === 'administrador'
-    ) {
-      return 'Ing. Ricardo Salazar Vega';
-    }
-    if (
-      limpio.toLowerCase() === 'tecnico' ||
-      limpio.toLowerCase() === 'tecnico01' ||
-      limpio.toLowerCase() === 'soporte técnico utp'
-    ) {
-      return 'Ing. Carlos Mendoza';
-    }
-    if (limpio.toLowerCase() === 'tecnico02') {
-      return 'Ing. Ana Torres';
-    }
-    if (limpio.toLowerCase() === 'soporte_redes') {
-      return 'Ing. Elena Gómez';
-    }
-    return limpio;
+    return limpio || 'Pendiente de asignación por Soporte TI';
   }
 
   constructor() {
@@ -142,7 +107,7 @@ export class ReporteDetailComponent {
 
     if (actual.estado === 'RESUELTO') {
       this.snackBar.open(
-        `El Reporte #${this.formatCount(actual.id)} ya está resuelto y cerrado; no admite ediciones.`,
+        `El ticket #${this.formatCount(actual.id)} ya está resuelto y cerrado; no admite ediciones.`,
         'Cerrar',
         { duration: 4000, horizontalPosition: 'end', verticalPosition: 'bottom' }
       );
@@ -163,7 +128,7 @@ export class ReporteDetailComponent {
       return;
     }
 
-    this.router.navigate(['/reportes', actual.id, 'editar']);
+    this.router.navigate(['/tickets', actual.id, 'editar']);
   }
 
   solicitarEliminacion(): void {
@@ -196,16 +161,16 @@ export class ReporteDetailComponent {
     this.reporteService.eliminarReporte(actual.id).subscribe({
       next: () => {
         this.snackBar.open(
-          `Reporte #${this.formatCount(actual.id)} (${actual.aulaId}) eliminado permanentemente`,
+          `Ticket #${this.formatCount(actual.id)} eliminado permanentemente`,
           'Cerrar',
           { duration: 4000, horizontalPosition: 'end', verticalPosition: 'bottom' }
         );
-        this.router.navigate(['/reportes']);
+        this.router.navigate(['/tickets']);
       },
       error: (err: HttpErrorResponse) => {
         const msg =
           err?.error?.message ||
-          'No se pudo eliminar el reporte. Verifica tus permisos de administrador.';
+          'No se pudo eliminar el ticket. Verifica tus permisos de administrador.';
         this.snackBar.open(msg, 'Cerrar', {
           duration: 4500,
           horizontalPosition: 'end',
@@ -224,7 +189,7 @@ export class ReporteDetailComponent {
     if (!this.authService.puedeActualizarReportes()) {
       this.snackBar
         .open(
-          'Se requiere una cuenta de Soporte Técnico o Administrador para actualizar el estado del reporte.',
+          'Se requiere una cuenta de Soporte Técnico o Administrador para actualizar el ticket.',
           'Iniciar sesión',
           { duration: 5000, horizontalPosition: 'end', verticalPosition: 'bottom' }
         )
@@ -238,7 +203,7 @@ export class ReporteDetailComponent {
     // Máquina de estados progresiva realista (PENDIENTE -> EN_ATENCION -> RESUELTO)
     if (actual.estado === 'RESUELTO') {
       this.snackBar.open(
-        `El Reporte #${this.formatCount(actual.id)} ya fue resuelto y cerrado; no puede retroceder a etapas anteriores.`,
+        `El ticket #${this.formatCount(actual.id)} ya fue resuelto y cerrado; no puede retroceder a etapas anteriores.`,
         'Cerrar',
         { duration: 4000, horizontalPosition: 'end', verticalPosition: 'bottom' }
       );
@@ -247,7 +212,7 @@ export class ReporteDetailComponent {
 
     if (actual.estado === 'EN_ATENCION' && nuevoEstado === 'PENDIENTE') {
       this.snackBar.open(
-        'El soporte técnico ya está interviniendo el aula (Etapa 2); el siguiente paso es resolver y liberar el aula (Etapa 3).',
+        'Soporte TI ya está atendiendo este ticket; el siguiente paso es registrar su resolución.',
         'Cerrar',
         { duration: 4000, horizontalPosition: 'end', verticalPosition: 'bottom' }
       );
@@ -257,8 +222,8 @@ export class ReporteDetailComponent {
     if (actual.estado === 'PENDIENTE' && nuevoEstado === 'RESUELTO') {
       this.snackBar
         .open(
-          'Flujo progresivo: Primero debes iniciar la Etapa 2 (En Intervención Técnica) antes de cerrar el reporte.',
-          'Iniciar Etapa 2',
+          'Primero debes iniciar la atención del ticket antes de marcarlo como resuelto.',
+          'Iniciar atención',
           { duration: 5000, horizontalPosition: 'end', verticalPosition: 'bottom' }
         )
         .onAction()
@@ -271,7 +236,7 @@ export class ReporteDetailComponent {
     this.reporteService.actualizarEstado(actual.id, nuevoEstado).subscribe({
       next: () => {
         this.snackBar.open(
-          `Reporte #${this.formatCount(actual.id)} (${actual.aulaId}) actualizado a ${this.getEstadoLabel(nuevoEstado)}`,
+          `Ticket #${this.formatCount(actual.id)} actualizado a ${this.getEstadoLabel(nuevoEstado)}`,
           'Cerrar',
           { duration: 3500, horizontalPosition: 'end', verticalPosition: 'bottom' }
         );
@@ -280,7 +245,7 @@ export class ReporteDetailComponent {
         const serverMsg = err?.error?.message;
         if (err.status === 404) {
           this.snackBar.open(
-            serverMsg || `El reporte #${actual.id} no existe en la base de datos del servidor (404).`,
+            serverMsg || `El ticket #${actual.id} no existe en la base de datos del servidor (404).`,
             'Cerrar',
             { duration: 4500, horizontalPosition: 'end', verticalPosition: 'bottom' }
           );
@@ -288,7 +253,7 @@ export class ReporteDetailComponent {
         }
         if (err.status === 400) {
           this.snackBar.open(
-            serverMsg || 'Solicitud inválida al intentar actualizar el reporte (400).',
+            serverMsg || 'Solicitud inválida al intentar actualizar el ticket (400).',
             'Cerrar',
             { duration: 4500, horizontalPosition: 'end', verticalPosition: 'bottom' }
           );
@@ -329,6 +294,13 @@ export class ReporteDetailComponent {
 
   getCategoriaLabel(tipo: TipoProblema): string {
     switch (tipo) {
+      case 'AUTENTICACION': return 'Autenticación';
+      case 'PLATAFORMAS': return 'Plataformas';
+      case 'REDES': return 'Redes y Wi-Fi';
+      case 'CUENTAS': return 'Cuentas';
+      case 'SOFTWARE': return 'Software';
+      case 'CORREO': return 'Correo institucional';
+      case 'EQUIPOS': return 'Equipos';
       case 'TECNOLOGICO': return 'Tecnológico';
       case 'ELECTRICO': return 'Eléctrico';
       case 'MOBILIARIO': return 'Mobiliario';
@@ -339,11 +311,11 @@ export class ReporteDetailComponent {
 
   getImpactoAula(prioridad: Prioridad, estado: EstadoReporte): string {
     if (estado === 'RESUELTO') {
-      return 'Aula 100% operativa';
+      return 'Ticket resuelto';
     }
     if (prioridad === 'ALTA') {
-      return 'Inhabilita uso en clase';
+      return 'Atención prioritaria';
     }
-    return 'Aula operativa con obs.';
+    return 'Atención según prioridad';
   }
 }

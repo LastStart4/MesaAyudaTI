@@ -18,6 +18,7 @@ public class ReporteResponseDTO {
     private String aulaUbicacion;
     private TipoProblema tipoProblema;
     private String descripcion;
+    private String servicioAfectado;
     private Prioridad prioridad;
     private EstadoReporte estado;
     private LocalDateTime fechaRegistro;
@@ -40,7 +41,7 @@ public class ReporteResponseDTO {
         if (reporte == null) {
             return null;
         }
-        String codigoAula = reporte.getAulaId() != null ? reporte.getAulaId() : "SIN-AULA";
+        String codigoAula = reporte.getAulaId() != null ? reporte.getAulaId() : "";
         ReporteResponseDTO dto = new ReporteResponseDTO(
                 reporte.getId(),
                 codigoAula,
@@ -59,6 +60,7 @@ public class ReporteResponseDTO {
                         ? reporte.getReportadoPor()
                         : "Comunidad Académica UTP"
         );
+        dto.setServicioAfectado(reporte.getServicioAfectado());
         return dto;
     }
 
@@ -108,6 +110,14 @@ public class ReporteResponseDTO {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getServicioAfectado() {
+        return servicioAfectado;
+    }
+
+    public void setServicioAfectado(String servicioAfectado) {
+        this.servicioAfectado = servicioAfectado;
     }
 
     public Prioridad getPrioridad() {

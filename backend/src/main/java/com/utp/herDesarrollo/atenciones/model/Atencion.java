@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "atenciones")
+@Table(name = "mesa_ayuda_intervenciones")
 public class Atencion {
 
     @Id
@@ -14,7 +14,7 @@ public class Atencion {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "reporte_id", nullable = false)
+    @JoinColumn(name = "ticket_id", nullable = false)
     private Reporte reporte;
 
     @Column(name = "tecnico_encargado", nullable = false, length = 100)
