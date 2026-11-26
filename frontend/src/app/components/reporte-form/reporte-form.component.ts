@@ -217,28 +217,30 @@ export class ReporteFormComponent {
 
   /**
    * Validador Nivel 2 (a nivel de FormGroup):
-   * Impide registrar un reporte si ya existe uno PENDIENTE o EN_ATENCION
-   * para la misma aula y la misma categoría técnica (excluyendo el ID propio en modo edición).
+   * Evita registrar el mismo incidente activo por servicio, categoría y descripción,
+   * sin depender de una ubicación física.
    */
   private reporteDuplicadoValidator(): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
-      const aulaId = group.get('aulaId')?.value ?? '';
+      const servicioAfectado = group.get('servicioAfectado')?.value ?? '';
+      const descripcion = group.get('descripcion')?.value ?? '';
       const tipoSolicitud = group.get('tipoSolicitud')?.value as TipoSolicitud;
       const tipo = group.get('tipoProblema')?.value as TipoProblema;
-      if (tipoSolicitud !== 'INCIDENTE' || !aulaId || !tipo) {
+      if (tipoSolicitud !== 'INCIDENTE' || !servicioAfectado || !descripcion || !tipo) {
         return null;
       }
 
       const duplicado = this.reporteService.buscarDuplicadoActivo(
-        aulaId,
+        servicioAfectado,
         tipo,
+        descripcion,
         this.reporteEditandoId()
       );
       if (duplicado) {
         return {
           reporteDuplicado: {
             id: duplicado.id,
-            aulaId: duplicado.aulaId,
+            servicioAfectado: duplicado.servicioAfectado,
             estado: duplicado.estado
           }
         };

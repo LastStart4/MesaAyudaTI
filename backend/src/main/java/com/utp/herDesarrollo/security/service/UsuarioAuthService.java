@@ -30,21 +30,27 @@ public class UsuarioAuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final String passwordTecnico;
     private final String passwordAdmin;
+    private final boolean demoUsersEnabled;
 
     public UsuarioAuthService(
             UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
-            @Value("${app.security.tecnico.password:tecnico123}") String passwordTecnico,
-            @Value("${app.security.admin.password:admin123}") String passwordAdmin) {
+            @Value("${app.security.tecnico.password:}") String passwordTecnico,
+            @Value("${app.security.admin.password:}") String passwordAdmin,
+            @Value("${app.security.demo-users.enabled:false}") boolean demoUsersEnabled) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.passwordTecnico = passwordTecnico;
         this.passwordAdmin = passwordAdmin;
+        this.demoUsersEnabled = demoUsersEnabled;
     }
 
     @PostConstruct
     @Transactional
     public void asegurarUsuariosBase() {
+        if (!demoUsersEnabled) {
+            return;
+        }
         sembrarSiNoExiste(
                 "tecnico",
                 "Soporte Técnico UTP",
@@ -110,6 +116,9 @@ public class UsuarioAuthService implements UserDetailsService {
             String rawPassword,
             RolUsuario rol,
             String especialidad) {
+        if (rawPassword == null || rawPassword.isBlank()) {
+            return;
+        }
         if (!usuarioRepository.existsByUsernameIgnoreCase(username)) {
             Usuario nuevo = new Usuario(
                     username,
@@ -185,7 +194,7 @@ public class UsuarioAuthService implements UserDetailsService {
             throw new ReglaNegocioException("El correo institucional '" + correo + "' ya está registrado.");
         }
 
-        RolUsuario rol = resolverRol(dto.rol());
+        RolUsuario rol = RolUsuario.ALUMNO;
         String especialidad = (dto.especialidad() != null && !dto.especialidad().trim().isEmpty())
                 ? dto.especialidad().trim()
                 : switch (rol) {
@@ -259,15 +268,4 @@ public class UsuarioAuthService implements UserDetailsService {
         );
     }
 
-    private RolUsuario resolverRol(String rolTexto) {
-        if (rolTexto == null || rolTexto.isBlank()) {
-            return RolUsuario.ALUMNO;
-        }
-        String normalizado = rolTexto.trim().toUpperCase().replace("ROLE_", "");
-        return switch (normalizado) {
-            case "ADMIN", "ADMINISTRADOR" -> RolUsuario.ADMIN;
-            case "TECNICO", "SOPORTE" -> RolUsuario.TECNICO;
-            default -> RolUsuario.ALUMNO;
-        };
-    }
 }

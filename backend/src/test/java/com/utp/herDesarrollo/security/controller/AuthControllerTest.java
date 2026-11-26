@@ -73,42 +73,48 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/register - Debe crear un nuevo usuario técnico y permitir iniciar sesión con él")
-    void debeRegistrarNuevoUsuarioYAutenticar() throws Exception {
-        String registroJson = """
-                {
-                    "username": "jramirez",
-                    "nombreCompleto": "Jorge Ramírez",
-                    "correo": "jramirez@utp.edu.pe",
-                    "password": "utp2026",
-                    "rol": "TECNICO",
-                    "especialidad": "Soporte de Laboratorios"
-                }
-                """;
+    @DisplayName("POST /api/auth/register - Solo permite crear solicitantes aunque se solicite un rol privilegiado")
+    void debeRegistrarSoloSolicitantesYAutenticarConRolLimitado() throws Exception {
+        String[] rolesSolicitados = {"ADMIN", "TECNICO"};
+        for (String rolSolicitado : rolesSolicitados) {
+            String username = "jramirez" + rolSolicitado.toLowerCase();
+            String registroJson = """
+                    {
+                        "username": "%s",
+                        "nombreCompleto": "Jorge Ramírez",
+                        "correo": "%s@utp.edu.pe",
+                        "password": "utp2026",
+                        "rol": "%s",
+                        "especialidad": "Soporte de Laboratorios"
+                    }
+                    """.formatted(username, username, rolSolicitado);
 
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registroJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token", notNullValue()))
-                .andExpect(jsonPath("$.username", is("jramirez")))
-                .andExpect(jsonPath("$.nombreCompleto", is("Jorge Ramírez")))
-                .andExpect(jsonPath("$.roles", hasItem("ROLE_TECNICO")));
+            mockMvc.perform(post("/api/auth/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(registroJson))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.token", notNullValue()))
+                    .andExpect(jsonPath("$.username", is(username)))
+                    .andExpect(jsonPath("$.nombreCompleto", is("Jorge Ramírez")))
+                    .andExpect(jsonPath("$.roles", hasItem("ROLE_ALUMNO")))
+                    .andExpect(jsonPath("$.roles", not(hasItem("ROLE_ADMIN"))))
+                    .andExpect(jsonPath("$.roles", not(hasItem("ROLE_TECNICO"))));
 
-        String loginJson = """
-                {
-                    "username": "jramirez",
-                    "password": "utp2026"
-                }
-                """;
+            String loginJson = """
+                    {
+                        "username": "%s",
+                        "password": "utp2026"
+                    }
+                    """.formatted(username);
 
-        mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(loginJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token", notNullValue()))
-                .andExpect(jsonPath("$.nombreCompleto", is("Jorge Ramírez")))
-                .andExpect(jsonPath("$.roles", hasItem("ROLE_TECNICO")));
+            mockMvc.perform(post("/api/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(loginJson))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.token", notNullValue()))
+                    .andExpect(jsonPath("$.nombreCompleto", is("Jorge Ramírez")))
+                    .andExpect(jsonPath("$.roles", hasItem("ROLE_ALUMNO")));
+        }
     }
 
     @Test

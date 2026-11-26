@@ -60,12 +60,100 @@
             </div>
           </div>
 
-          <!-- Ubicación física opcional de la incidencia -->
+          <!-- Categoría Técnica del Problema -->
+          <div class="field-group">
+            <label class="field-label">3. Área de soporte *</label>
+            <div class="category-selector-grid" role="radiogroup" aria-label="Categoría técnica">
+              @for (cat of categorias; track cat.valor) {
+                <button
+                  type="button"
+                  class="cat-option-btn"
+                  [class.active]="f.tipoProblema.value === cat.valor"
+                  (click)="seleccionarCategoria(cat.valor)">
+                  <mat-icon>{{ cat.icono }}</mat-icon>
+                  <span>{{ cat.label }}</span>
+                </button>
+              }
+            </div>
+
+            <!-- Alerta de Validación Nivel 2: Reporte Duplicado Activo -->
+            @if (reporteForm.errors?.['reporteDuplicado']; as dup) {
+              <div class="duplicate-alert-box" role="alert">
+                <div class="duplicate-alert-copy">
+                  <mat-icon>warning_amber</mat-icon>
+                  <div>
+                    <strong>Ticket similar detectado</strong>
+                    <span>
+                    Ya existe el ticket #{{ formatCount(dup.id) }} activo para el mismo servicio, categoría y descripción. Revisa el ticket o actualiza los datos.
+                    </span>
+                  </div>
+                </div>
+                <a [routerLink]="['/tickets', dup.id]" class="duplicate-link-btn">
+                  <span>Ver ticket #{{ formatCount(dup.id) }}</span>
+                  <mat-icon>open_in_new</mat-icon>
+                </a>
+              </div>
+            }
+          </div>
+
+          <!-- Nivel de Prioridad e Impacto -->
+          <div class="field-group">
+            <label class="field-label">4. Prioridad *</label>
+            <div class="prio-selector-grid" role="radiogroup" aria-label="Nivel de prioridad">
+              @for (p of prioridades; track p.valor) {
+                <button
+                  type="button"
+                  class="prio-option-card"
+                  [attr.data-prio]="p.valor"
+                  [class.active]="f.prioridad.value === p.valor"
+                  (click)="seleccionarPrioridad(p.valor)">
+                  <strong class="prio-title">{{ p.label }}</strong>
+                  <span class="prio-impact">{{ p.impacto }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Descripción Técnica con Contador de Caracteres Reales (sin espacios extremos) -->
           <div class="field-group">
             <div class="label-row">
-              <label for="aulaIdInput" class="field-label">3. Ubicación relacionada (opcional)</label>
-              <span class="quick-pick-caption">Ubicaciones frecuentes del campus:</span>
+              <label for="descripcionInput" class="field-label">5. Cuéntanos cómo podemos ayudarte *</label>
+              <span
+                class="char-counter"
+                [class.counter-warn]="getCaracteresReales() > 230">
+                {{ getCaracteresReales() }} / 255 caracteres
+              </span>
             </div>
+
+            <div
+              class="m3-textarea-box"
+              [class.field-invalid]="f.descripcion.invalid && (f.descripcion.touched || f.descripcion.dirty)"
+              [class.field-valid]="f.descripcion.valid && (f.descripcion.touched || f.descripcion.dirty)">
+              <textarea
+                id="descripcionInput"
+                rows="4"
+                formControlName="descripcion"
+                placeholder="Describe tu consulta, el problema o el servicio que necesitas. Incluye los datos necesarios para orientarte..."></textarea>
+            </div>
+
+            @if (f.descripcion.invalid && (f.descripcion.touched || f.descripcion.dirty)) {
+              <div class="error-msg" role="alert">
+                @if (f.descripcion.errors?.['required'] || f.descripcion.errors?.['soloEspacios']) {
+                  <span>La descripción no puede estar vacía ni contener solo espacios en blanco.</span>
+                } @else if (f.descripcion.errors?.['minlengthReal']) {
+                  <span>Escribe al menos 10 caracteres reales sin contar espacios vacíos (actual: {{ getCaracteresReales() }}).</span>
+                } @else if (f.descripcion.errors?.['diagnosticoIncoherente']) {
+                  <span>Describe brevemente tu necesidad con al menos dos palabras y sin caracteres repetidos.</span>
+                } @else if (f.descripcion.errors?.['maxlength']) {
+                  <span>Has superado el máximo permitido de 255 caracteres.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <details class="location-context">
+            <summary>Agregar ubicación física (opcional)</summary>
+            <p class="location-context__hint">Inclúyela solo si ayuda al equipo de soporte a localizar el problema en el campus.</p>
 
             @if (!modoEdicion()) {
               <div class="quick-rooms-row">
@@ -111,7 +199,7 @@
 
               <div class="input-wrapper">
                 <div class="label-row">
-                  <label for="ubicacionInput" class="sub-label">Pabellón y Piso (Auto-sincronizado)</label>
+                  <label for="ubicacionInput" class="sub-label">Pabellón y piso</label>
                   <span class="auto-sync-tag">
                     <mat-icon>verified</mat-icon>
                     <span>AUTO</span>
@@ -129,98 +217,7 @@
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- Categoría Técnica del Problema -->
-          <div class="field-group">
-            <label class="field-label">4. Área de soporte *</label>
-            <div class="category-selector-grid" role="radiogroup" aria-label="Categoría técnica">
-              @for (cat of categorias; track cat.valor) {
-                <button
-                  type="button"
-                  class="cat-option-btn"
-                  [class.active]="f.tipoProblema.value === cat.valor"
-                  (click)="seleccionarCategoria(cat.valor)">
-                  <mat-icon>{{ cat.icono }}</mat-icon>
-                  <span>{{ cat.label }}</span>
-                </button>
-              }
-            </div>
-
-            <!-- Alerta de Validación Nivel 2: Reporte Duplicado Activo -->
-            @if (reporteForm.errors?.['reporteDuplicado']; as dup) {
-              <div class="duplicate-alert-box" role="alert">
-                <div class="duplicate-alert-copy">
-                  <mat-icon>warning_amber</mat-icon>
-                  <div>
-                    <strong>Ticket similar detectado en {{ dup.aulaId }}</strong>
-                    <span>
-                    Ya existe el ticket #{{ formatCount(dup.id) }} activo ({{ dup.estado }}) para la categoría {{ getCategoriaActual().label }}. Revisa el ticket o actualiza los datos.
-                    </span>
-                  </div>
-                </div>
-                <a [routerLink]="['/tickets', dup.id]" class="duplicate-link-btn">
-                  <span>Ver ticket #{{ formatCount(dup.id) }}</span>
-                  <mat-icon>open_in_new</mat-icon>
-                </a>
-              </div>
-            }
-          </div>
-
-          <!-- Nivel de Prioridad e Impacto -->
-          <div class="field-group">
-            <label class="field-label">5. Prioridad *</label>
-            <div class="prio-selector-grid" role="radiogroup" aria-label="Nivel de prioridad">
-              @for (p of prioridades; track p.valor) {
-                <button
-                  type="button"
-                  class="prio-option-card"
-                  [attr.data-prio]="p.valor"
-                  [class.active]="f.prioridad.value === p.valor"
-                  (click)="seleccionarPrioridad(p.valor)">
-                  <strong class="prio-title">{{ p.label }}</strong>
-                  <span class="prio-impact">{{ p.impacto }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Descripción Técnica con Contador de Caracteres Reales (sin espacios extremos) -->
-          <div class="field-group">
-            <div class="label-row">
-              <label for="descripcionInput" class="field-label">6. Cuéntanos cómo podemos ayudarte *</label>
-              <span
-                class="char-counter"
-                [class.counter-warn]="getCaracteresReales() > 230">
-                {{ getCaracteresReales() }} / 255 caracteres
-              </span>
-            </div>
-
-            <div
-              class="m3-textarea-box"
-              [class.field-invalid]="f.descripcion.invalid && (f.descripcion.touched || f.descripcion.dirty)"
-              [class.field-valid]="f.descripcion.valid && (f.descripcion.touched || f.descripcion.dirty)">
-              <textarea
-                id="descripcionInput"
-                rows="4"
-                formControlName="descripcion"
-                placeholder="Describe tu consulta, el problema o el servicio que necesitas. Incluye los datos necesarios para orientarte..."></textarea>
-            </div>
-
-            @if (f.descripcion.invalid && (f.descripcion.touched || f.descripcion.dirty)) {
-              <div class="error-msg" role="alert">
-                @if (f.descripcion.errors?.['required'] || f.descripcion.errors?.['soloEspacios']) {
-                  <span>La descripción no puede estar vacía ni contener solo espacios en blanco.</span>
-                } @else if (f.descripcion.errors?.['minlengthReal']) {
-                  <span>Escribe al menos 10 caracteres reales sin contar espacios vacíos (actual: {{ getCaracteresReales() }}).</span>
-                } @else if (f.descripcion.errors?.['diagnosticoIncoherente']) {
-                  <span>Describe brevemente tu necesidad con al menos dos palabras y sin caracteres repetidos.</span>
-                } @else if (f.descripcion.errors?.['maxlength']) {
-                  <span>Has superado el máximo permitido de 255 caracteres.</span>
-                }
-              </div>
-            }
-          </div>
+          </details>
 
           <!-- Acciones del Formulario -->
           <div class="form-actions">
@@ -263,7 +260,7 @@
             <div class="card-header">
               <div class="room-identity">
                 <span class="room-plaque">
-                  {{ (f.aulaId.value.trim() || 'MESA DE AYUDA').toUpperCase() }}
+                  MESA DE AYUDA
                 </span>
                 <div>
                   <span class="room-category-title">
@@ -271,7 +268,7 @@
                     <span>{{ getTipoSolicitudActual() }} · {{ getCategoriaActual().label }}</span>
                   </span>
                   <span class="room-location">
-                    {{ f.servicioAfectado.value }} · {{ f.aulaUbicacion.value || 'Ubicación no especificada' }}
+                    {{ f.servicioAfectado.value }}{{ f.aulaUbicacion.value ? ' · ' + f.aulaUbicacion.value : '' }}
                   </span>
                 </div>
               </div>

@@ -227,23 +227,26 @@ export class ReporteService {
   }
 
   /**
-   * Verifica si ya existe un reporte activo (PENDIENTE o EN_ATENCION)
-   * para la misma aula y la misma categoría técnica, excluyendo opcionalmente el ID en edición.
+   * Verifica si ya existe un incidente activo para el mismo servicio, categoría y descripción.
    */
   buscarDuplicadoActivo(
-    aulaId: string,
+    servicioAfectado: string,
     tipoProblema: TipoProblema,
+    descripcion: string,
     excluirId?: number | null
   ): Reporte | undefined {
-    const codigoNormalizado = aulaId.trim().toUpperCase();
-    if (!codigoNormalizado) {
+    const servicioNormalizado = servicioAfectado.trim().toLowerCase();
+    const descripcionNormalizada = descripcion.trim().toLowerCase();
+    if (!servicioNormalizado || !descripcionNormalizada) {
       return undefined;
     }
     return this.reportesState().find(
       r =>
         r.id !== excluirId &&
-        r.aulaId.toUpperCase() === codigoNormalizado &&
+        (r.tipoSolicitud || 'INCIDENTE') === 'INCIDENTE' &&
+        (r.servicioAfectado || 'Servicio general').trim().toLowerCase() === servicioNormalizado &&
         r.tipoProblema === tipoProblema &&
+        r.descripcion.trim().toLowerCase() === descripcionNormalizada &&
         r.estado !== 'RESUELTO'
     );
   }

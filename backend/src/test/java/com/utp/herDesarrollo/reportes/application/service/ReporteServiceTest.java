@@ -275,17 +275,21 @@ class ReporteServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar ReglaNegocioException si ya existe un reporte activo del mismo tipoProblema en la misma aula")
-    void debeLanzarExcepcionCuandoExisteReporteDuplicadoActivoEnMismaAula() {
+    @DisplayName("Debe detectar incidentes duplicados por servicio y descripción aunque no tengan ubicación")
+    void debeLanzarExcepcionCuandoExisteReporteDuplicadoSinUbicacion() {
         CrearReporteDTO dto = crearDTOValido();
-        Aula aulaMock = crearAulaMock(1L, "A-101");
+        dto.setAulaId("");
 
-        when(aulaRepository.findByCodigoIgnoreCase("A-101")).thenReturn(Optional.of(aulaMock));
-        when(reporteRepository.existsActiveIncidentByLocation(1L, TipoProblema.TECNOLOGICO, EstadoReporte.RESUELTO))
+        when(reporteRepository.existsActiveIncidentByIssue(
+                "Plataforma académica",
+                TipoProblema.TECNOLOGICO,
+                "Proyector apagado",
+                EstadoReporte.RESUELTO))
                 .thenReturn(true);
 
         assertThrows(ReglaNegocioException.class, () -> reporteService.crearReporte(dto));
         verify(reporteRepository, never()).save(any());
+        verifyNoInteractions(aulaRepository);
     }
 
     @Test
@@ -302,7 +306,7 @@ class ReporteServiceTest {
         ReporteResponseDTO respuesta = reporteService.crearReporte(dto);
 
         assertEquals(TipoSolicitud.SOLICITUD_SERVICIO, respuesta.getTipoSolicitud());
-        verify(reporteRepository, never()).existsActiveIncidentByLocation(anyLong(), any(), any());
+        verify(reporteRepository, never()).existsActiveIncidentByIssue(anyString(), any(), anyString(), any());
     }
 
     @Test

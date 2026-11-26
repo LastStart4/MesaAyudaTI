@@ -71,30 +71,34 @@ public interface ReporteRepository extends JpaRepository<Reporte, Long> {
     @Query("""
             SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
             FROM Reporte r
-            WHERE r.aula.id = :aulaId
+            WHERE LOWER(TRIM(r.servicioAfectado)) = LOWER(TRIM(:servicioAfectado))
               AND r.tipoProblema = :tipoProblema
+              AND LOWER(TRIM(r.descripcion)) = LOWER(TRIM(:descripcion))
               AND r.estado <> :estado
               AND (r.tipoSolicitud = com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud.INCIDENTE
                    OR r.tipoSolicitud IS NULL)
             """)
-    boolean existsActiveIncidentByLocation(
-            @Param("aulaId") Long aulaId,
+    boolean existsActiveIncidentByIssue(
+            @Param("servicioAfectado") String servicioAfectado,
             @Param("tipoProblema") TipoProblema tipoProblema,
+            @Param("descripcion") String descripcion,
             @Param("estado") EstadoReporte estado);
 
     @Query("""
             SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
             FROM Reporte r
-            WHERE r.aula.id = :aulaId
+            WHERE LOWER(TRIM(r.servicioAfectado)) = LOWER(TRIM(:servicioAfectado))
               AND r.tipoProblema = :tipoProblema
+              AND LOWER(TRIM(r.descripcion)) = LOWER(TRIM(:descripcion))
               AND r.estado <> :estado
               AND r.id <> :id
               AND (r.tipoSolicitud = com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud.INCIDENTE
                    OR r.tipoSolicitud IS NULL)
             """)
-    boolean existsActiveIncidentByLocationAndNotId(
-            @Param("aulaId") Long aulaId,
+    boolean existsActiveIncidentByIssueAndNotId(
+            @Param("servicioAfectado") String servicioAfectado,
             @Param("tipoProblema") TipoProblema tipoProblema,
+            @Param("descripcion") String descripcion,
             @Param("estado") EstadoReporte estado,
             @Param("id") Long id);
 }

@@ -1,7 +1,6 @@
 // ==========================================================================
 // Mesa de Ayuda TI - Sistema de Diseño Material Design 3 Personalizado
-// Marino Institucional & Acero (Día) + Pizarra Técnica (Noche)
-// Geometría Folder-Tab con Solapa Sólida Semántica | Chakra Petch + Inter
+// Azul institucional y teal para una experiencia clara de soporte universitario
 // ==========================================================================
 @use '@angular/material' as mat;
 
@@ -11,7 +10,7 @@ html {
   @include mat.theme((
     color: (
       primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
+      tertiary: mat.$azure-palette,
     ),
     typography: Inter,
     density: -1,
@@ -19,79 +18,101 @@ html {
 }
 
 :root {
-  --font-display: 'Chakra Petch', sans-serif;
+  --font-display: 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  // Modo Día: Marino Institucional & Acero
-  --page-bg: #E2E9F2;
-  --appbar-bg: #0A1626;
-  --appbar-border: rgba(255, 255, 255, 0.08);
-  --hero-bg: #10223A;
-  --hero-sub: #CBD5E1;
+  --page-bg: #F4F8FA;
+  --appbar-bg: #FFFFFF;
+  --appbar-border: #E2EAF0;
+  --appbar-text: #17324A;
+  --appbar-muted: #64788A;
+  --appbar-pill: #F2F7F8;
+  --appbar-active-bg: #E8F5F2;
+  --appbar-active-text: #0F766E;
+  --hero-bg: #12364D;
+  --hero-sub: #D3E5EC;
+  --accent-primary: #0F766E;
+  --accent-hover: #0D9488;
+  --accent-soft: #E8F5F2;
 
-  --filter-bg: #D4E0EE;
-  --input-bg: #F5F8FC;
+  --filter-bg: #FFFFFF;
+  --input-bg: #FBFDFE;
 
-  --card-bg: #F8FAFD;
-  --card-header-bg: #ECF2F9;
-  --card-footer-bg: #EDF3FA;
-  --card-border: #C3D0E2;
+  --card-bg: #FFFFFF;
+  --card-header-bg: #F7FAFC;
+  --card-footer-bg: #F7FAFC;
+  --card-border: #DCE6ED;
+  --surface-subtle: #F7FAFC;
 
-  --plaque-bg: #10223A;
-  --plaque-text: #FFFFFF;
+  --plaque-bg: #E8F5F2;
+  --plaque-text: #0F766E;
 
-  --impact-bg: #EBF1F8;
-  --impact-border: #CFDCEB;
+  --impact-bg: #F2F7F9;
+  --impact-border: #E1EAF0;
 
-  --text-main: #0C192C;
-  --text-secondary: #334155;
-  --text-muted: #5B6B82;
+  --text-main: #172B3D;
+  --text-primary: #172B3D;
+  --text-secondary: #4C6071;
+  --text-muted: #718394;
 
-  --btn-bg: #10223A;
+  --btn-bg: #0F766E;
   --btn-text: #FFFFFF;
 
-  // Colores de Solapa Sólida Semántica
-  --st-pendiente-main: #D97706;
+  --st-pendiente-main: #B45309;
+  --st-pendiente-soft: #FFF7ED;
   --st-atencion-main: #2563EB;
-  --st-resuelto-main: #059669;
+  --st-atencion-soft: #EFF6FF;
+  --st-resuelto-main: #15803D;
+  --st-resuelto-soft: #F0FDF4;
 }
 
-// Modo Nocturno: Pizarra Técnica de Alto Contraste
 body[data-mode="dark"] {
   color-scheme: dark;
 
-  --page-bg: #080F1A;
-  --appbar-bg: #050A12;
-  --appbar-border: #1E293B;
-  --hero-bg: #0F1D32;
-  --hero-sub: #94A3B8;
+  --page-bg: #0C1721;
+  --appbar-bg: #101F2B;
+  --appbar-border: #203443;
+  --appbar-text: #E7F0F5;
+  --appbar-muted: #A0B2BF;
+  --appbar-pill: #172B39;
+  --appbar-active-bg: #173A3A;
+  --appbar-active-text: #99F6E4;
+  --hero-bg: #102A3B;
+  --hero-sub: #BDD1DB;
+  --accent-primary: #2DD4BF;
+  --accent-hover: #5EEAD4;
+  --accent-soft: #123A39;
 
-  --filter-bg: #111F35;
-  --input-bg: #091322;
+  --filter-bg: #132431;
+  --input-bg: #0F1E29;
 
-  --card-bg: #111E32;
-  --card-header-bg: #16263F;
-  --card-footer-bg: #0D1829;
-  --card-border: #233554;
+  --card-bg: #142532;
+  --card-header-bg: #182C3A;
+  --card-footer-bg: #11212D;
+  --card-border: #29404E;
+  --surface-subtle: #182C3A;
 
-  --plaque-bg: #38BDF8;
-  --plaque-text: #062238;
+  --plaque-bg: #173A3A;
+  --plaque-text: #99F6E4;
 
-  --impact-bg: #0B1524;
-  --impact-border: #1E304C;
+  --impact-bg: #10212D;
+  --impact-border: #263D4B;
 
   --text-main: #F1F5F9;
-  --text-secondary: #CBD5E1;
-  --text-muted: #8696AD;
+  --text-primary: #F1F5F9;
+  --text-secondary: #CBD8E0;
+  --text-muted: #93A6B4;
 
-  --btn-bg: #38BDF8;
-  --btn-text: #062238;
+  --btn-bg: #0F8A7E;
+  --btn-text: #FFFFFF;
 
-  --st-pendiente-main: #D97706;
-  --st-atencion-main: #2563EB;
-  --st-resuelto-main: #059669;
+  --st-pendiente-main: #F59E0B;
+  --st-pendiente-soft: #352819;
+  --st-atencion-main: #60A5FA;
+  --st-atencion-soft: #172D43;
+  --st-resuelto-main: #4ADE80;
+  --st-resuelto-soft: #173124;
 
-  // Adaptación de variables internas de Angular Material M3 en modo oscuro
   --mat-sys-surface: #111E32;
   --mat-sys-on-surface: #F1F5F9;
   --mat-sys-on-surface-variant: #94A3B8;
@@ -125,16 +146,14 @@ a {
   text-decoration: none;
 }
 
-// Ajustes globales para MatSnackBar con estética técnica
 .mat-mdc-snack-bar-container .mdc-snackbar__surface {
   background-color: #0F172A !important;
   color: #F8FAFC !important;
-  border-left: 4px solid #38BDF8;
-  border-radius: 0 12px 4px 12px !important;
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 12px !important;
   font-family: var(--font-display);
 }
 
-// Reglas Globales de Impresión / Exportación PDF de Actas Técnicas
 @media print {
   @page {
     size: A4 portrait;

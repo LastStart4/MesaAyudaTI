@@ -70,28 +70,29 @@ public class ReporteServiceImpl implements ReporteService {
                 ? dto.getTipoSolicitud()
                 : TipoSolicitud.INCIDENTE;
 
+        String descripcion = dto.getDescripcion().trim();
+        String servicioAfectado = dto.getServicioAfectado().trim();
         if (tipoSolicitud == TipoSolicitud.INCIDENTE
-                && aula != null
-                && aula.getId() != null
-                && reporteRepository.existsActiveIncidentByLocation(
-                aula.getId(),
+                && reporteRepository.existsActiveIncidentByIssue(
+                servicioAfectado,
                 dto.getTipoProblema(),
+                descripcion,
                 EstadoReporte.RESUELTO)) {
             throw new ReglaNegocioException(
-                    "Ya existe un ticket de incidente activo (" + dto.getTipoProblema() + ") en " + aula.getCodigo()
+                    "Ya existe un ticket de incidente activo con el mismo servicio, categoría y descripción."
             );
         }
 
         Reporte nuevoReporte = new Reporte(
                 aula,
                 dto.getTipoProblema(),
-                dto.getDescripcion().trim(),
+                descripcion,
                 dto.getPrioridad(),
                 EstadoReporte.PENDIENTE,
                 LocalDateTime.now()
         );
         nuevoReporte.setTipoSolicitud(tipoSolicitud);
-        nuevoReporte.setServicioAfectado(dto.getServicioAfectado().trim());
+        nuevoReporte.setServicioAfectado(servicioAfectado);
         String autor = (dto.getReportadoPor() != null && !dto.getReportadoPor().isBlank())
                 ? dto.getReportadoPor().trim()
                 : "Comunidad Académica UTP";
@@ -181,18 +182,26 @@ public class ReporteServiceImpl implements ReporteService {
         TipoProblema tipoProblemaActualizado = dto.getTipoProblema() != null
                 ? dto.getTipoProblema()
                 : reporteExistente.getTipoProblema();
-        if ((dto.getTipoProblema() != null || dto.getTipoSolicitud() != null)
+        boolean datosDeIncidenciaActualizados = dto.getDescripcion() != null
+                || dto.getServicioAfectado() != null
+                || dto.getTipoProblema() != null
+                || dto.getTipoSolicitud() != null;
+        String descripcionActualizada = dto.getDescripcion() != null && !dto.getDescripcion().isBlank()
+                ? dto.getDescripcion().trim()
+                : reporteExistente.getDescripcion();
+        String servicioAfectadoActualizado = dto.getServicioAfectado() != null && !dto.getServicioAfectado().isBlank()
+                ? dto.getServicioAfectado().trim()
+                : reporteExistente.getServicioAfectado();
+        if (datosDeIncidenciaActualizados
                 && tipoSolicitudActualizado == TipoSolicitud.INCIDENTE
-                && reporteExistente.getAula() != null
-                && reporteExistente.getAula().getId() != null
-                && reporteRepository.existsActiveIncidentByLocationAndNotId(
-                        reporteExistente.getAula().getId(),
+                && reporteRepository.existsActiveIncidentByIssueAndNotId(
+                        servicioAfectadoActualizado,
                         tipoProblemaActualizado,
+                        descripcionActualizada,
                         EstadoReporte.RESUELTO,
                         reporteExistente.getId())) {
                 throw new ReglaNegocioException(
-                        "Ya existe otro ticket de incidente activo con la categoría "
-                                + tipoProblemaActualizado + " en " + reporteExistente.getAulaId()
+                        "Ya existe otro ticket de incidente activo con el mismo servicio, categoría y descripción."
                 );
         }
         if (dto.getTipoProblema() != null) {

@@ -11,7 +11,9 @@ La demostración mantiene un flujo sencillo de atención. No implementa niveles 
 - **Persistencia:** PostgreSQL. Las pruebas del backend usan H2.
 - **Roles:** `ALUMNO` (solicitante), `TECNICO` (Service Desk/soporte) y `ADMIN`.
 
-Las rutas principales son `/tickets`, `/tickets/nuevo` y `/tickets/:id`. Las APIs principales son `/api/tickets`, `/api/ubicaciones` y `/api/intervenciones`; los endpoints anteriores `/api/reportes`, `/api/aulas` y `/api/atenciones` se conservan temporalmente como alias de compatibilidad. La ubicación física del campus es opcional en cada ticket.
+Las rutas principales son `/tickets`, `/tickets/nuevo` y `/tickets/:id`. Las rutas de pantalla heredadas `/aulas` y `/aulas/seguimiento` redirigen al tablero. Las APIs principales son `/api/tickets`, `/api/ubicaciones` y `/api/intervenciones`; los endpoints anteriores `/api/reportes`, `/api/aulas` y `/api/atenciones` se conservan temporalmente como alias de compatibilidad. La ubicación física es opcional y secundaria en el formulario. Los incidentes duplicados se comparan por servicio, categoría y descripción, no por aula.
+
+El catálogo principal de solicitudes ofrece categorías de soporte TI como autenticación, plataformas, redes, cuentas, software, correo y equipos. Los valores antiguos se conservan en el modelo para poder leer tickets históricos.
 
 ## Base de datos
 
@@ -46,12 +48,14 @@ npm.cmd start
 
 Angular corre en `http://localhost:4200` y usa el proxy de desarrollo hacia Spring Boot en `http://localhost:8080`.
 
-## Cuentas locales de demostración
+## Cuentas de demostración
 
-| Usuario | Contraseña | Rol |
-|---|---|---|
-| `alumno` | `alumno123` | Solicitante |
-| `tecnico` | `tecnico123` | Soporte técnico |
-| `admin` | `admin123` | Administrador |
+El registro público siempre crea una cuenta solicitante (`ALUMNO`); el rol enviado por el cliente se ignora. Las cuentas de demostración no se crean por defecto. Para habilitarlas solo en un entorno local, configura antes de iniciar el backend:
 
-Estas credenciales son únicamente valores de desarrollo; deben cambiarse antes de cualquier despliegue.
+```powershell
+$env:APP_SECURITY_DEMO_USERS_ENABLED = "true"
+$env:APP_SECURITY_TECNICO_PASSWORD = "tecnico123"
+$env:APP_SECURITY_ADMIN_PASSWORD = "admin123"
+```
+
+No habilites `APP_SECURITY_DEMO_USERS_ENABLED` en un despliegue público. Usa contraseñas propias y fuertes, y no reutilices una base de datos de desarrollo.

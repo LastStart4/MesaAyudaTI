@@ -91,6 +91,16 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     expect(reporteService.reportes()[0].tipoSolicitud).toBe('INCIDENTE');
   });
 
+  it('debe detectar un incidente duplicado sin depender de su ubicación', () => {
+    const duplicado = reporteService.buscarDuplicadoActivo(
+      'Plataforma académica',
+      'PLATAFORMAS',
+      'la plataforma académica no permite iniciar sesión.'
+    );
+
+    expect(duplicado?.id).toBe(1);
+  });
+
   it('debe registrar un nuevo ticket vía POST /api/tickets y actualizar la señal reactiva', () => {
     let creadoResultado: Reporte | undefined;
 

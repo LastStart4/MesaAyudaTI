@@ -118,12 +118,36 @@ class ReporteEndToEndIntegrationTest {
         Aula aulaTrasCreacion = aulaRepository.findByCodigoIgnoreCase("A-101").orElseThrow();
         assertEquals("Disponible", aulaTrasCreacion.getEstado());
 
-        // 4. Verificar regla de negocio: bloquear duplicado activo en la misma aula y misma categoría (HTTP 400)
+        // 4. Verificar que la detección de duplicados no depende de la ubicación (HTTP 400)
+        String incidenteVirtualDuplicadoJson = """
+                {
+                    "tipoSolicitud": "INCIDENTE",
+                    "tipoProblema": "PLATAFORMAS",
+                    "servicioAfectado": "Plataforma académica",
+                    "descripcion": "La plataforma académica no permite iniciar sesión durante las evaluaciones.",
+                    "prioridad": "ALTA"
+                }
+                """;
         mockMvc.perform(post("/api/tickets")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearReporteJson))
+                        .content(incidenteVirtualDuplicadoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsString("ticket de incidente activo")));
+
+        String incidenteVirtualJson = """
+                {
+                    "tipoSolicitud": "INCIDENTE",
+                    "tipoProblema": "CUENTAS",
+                    "servicioAfectado": "Cuenta institucional",
+                    "descripcion": "Necesito recuperar el acceso a mi cuenta institucional.",
+                    "prioridad": "MEDIA"
+                }
+                """;
+        mockMvc.perform(post("/api/tickets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(incidenteVirtualJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.aulaId", is("")));
 
         String crearSolicitudServicioJson = """
                 {
