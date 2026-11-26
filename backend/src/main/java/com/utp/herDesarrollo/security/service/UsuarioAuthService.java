@@ -53,24 +53,24 @@ public class UsuarioAuthService implements UserDetailsService {
         }
         sembrarSiNoExiste(
                 "tecnico",
-                "Soporte Técnico UTP",
-                "tecnico@utp.edu.pe",
+                "Soporte Técnico",
+                "tecnico@institucion.edu",
                 passwordTecnico,
                 RolUsuario.TECNICO,
                 "Service Desk N1"
         );
         sembrarSiNoExiste(
                 "admin",
-                "Administrador General UTP",
-                "admin@utp.edu.pe",
+                "Administrador General",
+                "admin@institucion.edu",
                 passwordAdmin,
                 RolUsuario.ADMIN,
                 "Administración de Mesa de Ayuda"
         );
         sembrarSiNoExiste(
                 "alumno",
-                "Estudiante / Docente UTP",
-                "alumno@utp.edu.pe",
+                "Estudiante / Docente",
+                "alumno@institucion.edu",
                 "alumno123",
                 RolUsuario.ALUMNO,
                 "Comunidad Académica"
@@ -78,7 +78,7 @@ public class UsuarioAuthService implements UserDetailsService {
         sembrarSiNoExiste(
                 "cmendoza",
                 "Carlos Mendoza",
-                "cmendoza@utp.edu.pe",
+                "cmendoza@institucion.edu",
                 passwordTecnico,
                 RolUsuario.TECNICO,
                 "Plataformas y aplicaciones"
@@ -86,7 +86,7 @@ public class UsuarioAuthService implements UserDetailsService {
         sembrarSiNoExiste(
                 "atorres",
                 "Ana Torres",
-                "atorres@utp.edu.pe",
+                "atorres@institucion.edu",
                 passwordTecnico,
                 RolUsuario.TECNICO,
                 "Cuentas institucionales"
@@ -94,7 +94,7 @@ public class UsuarioAuthService implements UserDetailsService {
         sembrarSiNoExiste(
                 "lvargas",
                 "Luis Vargas",
-                "lvargas@utp.edu.pe",
+                "lvargas@institucion.edu",
                 passwordTecnico,
                 RolUsuario.TECNICO,
                 "Equipos y software"
@@ -102,7 +102,7 @@ public class UsuarioAuthService implements UserDetailsService {
         sembrarSiNoExiste(
                 "egomez",
                 "Elena Gómez",
-                "egomez@utp.edu.pe",
+                "egomez@institucion.edu",
                 passwordTecnico,
                 RolUsuario.TECNICO,
                 "Redes y conectividad"
@@ -188,7 +188,7 @@ public class UsuarioAuthService implements UserDetailsService {
 
         String correo = (dto.correo() != null && !dto.correo().trim().isEmpty())
                 ? dto.correo().trim().toLowerCase()
-                : username + "@utp.edu.pe";
+                : username + "@institucion.edu";
 
         if (usuarioRepository.existsByCorreoIgnoreCase(correo)) {
             throw new ReglaNegocioException("El correo institucional '" + correo + "' ya está registrado.");
@@ -200,7 +200,7 @@ public class UsuarioAuthService implements UserDetailsService {
                 : switch (rol) {
                     case ADMIN -> "Administración de Mesa de Ayuda";
                     case TECNICO -> "Soporte Técnico de Campus";
-                    case ALUMNO -> "Comunidad Académica UTP";
+                    case ALUMNO -> "Comunidad Académica";
                 };
 
         Usuario nuevo = new Usuario(

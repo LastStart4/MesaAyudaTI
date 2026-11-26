@@ -504,6 +504,6 @@ export class AtencionListComponent {
   }
 
   generarCodigoActa(atencion: Atencion): string {
-    return `ACTA-UTP-${new Date().getFullYear()}-${String(atencion.id).padStart(4, '0')}`;
+    return `ACTA-TI-${new Date().getFullYear()}-${String(atencion.id).padStart(4, '0')}`;
   }
 }

@@ -321,7 +321,7 @@ export class AtencionService {
     const meta = METADATA_REPORTES[dto.reporteId] || {};
     return {
       ...dto,
-      aulaCodigo: reporteActivo?.aulaId || meta.aulaCodigo || '',
+      aulaCodigo: reporteActivo ? reporteActivo.aulaId : meta.aulaCodigo || '',
       tipoProblema: reporteActivo?.tipoProblema || meta.tipoProblema || 'General',
       prioridad: (reporteActivo?.prioridad as 'ALTA' | 'MEDIA' | 'BAJA') || meta.prioridad || 'MEDIA',
       tipoMantenimiento: meta.tipoMantenimiento || 'CORRECTIVO',

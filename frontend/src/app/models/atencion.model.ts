@@ -11,7 +11,7 @@ export interface Atencion {
   observaciones?: string;
   fechaRegistro: string;
   fechaResolucion?: string | null;
-  // Campos enriquecidos para la mesa técnica en campus UTP
+  // Campos enriquecidos para la mesa técnica universitaria
   aulaCodigo?: string;
   tipoProblema?: string;
   prioridad?: 'ALTA' | 'MEDIA' | 'BAJA';

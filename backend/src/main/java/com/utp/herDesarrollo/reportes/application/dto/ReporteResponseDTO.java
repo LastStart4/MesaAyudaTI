@@ -60,7 +60,7 @@ public class ReporteResponseDTO {
         dto.setReportadoPor(
                 (reporte.getReportadoPor() != null && !reporte.getReportadoPor().isBlank())
                         ? reporte.getReportadoPor()
-                        : "Comunidad Académica UTP"
+                        : "Comunidad Académica"
         );
         dto.setServicioAfectado(reporte.getServicioAfectado());
         dto.setTipoSolicitud(reporte.getTipoSolicitud());

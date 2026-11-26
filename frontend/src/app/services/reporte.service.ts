@@ -78,9 +78,8 @@ const REPORTES_INICIALES: Reporte[] = [
   },
   {
     id: 5,
-    aulaId: 'LAB-104',
-    aulaInternoId: 5,
-    aulaUbicacion: 'Pabellón C • Piso 1',
+    aulaId: '',
+    aulaUbicacion: 'Ubicación no especificada',
     tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'AUTENTICACION',
     servicioAfectado: 'Autenticación institucional',
@@ -91,9 +90,8 @@ const REPORTES_INICIALES: Reporte[] = [
   },
   {
     id: 6,
-    aulaId: 'D-401',
-    aulaInternoId: 6,
-    aulaUbicacion: 'Pabellón D • Piso 4',
+    aulaId: '',
+    aulaUbicacion: 'Ubicación no especificada',
     tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'CORREO',
     servicioAfectado: 'Correo institucional',
@@ -104,9 +102,8 @@ const REPORTES_INICIALES: Reporte[] = [
   },
   {
     id: 7,
-    aulaId: 'C-201',
-    aulaInternoId: 7,
-    aulaUbicacion: 'Pabellón C • Piso 2',
+    aulaId: '',
+    aulaUbicacion: 'Ubicación no especificada',
     tipoSolicitud: 'CONSULTA',
     tipoProblema: 'PLATAFORMAS',
     servicioAfectado: 'Plataforma académica',
@@ -256,15 +253,15 @@ export class ReporteService {
    * - Si el backend está apagado (status 0 / 502 / 504), guarda en memoria local para modo demostrativo.
    */
   crearReporte(payload: CrearReportePayload): Observable<Reporte> {
-    const codigoNormalizado = payload.aulaId.trim().toUpperCase();
+    const codigoNormalizado = (payload.aulaId ?? '').trim().toUpperCase();
     const ubicacionCalculada =
-      payload.aulaUbicacion.trim() ||
+      payload.aulaUbicacion?.trim() ||
       (codigoNormalizado ? this.deducirUbicacionDesdeCodigo(codigoNormalizado) : 'Ubicación no especificada');
 
     const autorSesion =
       this.authService.sesion()?.nombreCompleto ||
       this.authService.sesion()?.username ||
-      'Comunidad Académica UTP';
+      'Comunidad Académica';
 
     const requestDto: CrearReporteRequestDTO = {
       aulaId: codigoNormalizado,
@@ -469,7 +466,7 @@ export class ReporteService {
         (!item.aulaId?.trim() ? 'Ubicación no especificada' : undefined) ||
         ubicacionRespaldo ||
         this.deducirUbicacionDesdeCodigo(item.aulaId ?? ''),
-      reportadoPor: item.reportadoPor || autorRespaldo || 'Comunidad Académica UTP'
+      reportadoPor: item.reportadoPor || autorRespaldo || 'Comunidad Académica'
     };
   }
 
@@ -477,7 +474,7 @@ export class ReporteService {
     const limpio = codigoRaw.trim().toUpperCase();
     const match = limpio.match(/^([A-E]|LAB)-([1-9])\d{2}$/);
     if (!match) {
-      return 'Pabellón Central • Campus UTP';
+      return 'Ubicación general';
     }
     const prefijo = match[1];
     const piso = match[2];

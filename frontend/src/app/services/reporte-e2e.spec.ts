@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { authInterceptor } from '../interceptors/auth.interceptor';
 import { Reporte } from '../models/reporte.model';
+import { AtencionService } from './atencion.service';
 import { AuthService } from './auth.service';
 import { ReporteService } from './reporte.service';
 
@@ -25,8 +26,7 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     },
     {
       id: 2,
-      aulaId: 'LAB-302',
-      aulaUbicacion: 'Pabellón C • Piso 3',
+      aulaId: '',
       tipoProblema: 'REDES',
       servicioAfectado: 'Red Wi-Fi',
       prioridad: 'ALTA',
@@ -89,6 +89,8 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     expect(reporteService.reportes().length).toBe(2);
     expect(reporteService.reportes()[0].aulaId).toBe('A-101');
     expect(reporteService.reportes()[0].tipoSolicitud).toBe('INCIDENTE');
+    expect(reporteService.reportes()[1].aulaId).toBe('');
+    expect(reporteService.reportes()[1].aulaUbicacion).toBe('Ubicación no especificada');
   });
 
   it('debe detectar un incidente duplicado sin depender de su ubicación', () => {
@@ -142,6 +144,61 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     expect(creadoResultado?.id).toBe(3);
     expect(reporteService.reportes().length).toBe(3);
     expect(reporteService.reportes()[0].aulaId).toBe('B-204');
+  });
+
+  it('debe permitir registrar una consulta sin especificar aula', () => {
+    let creadoResultado: Reporte | undefined;
+
+    reporteService
+      .crearReporte({
+        tipoSolicitud: 'CONSULTA',
+        tipoProblema: 'PLATAFORMAS',
+        servicioAfectado: 'Plataforma académica',
+        prioridad: 'BAJA',
+        descripcion: 'Se solicita orientación para ingresar a la plataforma.'
+      })
+      .subscribe(res => (creadoResultado = res));
+
+    const postReq = httpMock.expectOne('/api/tickets');
+    expect(postReq.request.body.aulaId).toBe('');
+    postReq.flush({
+      id: 3,
+      aulaId: '',
+      tipoSolicitud: 'CONSULTA',
+      tipoProblema: 'PLATAFORMAS',
+      servicioAfectado: 'Plataforma académica',
+      prioridad: 'BAJA',
+      estado: 'PENDIENTE',
+      descripcion: 'Se solicita orientación para ingresar a la plataforma.',
+      fechaRegistro: '2026-10-30T10:00:00'
+    });
+
+    httpMock.expectOne('/api/ubicaciones').flush([]);
+
+    expect(creadoResultado?.aulaId).toBe('');
+    expect(creadoResultado?.aulaUbicacion).toBe('Ubicación no especificada');
+  });
+
+  it('no debe asignar una ubicación ficticia a una atención de un ticket sin aula', () => {
+    const atencionService = TestBed.inject(AtencionService);
+
+    httpMock.expectOne('/api/intervenciones').flush([
+      {
+        id: 1,
+        reporteId: 2,
+        tecnicoEncargado: 'tecnico02',
+        estado: 'EN_ATENCION',
+        fechaRegistro: '2026-10-30T10:00:00'
+      }
+    ]);
+
+    const reportesRequests = httpMock.match('/api/tickets');
+    expect(reportesRequests).toHaveLength(2);
+    for (const request of reportesRequests) {
+      request.flush(reportesMockBackend);
+    }
+
+    expect(atencionService.atenciones()[0].aulaCodigo).toBe('');
   });
 
   it('debe inyectar automáticamente Authorization: Bearer <token> en PUT y DELETE tras autenticar con AuthService', () => {

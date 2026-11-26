@@ -74,7 +74,7 @@ export class ReporteListComponent {
     const miUsername = (sesion?.username || '').trim().toUpperCase();
 
     const filtrados = this.reportes().filter(reporte => {
-      const autorReporte = (reporte.reportadoPor || 'Comunidad Académica UTP').trim().toUpperCase();
+      const autorReporte = (reporte.reportadoPor || 'Comunidad Académica').trim().toUpperCase();
       const matchesQuery =
         !query ||
         reporte.aulaId.toUpperCase().includes(query) ||
@@ -197,11 +197,11 @@ export class ReporteListComponent {
         `#${this.formatCount(r.id)}`,
         this.getTipoSolicitudLabel(r.tipoSolicitud || 'INCIDENTE'),
         r.servicioAfectado || 'Servicio general',
-        r.aulaUbicacion || 'Campus UTP',
+        r.aulaUbicacion || 'Ubicación general',
         this.getCategoriaLabel(r.tipoProblema),
         this.getPrioridadLabel(r.prioridad),
         this.getEstadoLabel(r.estado),
-        r.reportadoPor || 'Comunidad Académica UTP',
+        r.reportadoPor || 'Comunidad Académica',
         r.fechaRegistro,
         r.descripcion
       ]
@@ -214,7 +214,7 @@ export class ReporteListComponent {
     const url = URL.createObjectURL(blob);
     const enlace = document.createElement('a');
     enlace.href = url;
-    enlace.download = `tickets-mesa-ayuda-utp-${new Date().toISOString().slice(0, 10)}.csv`;
+    enlace.download = `tickets-mesa-ayuda-${new Date().toISOString().slice(0, 10)}.csv`;
     enlace.click();
     URL.revokeObjectURL(url);
   }

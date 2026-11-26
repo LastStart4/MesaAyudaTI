@@ -1,10 +1,10 @@
 MESA DE AYUDA TI UNIVERSITARIA
 Informe final del proyecto integrador
-Universidad Tecnológica del Perú (UTP)
+Institución universitaria
 Curso: Gestión de Servicios TI
 
 1. Resumen ejecutivo
-El presente proyecto desarrolla una propuesta de modelo de Mesa de Ayuda TI Universitaria orientada a mejorar la atención de incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo de la Universidad Tecnológica del Perú (UTP).
+El presente proyecto desarrolla una propuesta de modelo de Mesa de Ayuda TI Universitaria orientada a mejorar la atención de incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo de una institución universitaria.
 La propuesta surge ante la necesidad de organizar la atención de problemas relacionados con el acceso a plataformas académicas, autenticación de cuentas institucionales, conectividad, redes Wi-Fi, equipos y aplicaciones utilizadas en las actividades académicas y administrativas.
 Para atender esta necesidad, se plantea un Service Desk como punto único de contacto, encargado de centralizar los reportes, registrar las solicitudes, clasificarlas, asignarlas y realizar su seguimiento. Asimismo, se establecen niveles de soporte, un catálogo de solicitudes, criterios de priorización, controles de acceso por roles y actividades de monitoreo y continuidad de los servicios tecnológicos.
 El proyecto toma como referencia ITIL 4 para organizar la gestión de servicios, complementándolo con los lineamientos de ISO/IEC 20000-1:2018. También incorpora indicadores y un enfoque de mejora continua basado en el ciclo PDCA.

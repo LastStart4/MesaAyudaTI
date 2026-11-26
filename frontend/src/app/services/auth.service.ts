@@ -24,24 +24,24 @@ const CREDENCIALES_DEMO: Record<PerfilDemo, CuentaLocalDemo> = {
   tecnico: {
     username: 'tecnico',
     password: 'tecnico123',
-    nombreCompleto: 'Soporte Técnico UTP',
-    correo: 'tecnico@utp.edu.pe',
+    nombreCompleto: 'Soporte Técnico',
+    correo: 'tecnico@institucion.edu',
     especialidad: 'Soporte Integral de Campus',
     roles: ['ROLE_TECNICO']
   },
   admin: {
     username: 'admin',
     password: 'admin123',
-    nombreCompleto: 'Administrador General UTP',
-    correo: 'admin@utp.edu.pe',
+    nombreCompleto: 'Administrador General',
+    correo: 'admin@institucion.edu',
     especialidad: 'Dirección de Infraestructura',
     roles: ['ROLE_ADMIN']
   },
   alumno: {
     username: 'alumno',
     password: 'alumno123',
-    nombreCompleto: 'Estudiante / Docente UTP',
-    correo: 'alumno@utp.edu.pe',
+    nombreCompleto: 'Estudiante / Docente',
+    correo: 'alumno@institucion.edu',
     especialidad: 'Comunidad Académica',
     roles: ['ROLE_ALUMNO']
   },
@@ -49,7 +49,7 @@ const CREDENCIALES_DEMO: Record<PerfilDemo, CuentaLocalDemo> = {
     username: 'cmendoza',
     password: 'tecnico123',
     nombreCompleto: 'Carlos Mendoza',
-    correo: 'cmendoza@utp.edu.pe',
+    correo: 'cmendoza@institucion.edu',
     especialidad: 'Audiovisual y Proyección',
     roles: ['ROLE_TECNICO']
   },
@@ -57,7 +57,7 @@ const CREDENCIALES_DEMO: Record<PerfilDemo, CuentaLocalDemo> = {
     username: 'atorres',
     password: 'tecnico123',
     nombreCompleto: 'Ana Torres',
-    correo: 'atorres@utp.edu.pe',
+    correo: 'atorres@institucion.edu',
     especialidad: 'Instalaciones Eléctricas',
     roles: ['ROLE_TECNICO']
   }
@@ -193,7 +193,7 @@ export class AuthService {
           token: respuesta.token,
           username: respuesta.username || credenciales.username,
           nombreCompleto: respuesta.nombreCompleto || perfilLocal?.nombreCompleto || credenciales.username,
-          correo: respuesta.correo || perfilLocal?.correo || `${credenciales.username}@utp.edu.pe`,
+          correo: respuesta.correo || perfilLocal?.correo || `${credenciales.username}@institucion.edu`,
           especialidad: respuesta.especialidad || perfilLocal?.especialidad,
           roles: rolesResueltos,
           origen: 'BACKEND_JWT' as const
@@ -215,7 +215,7 @@ export class AuthService {
           token: tokenSimulado,
           username: credenciales.username,
           nombreCompleto: perfilLocal?.nombreCompleto || credenciales.username,
-          correo: perfilLocal?.correo || `${credenciales.username}@utp.edu.pe`,
+          correo: perfilLocal?.correo || `${credenciales.username}@institucion.edu`,
           especialidad: perfilLocal?.especialidad,
           roles: rolesAsignados,
           origen: 'DEMO_JWT' as const
@@ -250,7 +250,7 @@ export class AuthService {
           password: payload.password,
           nombreCompleto: payload.nombreCompleto.trim(),
           correo: payload.correo.trim().toLowerCase(),
-          especialidad: payload.especialidad || 'Comunidad UTP',
+          especialidad: payload.especialidad || 'Comunidad Académica',
           roles
         };
         this.guardarCuentaLocalRespaldo(cuentaLocal);
@@ -384,8 +384,8 @@ export class AuthService {
       {
         id: 1,
         username: 'tecnico',
-        nombreCompleto: 'Soporte Técnico UTP',
-        correo: 'tecnico@utp.edu.pe',
+        nombreCompleto: 'Soporte Técnico',
+        correo: 'tecnico@institucion.edu',
         rol: 'TECNICO',
         roles: ['ROLE_TECNICO'],
         especialidad: 'Soporte Integral de Campus',
@@ -395,7 +395,7 @@ export class AuthService {
         id: 2,
         username: 'cmendoza',
         nombreCompleto: 'Carlos Mendoza',
-        correo: 'cmendoza@utp.edu.pe',
+        correo: 'cmendoza@institucion.edu',
         rol: 'TECNICO',
         roles: ['ROLE_TECNICO'],
         especialidad: 'Audiovisual y Proyección',
@@ -405,7 +405,7 @@ export class AuthService {
         id: 3,
         username: 'atorres',
         nombreCompleto: 'Ana Torres',
-        correo: 'atorres@utp.edu.pe',
+        correo: 'atorres@institucion.edu',
         rol: 'TECNICO',
         roles: ['ROLE_TECNICO'],
         especialidad: 'Instalaciones Eléctricas',
@@ -415,7 +415,7 @@ export class AuthService {
         id: 4,
         username: 'lvargas',
         nombreCompleto: 'Luis Vargas',
-        correo: 'lvargas@utp.edu.pe',
+        correo: 'lvargas@institucion.edu',
         rol: 'TECNICO',
         roles: ['ROLE_TECNICO'],
         especialidad: 'Climatización e Infraestructura',
@@ -425,7 +425,7 @@ export class AuthService {
         id: 5,
         username: 'egomez',
         nombreCompleto: 'Elena Gómez',
-        correo: 'egomez@utp.edu.pe',
+        correo: 'egomez@institucion.edu',
         rol: 'TECNICO',
         roles: ['ROLE_TECNICO'],
         especialidad: 'Redes y Conectividad',
@@ -456,8 +456,8 @@ export class AuthService {
     const inicial: SesionUsuario = {
       token: this.generarTokenRespaldo('tecnico', ['ROLE_TECNICO']),
       username: 'tecnico',
-      nombreCompleto: 'Soporte Técnico UTP',
-      correo: 'tecnico@utp.edu.pe',
+      nombreCompleto: 'Soporte Técnico',
+      correo: 'tecnico@institucion.edu',
       especialidad: 'Soporte Integral de Campus',
       roles: ['ROLE_TECNICO'],
       origen: 'DEMO_JWT'
@@ -472,7 +472,7 @@ export class AuthService {
       JSON.stringify({
         sub: username,
         roles: roles.join(','),
-        iss: 'mesa-ayuda-utp-client'
+        iss: 'mesa-ayuda-ti-client'
       })
     );
     return `${header}.${payload}.mesa-ayuda-signature`;

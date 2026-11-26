@@ -1,6 +1,6 @@
 # Mesa de Ayuda TI Universitaria
 
-Demostración funcional de una Mesa de Ayuda TI Universitaria para recibir y centralizar incidentes, solicitudes de servicio y consultas de estudiantes, docentes y personal administrativo de la UTP. Permite registrar solicitudes, consultar su avance y resultado, y documentar la atención técnica con acceso según roles.
+Demostración funcional de una Mesa de Ayuda TI Universitaria para recibir y centralizar incidentes, solicitudes de servicio y consultas de estudiantes, docentes y personal administrativo de una institución universitaria. Permite registrar solicitudes, consultar su avance y resultado, y documentar la atención técnica con acceso según roles.
 
 La demostración mantiene un flujo sencillo de atención. No implementa niveles formales N0–N3, un motor avanzado de SLA ni automatización de escalamiento; esos procesos forman parte de la propuesta organizacional del informe.
 

@@ -82,8 +82,8 @@ class AuthControllerTest {
                     {
                         "username": "%s",
                         "nombreCompleto": "Jorge Ramírez",
-                        "correo": "%s@utp.edu.pe",
-                        "password": "utp2026",
+                        "correo": "%s@institucion.edu",
+                        "password": "demo2026",
                         "rol": "%s",
                         "especialidad": "Soporte de Laboratorios"
                     }
@@ -103,7 +103,7 @@ class AuthControllerTest {
             String loginJson = """
                     {
                         "username": "%s",
-                        "password": "utp2026"
+                        "password": "demo2026"
                     }
                     """.formatted(username);
 

@@ -39,8 +39,8 @@ export interface Reporte {
 }
 
 export interface CrearReportePayload {
-  aulaId: string;
-  aulaUbicacion: string;
+  aulaId?: string;
+  aulaUbicacion?: string;
   tipoSolicitud?: TipoSolicitud;
   tipoProblema: TipoProblema;
   prioridad: Prioridad;
@@ -52,7 +52,7 @@ export interface CrearReportePayload {
  * Contrato de creación de un ticket en Spring Boot (POST /api/tickets).
  */
 export interface CrearReporteRequestDTO {
-  aulaId: string;
+  aulaId?: string;
   tipoSolicitud: TipoSolicitud;
   tipoProblema: TipoProblema;
   descripcion: string;

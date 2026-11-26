@@ -2,7 +2,7 @@
   <!-- Contenedor Corporativo de Doble Panel -->
   <div class="auth-corporate-shell" [class.auth-corporate-shell--admin]="esAdmin()">
 
-    <!-- Panel Izquierdo: Identidad de la Mesa de Ayuda TI UTP -->
+    <!-- Panel Izquierdo: Identidad de la Mesa de Ayuda TI -->
     <aside class="auth-brand-panel">
       <div class="brand-panel-top">
         <a routerLink="/tickets" class="back-campus-pill">
@@ -14,7 +14,7 @@
           <div class="brand-emblem">
             <mat-icon>domain_verification</mat-icon>
           </div>
-          <span class="brand-kicker">UNIVERSIDAD TECNOLÓGICA DEL PERÚ</span>
+          <span class="brand-kicker">INSTITUCIÓN UNIVERSITARIA</span>
           <h2 class="brand-headline">Mesa de Ayuda TI</h2>
           <p class="brand-lead">
             Punto único de contacto para registrar incidentes y solicitudes tecnológicas, consultar su estado y coordinar el soporte.
@@ -71,7 +71,7 @@
           <mat-icon>login</mat-icon>
           <div class="tab-label-stack">
             <strong>Iniciar Sesión</strong>
-            <span>Ingresa con tu cuenta UTP</span>
+            <span>Ingresa con tu cuenta institucional</span>
           </div>
         </button>
 
@@ -235,7 +235,7 @@
               <mat-icon>{{ esAdmin() ? 'manage_accounts' : 'person_add_alt_1' }}</mat-icon>
             </div>
             <div>
-              <h3>{{ esAdmin() ? 'Alta de Personal y Especialistas del Campus' : 'Crear Cuenta Académica UTP' }}</h3>
+              <h3>{{ esAdmin() ? 'Alta de Personal y Especialistas del Campus' : 'Crear Cuenta Académica' }}</h3>
               <p>
                 {{ esAdmin()
                   ? 'Como Administrador puedes incorporar nuevos especialistas de Soporte Técnico o personal administrativo.'
@@ -301,7 +301,7 @@
                   id="reg-correo"
                   type="email"
                   name="regCorreo"
-                  placeholder="usuario@utp.edu.pe"
+                  placeholder="usuario@institucion.edu"
                   [ngModel]="regCorreo()"
                   (ngModelChange)="regCorreo.set($event)"
                 />

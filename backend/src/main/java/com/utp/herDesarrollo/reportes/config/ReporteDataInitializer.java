@@ -43,7 +43,6 @@ public class ReporteDataInitializer implements CommandLineRunner {
         Aula a305 = asegurarAula("A-305", "Pabellón A • Piso 3", 40, "Disponible");
         Aula lab104 = asegurarAula("LAB-104", "Pabellón C • Piso 1", 30, "Disponible");
         Aula d401 = asegurarAula("D-401", "Pabellón D • Piso 4", 50, "Disponible");
-        Aula c201 = asegurarAula("C-201", "Pabellón C • Piso 2", 35, "Disponible");
 
         asegurarReporte(
                 a101,
@@ -106,7 +105,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
         );
 
         asegurarReporte(
-                c201,
+                null,
                 TipoSolicitud.CONSULTA,
                 TipoProblema.PLATAFORMAS,
                 Prioridad.BAJA,
@@ -149,8 +148,8 @@ public class ReporteDataInitializer implements CommandLineRunner {
             EstadoReporte estado,
             String descripcion,
             LocalDateTime fechaRegistro) {
-        List<Reporte> existentesEnAula = reporteRepository.findByAulaId(aula.getCodigo());
-        boolean yaExiste = existentesEnAula.stream()
+        List<Reporte> existentes = reporteRepository.findAll();
+        boolean yaExiste = existentes.stream()
                 .anyMatch(r -> r.getTipoSolicitud() == tipoSolicitud
                         && r.getTipoProblema() == tipoProblema
                         && r.getDescripcion().equalsIgnoreCase(descripcion));

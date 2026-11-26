@@ -95,7 +95,7 @@ public class ReporteServiceImpl implements ReporteService {
         nuevoReporte.setServicioAfectado(servicioAfectado);
         String autor = (dto.getReportadoPor() != null && !dto.getReportadoPor().isBlank())
                 ? dto.getReportadoPor().trim()
-                : "Comunidad Académica UTP";
+                : "Comunidad Académica";
         nuevoReporte.setReportadoPor(autor);
 
         Reporte guardado = reporteRepository.save(nuevoReporte);

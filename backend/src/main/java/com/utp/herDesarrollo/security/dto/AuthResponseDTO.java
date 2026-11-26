@@ -15,7 +15,7 @@ public record AuthResponseDTO(
         List<String> roles
 ) {
     public AuthResponseDTO(String token, String username, List<String> roles) {
-        this(token, "Bearer", username, username, username + "@utp.edu.pe", null, roles);
+        this(token, "Bearer", username, username, username + "@institucion.edu", null, roles);
     }
 
     public AuthResponseDTO(

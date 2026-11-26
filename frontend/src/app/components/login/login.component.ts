@@ -97,8 +97,8 @@ export class LoginComponent implements OnInit {
   autocompletarCorreoDesdeUsername(username: string): void {
     this.regUsername.set(username);
     const limpio = username.trim().toLowerCase().replace(/\s+/g, '');
-    if (limpio && (!this.regCorreo() || this.regCorreo().endsWith('@utp.edu.pe'))) {
-      this.regCorreo.set(`${limpio}@utp.edu.pe`);
+    if (limpio && (!this.regCorreo() || this.regCorreo().endsWith('@institucion.edu'))) {
+      this.regCorreo.set(`${limpio}@institucion.edu`);
     }
   }
 
@@ -113,7 +113,7 @@ export class LoginComponent implements OnInit {
     } else if (rol === 'ADMIN') {
       this.regEspecialidad.set('Dirección de Infraestructura');
     } else {
-      this.regEspecialidad.set('Comunidad Académica UTP');
+      this.regEspecialidad.set('Comunidad Académica');
     }
   }
 
@@ -151,11 +151,11 @@ export class LoginComponent implements OnInit {
   registrarNuevoUsuario(): void {
     const nombreCompleto = this.regNombreCompleto().trim();
     const username = this.regUsername().trim().toLowerCase();
-    const correo = this.regCorreo().trim().toLowerCase() || `${username}@utp.edu.pe`;
+    const correo = this.regCorreo().trim().toLowerCase() || `${username}@institucion.edu`;
     const password = this.regPassword().trim();
     // Gobernanza de roles: el auto-registro público siempre asigna ALUMNO. Solo un ADMIN puede dar de alta TECNICO o ADMIN.
     const rol: RolRegistro = this.esAdmin() ? this.regRol() : 'ALUMNO';
-    const especialidad = this.regEspecialidad().trim() || 'Comunidad Académica UTP';
+    const especialidad = this.regEspecialidad().trim() || 'Comunidad Académica';
 
     if (nombreCompleto.length < 3) {
       this.errorRegistro.set('Ingresa tu nombre y apellido completo (mínimo 3 caracteres).');
