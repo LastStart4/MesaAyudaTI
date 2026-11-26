@@ -4,7 +4,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { EstadoReporte, Prioridad, TipoProblema } from '../../models/reporte.model';
+import { EstadoReporte, Prioridad, TipoProblema, TipoSolicitud } from '../../models/reporte.model';
 import { AtencionService } from '../../services/atencion.service';
 import { AuthService } from '../../services/auth.service';
 import { ReporteService } from '../../services/reporte.service';
@@ -306,6 +306,14 @@ export class ReporteDetailComponent {
       case 'MOBILIARIO': return 'Mobiliario';
       case 'INFRAESTRUCTURA': return 'Infraestructura';
       case 'OTRO': return 'Otro';
+    }
+  }
+
+  getTipoSolicitudLabel(tipo: TipoSolicitud): string {
+    switch (tipo) {
+      case 'INCIDENTE': return 'Incidente';
+      case 'SOLICITUD_SERVICIO': return 'Solicitud de servicio';
+      case 'CONSULTA': return 'Consulta';
     }
   }
 

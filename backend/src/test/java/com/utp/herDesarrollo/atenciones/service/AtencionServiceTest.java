@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -142,6 +143,10 @@ class AtencionServiceImplTest {
         AtencionResponseDTO resultado = service.actualizarEstado(10L, dto);
 
         assertEquals(EstadoAtencion.EN_ATENCION, resultado.getEstado());
+        ArgumentCaptor<Atencion> atencionCaptor = ArgumentCaptor.forClass(Atencion.class);
+        verify(atencionRepository).save(atencionCaptor.capture());
+        assertTrue(atencionCaptor.getValue().getObservaciones().contains("Caso registrado"));
+        assertTrue(atencionCaptor.getValue().getObservaciones().contains("Técnico revisando el equipo"));
     }
 
     @Test

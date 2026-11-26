@@ -24,7 +24,7 @@ public class Atencion {
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoAtencion estado;
 
-    @Column(name = "observaciones", length = 500)
+    @Column(name = "observaciones", length = 2000)
     private String observaciones;
 
     @Column(name = "fecha_registro", nullable = false)

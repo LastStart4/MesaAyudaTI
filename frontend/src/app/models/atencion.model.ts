@@ -1,3 +1,5 @@
+import { TipoSolicitud } from './reporte.model';
+
 export type EstadoAtencion = 'PENDIENTE' | 'EN_ATENCION' | 'RESUELTO';
 export type TipoMantenimiento = 'CORRECTIVO' | 'PREVENTIVO';
 
@@ -59,5 +61,6 @@ export interface ReportePendienteAsignacion {
   descripcion: string;
   fechaRegistro: string;
   aulaUbicacion?: string;
+  tipoSolicitud?: TipoSolicitud;
   estado?: string;
 }

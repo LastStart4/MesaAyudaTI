@@ -11,6 +11,8 @@ import com.utp.herDesarrollo.reportes.application.service.ReporteService;
 import com.utp.herDesarrollo.reportes.domain.model.EstadoReporte;
 import com.utp.herDesarrollo.reportes.domain.model.Prioridad;
 import com.utp.herDesarrollo.reportes.domain.model.Reporte;
+import com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud;
+import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
 import com.utp.herDesarrollo.reportes.domain.repository.ReporteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,13 +66,19 @@ public class ReporteServiceImpl implements ReporteService {
                 })
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe una ubicación registrada con código o ID: " + aulaParam));
 
-        // Regla de negocio: impedir duplicados activos (PENDIENTE o EN_ATENCION) del mismo tipo de problema en la misma aula
-        if (aula != null && aula.getId() != null && reporteRepository.existsByAula_IdAndTipoProblemaAndEstadoNot(
+        TipoSolicitud tipoSolicitud = dto.getTipoSolicitud() != null
+                ? dto.getTipoSolicitud()
+                : TipoSolicitud.INCIDENTE;
+
+        if (tipoSolicitud == TipoSolicitud.INCIDENTE
+                && aula != null
+                && aula.getId() != null
+                && reporteRepository.existsActiveIncidentByLocation(
                 aula.getId(),
                 dto.getTipoProblema(),
                 EstadoReporte.RESUELTO)) {
             throw new ReglaNegocioException(
-                    "Ya existe un reporte activo (" + dto.getTipoProblema() + ") pendiente de solución en el aula " + aula.getCodigo()
+                    "Ya existe un ticket de incidente activo (" + dto.getTipoProblema() + ") en " + aula.getCodigo()
             );
         }
 
@@ -82,6 +90,7 @@ public class ReporteServiceImpl implements ReporteService {
                 EstadoReporte.PENDIENTE,
                 LocalDateTime.now()
         );
+        nuevoReporte.setTipoSolicitud(tipoSolicitud);
         nuevoReporte.setServicioAfectado(dto.getServicioAfectado().trim());
         String autor = (dto.getReportadoPor() != null && !dto.getReportadoPor().isBlank())
                 ? dto.getReportadoPor().trim()
@@ -163,18 +172,30 @@ public class ReporteServiceImpl implements ReporteService {
         if (dto.getServicioAfectado() != null && !dto.getServicioAfectado().isBlank()) {
             reporteExistente.setServicioAfectado(dto.getServicioAfectado().trim());
         }
-        if (dto.getTipoProblema() != null) {
-            if (reporteExistente.getAula() != null
-                    && reporteExistente.getAula().getId() != null
-                    && reporteRepository.existsByAula_IdAndTipoProblemaAndEstadoNotAndIdNot(
-                            reporteExistente.getAula().getId(),
-                            dto.getTipoProblema(),
-                            EstadoReporte.RESUELTO,
-                            reporteExistente.getId())) {
+        if (dto.getTipoSolicitud() != null) {
+            reporteExistente.setTipoSolicitud(dto.getTipoSolicitud());
+        }
+        TipoSolicitud tipoSolicitudActualizado = dto.getTipoSolicitud() != null
+                ? dto.getTipoSolicitud()
+                : reporteExistente.getTipoSolicitud();
+        TipoProblema tipoProblemaActualizado = dto.getTipoProblema() != null
+                ? dto.getTipoProblema()
+                : reporteExistente.getTipoProblema();
+        if ((dto.getTipoProblema() != null || dto.getTipoSolicitud() != null)
+                && tipoSolicitudActualizado == TipoSolicitud.INCIDENTE
+                && reporteExistente.getAula() != null
+                && reporteExistente.getAula().getId() != null
+                && reporteRepository.existsActiveIncidentByLocationAndNotId(
+                        reporteExistente.getAula().getId(),
+                        tipoProblemaActualizado,
+                        EstadoReporte.RESUELTO,
+                        reporteExistente.getId())) {
                 throw new ReglaNegocioException(
-                        "Ya existe otro reporte activo con la categoría " + dto.getTipoProblema() + " en el aula " + reporteExistente.getAulaId()
+                        "Ya existe otro ticket de incidente activo con la categoría "
+                                + tipoProblemaActualizado + " en " + reporteExistente.getAulaId()
                 );
-            }
+        }
+        if (dto.getTipoProblema() != null) {
             reporteExistente.setTipoProblema(dto.getTipoProblema());
         }
         if (dto.getPrioridad() != null) {

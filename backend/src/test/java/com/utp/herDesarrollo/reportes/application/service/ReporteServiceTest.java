@@ -12,6 +12,7 @@ import com.utp.herDesarrollo.reportes.domain.model.EstadoReporte;
 import com.utp.herDesarrollo.reportes.domain.model.Prioridad;
 import com.utp.herDesarrollo.reportes.domain.model.Reporte;
 import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
+import com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud;
 import com.utp.herDesarrollo.reportes.domain.repository.ReporteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,7 @@ class ReporteServiceTest {
         assertEquals(1L, respuesta.getId());
         assertEquals("A-101", respuesta.getAulaId());
         assertEquals("Plataforma académica", respuesta.getServicioAfectado());
+        assertEquals(TipoSolicitud.INCIDENTE, respuesta.getTipoSolicitud());
         assertEquals(EstadoReporte.PENDIENTE, respuesta.getEstado());
         assertNotNull(respuesta.getFechaRegistro());
 
@@ -279,11 +281,28 @@ class ReporteServiceTest {
         Aula aulaMock = crearAulaMock(1L, "A-101");
 
         when(aulaRepository.findByCodigoIgnoreCase("A-101")).thenReturn(Optional.of(aulaMock));
-        when(reporteRepository.existsByAula_IdAndTipoProblemaAndEstadoNot(1L, TipoProblema.TECNOLOGICO, EstadoReporte.RESUELTO))
+        when(reporteRepository.existsActiveIncidentByLocation(1L, TipoProblema.TECNOLOGICO, EstadoReporte.RESUELTO))
                 .thenReturn(true);
 
         assertThrows(ReglaNegocioException.class, () -> reporteService.crearReporte(dto));
         verify(reporteRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Debe permitir solicitudes de servicio aunque exista un incidente de la misma categoría y ubicación")
+    void debePermitirSolicitudServicioAunqueExistaIncidenteSimilar() {
+        CrearReporteDTO dto = crearDTOValido();
+        dto.setTipoSolicitud(TipoSolicitud.SOLICITUD_SERVICIO);
+        Aula aulaMock = crearAulaMock(1L, "A-101");
+
+        when(aulaRepository.findByCodigoIgnoreCase("A-101")).thenReturn(Optional.of(aulaMock));
+        when(reporteRepository.save(any(Reporte.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        ReporteResponseDTO respuesta = reporteService.crearReporte(dto);
+
+        assertEquals(TipoSolicitud.SOLICITUD_SERVICIO, respuesta.getTipoSolicitud());
+        verify(reporteRepository, never()).existsActiveIncidentByLocation(anyLong(), any(), any());
     }
 
     @Test

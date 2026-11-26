@@ -15,24 +15,26 @@
       <a
         routerLink="/tickets"
         routerLinkActive="m3-nav__pill--active"
+        [routerLinkActiveOptions]="{ exact: true }"
         class="m3-nav__pill">
         <mat-icon>folder_copy</mat-icon>
-        <span>Tickets</span>
+        <span>Inicio</span>
       </a>
       <a
-        routerLink="/aulas"
-        routerLinkActive="m3-nav__pill--active"
+        routerLink="/tickets/nuevo"
         class="m3-nav__pill">
-        <mat-icon>meeting_room</mat-icon>
-        <span>Ubicaciones</span>
+        <mat-icon>add_circle</mat-icon>
+        <span>Nueva solicitud</span>
       </a>
-      <a
-        routerLink="/atenciones"
-        routerLinkActive="m3-nav__pill--active"
-        class="m3-nav__pill">
-        <mat-icon>assignment_turned_in</mat-icon>
-        <span>Intervenciones</span>
-      </a>
+      @if (authService.puedeActualizarReportes()) {
+        <a
+          routerLink="/atenciones"
+          routerLinkActive="m3-nav__pill--active"
+          class="m3-nav__pill">
+          <mat-icon>support_agent</mat-icon>
+          <span>Atención técnica</span>
+        </a>
+      }
 
       <!-- Menú de Cuenta Institucional -->
       @if (authService.autenticado()) {
@@ -79,7 +81,7 @@
                     class="profile-action-item profile-action-item--admin"
                     (click)="cerrarPanelJwt()">
                     <mat-icon>person_add</mat-icon>
-                    <span>Alta de Personal (Admin)</span>
+                    <span>Administración de usuarios</span>
                   </a>
                 }
 
@@ -124,7 +126,7 @@
 <!-- Pie de Página Institucional -->
 <footer class="m3-footer">
   <div class="m3-footer__inner">
-    <span><strong>Mesa de Ayuda TI</strong> &mdash; Gestión de incidentes y solicitudes tecnológicas</span>
+    <span><strong>Mesa de Ayuda TI</strong> &mdash; Orientación, solicitudes y seguimiento del soporte tecnológico</span>
     <span class="m3-footer__uni">UNIVERSIDAD TECNOLÓGICA DEL PERÚ (UTP)</span>
   </div>
 </footer>

@@ -1,6 +1,7 @@
 package com.utp.herDesarrollo.reportes.application.dto;
 
 import com.utp.herDesarrollo.reportes.domain.model.Prioridad;
+import com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud;
 import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
 
 /**
@@ -9,6 +10,7 @@ import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
 public class CrearReporteDTO {
 
     private String aulaId;
+    private TipoSolicitud tipoSolicitud = TipoSolicitud.INCIDENTE;
     private TipoProblema tipoProblema;
     private String descripcion;
     private String servicioAfectado = "Servicio general";
@@ -39,6 +41,14 @@ public class CrearReporteDTO {
 
     public void setAulaId(String aulaId) {
         this.aulaId = aulaId;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
     }
 
     public TipoProblema getTipoProblema() {

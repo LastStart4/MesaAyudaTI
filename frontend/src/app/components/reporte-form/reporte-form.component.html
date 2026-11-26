@@ -19,7 +19,7 @@
       <div class="folder-tab-row">
         <span class="folder-tab">
           <mat-icon>{{ modoEdicion() ? 'edit_note' : 'note_add' }}</mat-icon>
-          <span>{{ modoEdicion() ? 'EDICIÓN DEL TICKET #' + formatCount(reporteEditandoId()!) : 'REGISTRO DE NUEVO TICKET' }}</span>
+          <span>{{ modoEdicion() ? 'EDICIÓN DE LA SOLICITUD #' + formatCount(reporteEditandoId()!) : 'NUEVA SOLICITUD DE SOPORTE' }}</span>
         </span>
         <span class="folder-stage-tag">{{ modoEdicion() ? 'ACTUALIZACIÓN DE DIAGNÓSTICO' : 'ETAPA INICIAL 1/3 • PENDIENTE' }}</span>
       </div>
@@ -29,7 +29,7 @@
           <div>
             <h2 class="form-title">{{ modoEdicion() ? 'Editar Ticket de Soporte' : 'Registrar Ticket de Soporte TI' }}</h2>
             <p class="form-subtitle">
-              {{ modoEdicion() ? 'Actualiza el servicio afectado, categoría, prioridad o descripción del ticket.' : 'Registra el servicio tecnológico afectado, categoriza el incidente y facilita su seguimiento por el Service Desk.' }}
+              {{ modoEdicion() ? 'Actualiza el tipo de solicitud, el servicio afectado o la descripción.' : 'Cuéntanos qué necesitas: reportar un incidente, solicitar un servicio o hacer una consulta.' }}
             </p>
           </div>
         </header>
@@ -37,7 +37,19 @@
         <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()" novalidate class="reactive-form">
 
           <div class="field-group">
-            <label for="servicioAfectado" class="field-label">1. Servicio tecnológico afectado *</label>
+            <label for="tipoSolicitud" class="field-label">1. ¿Qué tipo de ayuda necesitas? *</label>
+            <div class="m3-field-box">
+              <mat-icon>support_agent</mat-icon>
+              <select id="tipoSolicitud" formControlName="tipoSolicitud">
+                @for (tipo of tiposSolicitud; track tipo.valor) {
+                  <option [value]="tipo.valor">{{ tipo.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="servicioAfectado" class="field-label">2. Servicio o área relacionada *</label>
             <div class="m3-field-box">
               <mat-icon>support</mat-icon>
               <select id="servicioAfectado" formControlName="servicioAfectado">
@@ -51,7 +63,7 @@
           <!-- Ubicación física opcional de la incidencia -->
           <div class="field-group">
             <div class="label-row">
-              <label for="aulaIdInput" class="field-label">2. Ubicación afectada (opcional)</label>
+              <label for="aulaIdInput" class="field-label">3. Ubicación relacionada (opcional)</label>
               <span class="quick-pick-caption">Ubicaciones frecuentes del campus:</span>
             </div>
 
@@ -121,7 +133,7 @@
 
           <!-- Categoría Técnica del Problema -->
           <div class="field-group">
-            <label class="field-label">2. Categoría Técnica de la Avería *</label>
+            <label class="field-label">4. Área de soporte *</label>
             <div class="category-selector-grid" role="radiogroup" aria-label="Categoría técnica">
               @for (cat of categorias; track cat.valor) {
                 <button
@@ -157,7 +169,7 @@
 
           <!-- Nivel de Prioridad e Impacto -->
           <div class="field-group">
-            <label class="field-label">3. Nivel de Prioridad e Impacto Académico *</label>
+            <label class="field-label">5. Prioridad *</label>
             <div class="prio-selector-grid" role="radiogroup" aria-label="Nivel de prioridad">
               @for (p of prioridades; track p.valor) {
                 <button
@@ -176,7 +188,7 @@
           <!-- Descripción Técnica con Contador de Caracteres Reales (sin espacios extremos) -->
           <div class="field-group">
             <div class="label-row">
-              <label for="descripcionInput" class="field-label">4. Descripción del incidente o solicitud *</label>
+              <label for="descripcionInput" class="field-label">6. Cuéntanos cómo podemos ayudarte *</label>
               <span
                 class="char-counter"
                 [class.counter-warn]="getCaracteresReales() > 230">
@@ -192,7 +204,7 @@
                 id="descripcionInput"
                 rows="4"
                 formControlName="descripcion"
-                placeholder="Describe qué servicio está afectado, qué ocurre y cómo impacta tus actividades académicas o administrativas..."></textarea>
+                placeholder="Describe tu consulta, el problema o el servicio que necesitas. Incluye los datos necesarios para orientarte..."></textarea>
             </div>
 
             @if (f.descripcion.invalid && (f.descripcion.touched || f.descripcion.dirty)) {
@@ -202,7 +214,7 @@
                 } @else if (f.descripcion.errors?.['minlengthReal']) {
                   <span>Escribe al menos 10 caracteres reales sin contar espacios vacíos (actual: {{ getCaracteresReales() }}).</span>
                 } @else if (f.descripcion.errors?.['diagnosticoIncoherente']) {
-                  <span>Ingresa una descripción real con al menos 2 palabras con sentido técnico (sin caracteres repetidos).</span>
+                  <span>Describe brevemente tu necesidad con al menos dos palabras y sin caracteres repetidos.</span>
                 } @else if (f.descripcion.errors?.['maxlength']) {
                   <span>Has superado el máximo permitido de 255 caracteres.</span>
                 }
@@ -236,7 +248,7 @@
       <article class="inspection-card" data-estado="PENDIENTE">
         <div class="folder-tab-row">
           <span class="folder-tab folder-tab--preview">
-            <span>PENDIENTE</span>
+            <span>{{ getTipoSolicitudActual() }}</span>
             <span class="step-dots" aria-hidden="true">
               <span class="step-pip on"></span>
               <span class="step-pip"></span>
@@ -256,7 +268,7 @@
                 <div>
                   <span class="room-category-title">
                     <mat-icon>{{ getCategoriaActual().icono }}</mat-icon>
-                    <span>{{ getCategoriaActual().label }}</span>
+                    <span>{{ getTipoSolicitudActual() }} · {{ getCategoriaActual().label }}</span>
                   </span>
                   <span class="room-location">
                     {{ f.servicioAfectado.value }} · {{ f.aulaUbicacion.value || 'Ubicación no especificada' }}

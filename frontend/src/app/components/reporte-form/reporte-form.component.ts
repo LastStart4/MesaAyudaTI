@@ -11,7 +11,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AulaDisponible, Prioridad, Reporte, TipoProblema } from '../../models/reporte.model';
+import { AulaDisponible, Prioridad, Reporte, TipoProblema, TipoSolicitud } from '../../models/reporte.model';
 import { AuthService } from '../../services/auth.service';
 import { ReporteService } from '../../services/reporte.service';
 
@@ -83,6 +83,12 @@ export class ReporteFormComponent {
   // Ubicaciones sugeridas sincronizadas desde ReporteService
   readonly aulasSugeridas = this.reporteService.aulasSugeridas;
 
+  readonly tiposSolicitud: { valor: TipoSolicitud; label: string }[] = [
+    { valor: 'INCIDENTE', label: 'Incidente' },
+    { valor: 'SOLICITUD_SERVICIO', label: 'Solicitud de servicio' },
+    { valor: 'CONSULTA', label: 'Consulta' }
+  ];
+
   readonly categorias: { valor: TipoProblema; label: string; icono: string }[] = [
     { valor: 'AUTENTICACION', label: 'Autenticación', icono: 'lock_open' },
     { valor: 'PLATAFORMAS', label: 'Plataformas', icono: 'school' },
@@ -106,8 +112,8 @@ export class ReporteFormComponent {
   ];
 
   readonly prioridades: { valor: Prioridad; label: string; impacto: string }[] = [
-    { valor: 'ALTA', label: 'Prioridad Alta', impacto: 'Inhabilita uso en clase' },
-    { valor: 'MEDIA', label: 'Prioridad Media', impacto: 'Aula operativa con obs.' },
+    { valor: 'ALTA', label: 'Prioridad Alta', impacto: 'Afecta actividades académicas o administrativas' },
+    { valor: 'MEDIA', label: 'Prioridad Media', impacto: 'Afectación parcial del servicio' },
     { valor: 'BAJA', label: 'Prioridad Baja', impacto: 'Atención según prioridad' }
   ];
 
@@ -124,6 +130,7 @@ export class ReporteFormComponent {
       aulaUbicacion: [
         ''
       ],
+      tipoSolicitud: ['INCIDENTE' as TipoSolicitud, [Validators.required]],
       servicioAfectado: ['Plataforma académica', [Validators.required]],
       tipoProblema: ['PLATAFORMAS' as TipoProblema, [Validators.required]],
       prioridad: ['ALTA' as Prioridad, [Validators.required]],
@@ -199,6 +206,7 @@ export class ReporteFormComponent {
     this.reporteForm.patchValue({
       aulaId: reporte.aulaId,
       aulaUbicacion: reporte.aulaUbicacion || '',
+      tipoSolicitud: reporte.tipoSolicitud || 'INCIDENTE',
       tipoProblema: reporte.tipoProblema,
       servicioAfectado: reporte.servicioAfectado,
       prioridad: reporte.prioridad,
@@ -215,8 +223,9 @@ export class ReporteFormComponent {
   private reporteDuplicadoValidator(): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
       const aulaId = group.get('aulaId')?.value ?? '';
+      const tipoSolicitud = group.get('tipoSolicitud')?.value as TipoSolicitud;
       const tipo = group.get('tipoProblema')?.value as TipoProblema;
-      if (!aulaId || !tipo) {
+      if (tipoSolicitud !== 'INCIDENTE' || !aulaId || !tipo) {
         return null;
       }
 
@@ -282,11 +291,13 @@ export class ReporteFormComponent {
         this.precargarFormulario(original);
         return;
       }
+
     }
 
     this.reporteForm.reset({
       aulaId: '',
       aulaUbicacion: '',
+      tipoSolicitud: 'INCIDENTE',
       tipoProblema: 'PLATAFORMAS',
       servicioAfectado: 'Plataforma académica',
       prioridad: 'ALTA',
@@ -321,6 +332,7 @@ export class ReporteFormComponent {
       const raw = this.reporteForm.getRawValue();
       this.reporteService
         .actualizarDetallesReporte(idEdicion, {
+          tipoSolicitud: raw.tipoSolicitud,
           tipoProblema: raw.tipoProblema,
           prioridad: raw.prioridad,
           descripcion: raw.descripcion,
@@ -395,5 +407,10 @@ export class ReporteFormComponent {
   getPrioridadActual() {
     const actual = this.f.prioridad.value;
     return this.prioridades.find(p => p.valor === actual) ?? this.prioridades[0];
+  }
+
+  getTipoSolicitudActual(): string {
+    const actual = this.f.tipoSolicitud.value;
+    return this.tiposSolicitud.find(tipo => tipo.valor === actual)?.label ?? this.tiposSolicitud[0].label;
   }
 }

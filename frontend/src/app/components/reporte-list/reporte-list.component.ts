@@ -3,7 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { EstadoReporte, Prioridad, TipoProblema } from '../../models/reporte.model';
+import { EstadoReporte, Prioridad, TipoProblema, TipoSolicitud } from '../../models/reporte.model';
 import { AuthService } from '../../services/auth.service';
 import { ReporteService } from '../../services/reporte.service';
 
@@ -38,6 +38,7 @@ export class ReporteListComponent {
   readonly searchQuery = signal<string>('');
   readonly selectedPrioridad = signal<string>('');
   readonly selectedCategoria = signal<string>('');
+  readonly selectedTipoSolicitud = signal<string>('');
   readonly selectedEstado = signal<string>('');
   readonly sortBy = signal<OrdenReportes>('RECIENTES');
   readonly soloMisReportes = signal<boolean>(false);
@@ -47,6 +48,7 @@ export class ReporteListComponent {
   readonly totalFiltrosActivos = computed(() => {
     let count = 0;
     if (this.selectedCategoria()) count++;
+    if (this.selectedTipoSolicitud()) count++;
     if (this.selectedPrioridad()) count++;
     if (this.sortBy() !== 'RECIENTES') count++;
     if (this.soloMisReportes()) count++;
@@ -63,6 +65,7 @@ export class ReporteListComponent {
     const query = this.searchQuery().trim().toUpperCase();
     const prioridad = this.selectedPrioridad();
     const categoria = this.selectedCategoria();
+    const tipoSolicitud = this.selectedTipoSolicitud();
     const estado = this.selectedEstado();
     const orden = this.sortBy();
     const misReportes = this.soloMisReportes();
@@ -80,12 +83,14 @@ export class ReporteListComponent {
         autorReporte.includes(query);
       const matchesPrioridad = !prioridad || reporte.prioridad === prioridad;
       const matchesCategoria = !categoria || reporte.tipoProblema === categoria;
+      const matchesTipoSolicitud =
+        !tipoSolicitud || (reporte.tipoSolicitud || 'INCIDENTE') === tipoSolicitud;
       const matchesEstado = !estado || reporte.estado === estado;
       const matchesAutor =
         !misReportes ||
         (Boolean(miNombre) && autorReporte.includes(miNombre)) ||
         (Boolean(miUsername) && autorReporte.includes(miUsername));
-      return matchesQuery && matchesPrioridad && matchesCategoria && matchesEstado && matchesAutor;
+      return matchesQuery && matchesPrioridad && matchesCategoria && matchesTipoSolicitud && matchesEstado && matchesAutor;
     });
 
     const pesoPrioridad: Record<Prioridad, number> = { ALTA: 3, MEDIA: 2, BAJA: 1 };
@@ -150,6 +155,7 @@ export class ReporteListComponent {
     this.searchQuery.set('');
     this.selectedPrioridad.set('');
     this.selectedCategoria.set('');
+    this.selectedTipoSolicitud.set('');
     this.selectedEstado.set('');
     this.sortBy.set('RECIENTES');
     this.soloMisReportes.set(false);
@@ -170,6 +176,7 @@ export class ReporteListComponent {
 
     const cabeceras = [
       'ID',
+      'Tipo de solicitud',
       'Servicio afectado',
       'Ubicación',
       'Categoria',
@@ -188,6 +195,7 @@ export class ReporteListComponent {
     const filas = lista.map(r =>
       [
         `#${this.formatCount(r.id)}`,
+        this.getTipoSolicitudLabel(r.tipoSolicitud || 'INCIDENTE'),
         r.servicioAfectado || 'Servicio general',
         r.aulaUbicacion || 'Campus UTP',
         this.getCategoriaLabel(r.tipoProblema),
@@ -264,6 +272,15 @@ export class ReporteListComponent {
       case 'MOBILIARIO': return 'Mobiliario';
       case 'INFRAESTRUCTURA': return 'Infraestructura';
       case 'OTRO': return 'Otro';
+    }
+
+  }
+
+  getTipoSolicitudLabel(tipo: TipoSolicitud): string {
+    switch (tipo) {
+      case 'INCIDENTE': return 'Incidente';
+      case 'SOLICITUD_SERVICIO': return 'Solicitud de servicio';
+      case 'CONSULTA': return 'Consulta';
     }
   }
 

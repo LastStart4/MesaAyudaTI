@@ -145,7 +145,7 @@ public class AtencionServiceImpl implements AtencionService {
         atencion.setEstado(dto.getNuevoEstado());
 
         if (dto.getObservaciones() != null && !dto.getObservaciones().isBlank()) {
-            atencion.setObservaciones(dto.getObservaciones().trim());
+            registrarActualizacion(atencion, dto.getObservaciones());
         }
         if (dto.getNuevoEstado() == EstadoAtencion.RESUELTO) {
             atencion.setFechaResolucion(LocalDateTime.now());
@@ -164,6 +164,18 @@ public class AtencionServiceImpl implements AtencionService {
         }
 
         return AtencionResponseDTO.fromDomain(atencionRepository.save(atencion));
+    }
+
+    private void registrarActualizacion(Atencion atencion, String observacion) {
+        String nuevaEntrada = LocalDateTime.now() + " - " + observacion.trim();
+        String observacionesActuales = atencion.getObservaciones();
+        String historial = observacionesActuales == null || observacionesActuales.isBlank()
+                ? nuevaEntrada
+                : observacionesActuales + System.lineSeparator() + nuevaEntrada;
+        if (historial.length() > 2000) {
+            throw new ReglaNegocioAtencionException("El historial de atención excede el máximo permitido");
+        }
+        atencion.setObservaciones(historial);
     }
 
     private void validarTransicion(EstadoAtencion actual, EstadoAtencion nuevo) {

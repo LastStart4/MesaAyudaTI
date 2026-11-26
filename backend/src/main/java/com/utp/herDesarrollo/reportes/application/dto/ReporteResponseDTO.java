@@ -3,6 +3,7 @@ package com.utp.herDesarrollo.reportes.application.dto;
 import com.utp.herDesarrollo.reportes.domain.model.EstadoReporte;
 import com.utp.herDesarrollo.reportes.domain.model.Prioridad;
 import com.utp.herDesarrollo.reportes.domain.model.Reporte;
+import com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud;
 import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class ReporteResponseDTO {
     private String aulaId;
     private Long aulaInternoId;
     private String aulaUbicacion;
+    private TipoSolicitud tipoSolicitud;
     private TipoProblema tipoProblema;
     private String descripcion;
     private String servicioAfectado;
@@ -61,6 +63,7 @@ public class ReporteResponseDTO {
                         : "Comunidad Académica UTP"
         );
         dto.setServicioAfectado(reporte.getServicioAfectado());
+        dto.setTipoSolicitud(reporte.getTipoSolicitud());
         return dto;
     }
 
@@ -94,6 +97,14 @@ public class ReporteResponseDTO {
 
     public void setAulaUbicacion(String aulaUbicacion) {
         this.aulaUbicacion = aulaUbicacion;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud != null ? tipoSolicitud : TipoSolicitud.INCIDENTE;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
     }
 
     public TipoProblema getTipoProblema() {

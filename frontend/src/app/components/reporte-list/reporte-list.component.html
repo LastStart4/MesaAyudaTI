@@ -5,7 +5,7 @@
     <div class="hero-copy">
       <h2 class="hero-title">Mesa de Ayuda TI Universitaria</h2>
       <p class="hero-subtitle">
-        Registro y seguimiento de incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo.
+        Un punto de contacto para incidentes, solicitudes de servicio y consultas de la comunidad universitaria.
       </p>
     </div>
 
@@ -17,7 +17,7 @@
         (click)="filterByEstado('')">
         <div class="kpi-data">
           <span class="kpi-num">{{ formatCount(totalIncidencias()) }}</span>
-          <span class="kpi-lbl">Tickets</span>
+          <span class="kpi-lbl">Solicitudes recibidas</span>
         </div>
         <span class="kpi-dot" style="background: #94A3B8"></span>
       </button>
@@ -53,7 +53,7 @@
         (click)="filterByEstado('RESUELTO')">
         <div class="kpi-data">
           <span class="kpi-num">{{ formatCount(totalResueltos()) }}</span>
-          <span class="kpi-lbl">Liberadas</span>
+          <span class="kpi-lbl">Resueltas</span>
         </div>
         <span class="kpi-dot" style="background: var(--st-resuelto-main)"></span>
       </button>
@@ -120,6 +120,22 @@
           </div>
 
           <div class="filter-popover__field">
+            <label for="tipoSolicitudSelect">Tipo de solicitud</label>
+            <div class="m3-select-box">
+              <mat-icon class="filter-icon">support_agent</mat-icon>
+              <select
+                id="tipoSolicitudSelect"
+                [ngModel]="selectedTipoSolicitud()"
+                (ngModelChange)="selectedTipoSolicitud.set($event)">
+                <option value="">Todos los tipos</option>
+                <option value="INCIDENTE">Incidente</option>
+                <option value="SOLICITUD_SERVICIO">Solicitud de servicio</option>
+                <option value="CONSULTA">Consulta</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-popover__field">
             <label for="prioSelect">Nivel de Prioridad</label>
             <div class="m3-select-box">
               <mat-icon class="filter-icon">filter_list</mat-icon>
@@ -168,7 +184,7 @@
         (click)="toggleMisReportes()"
         title="Filtrar únicamente los tickets enviados con mi cuenta">
         <mat-icon>person_search</mat-icon>
-        <span>Mis Reportes</span>
+        <span>Mis solicitudes</span>
       </button>
     }
 
@@ -221,7 +237,7 @@
                 <div>
                   <span class="room-category-title">
                     <mat-icon>{{ getCategoriaIcon(reporte.tipoProblema) }}</mat-icon>
-                    <span>{{ reporte.servicioAfectado }} · {{ getCategoriaLabel(reporte.tipoProblema) }}</span>
+                    <span>{{ getTipoSolicitudLabel(reporte.tipoSolicitud || 'INCIDENTE') }} · {{ reporte.servicioAfectado }} · {{ getCategoriaLabel(reporte.tipoProblema) }}</span>
                   </span>
                   <span class="room-location">{{ reporte.aulaUbicacion || 'Ubicación no especificada' }}</span>
                 </div>

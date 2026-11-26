@@ -13,6 +13,7 @@ export type TipoProblema =
   | 'INFRAESTRUCTURA';
 export type Prioridad = 'ALTA' | 'MEDIA' | 'BAJA';
 export type EstadoReporte = 'PENDIENTE' | 'EN_ATENCION' | 'RESUELTO';
+export type TipoSolicitud = 'INCIDENTE' | 'SOLICITUD_SERVICIO' | 'CONSULTA';
 
 export interface AulaDisponible {
   id?: number;
@@ -27,6 +28,7 @@ export interface Reporte {
   aulaId: string;
   aulaInternoId?: number;
   aulaUbicacion?: string;
+  tipoSolicitud?: TipoSolicitud;
   tipoProblema: TipoProblema;
   servicioAfectado?: string;
   prioridad: Prioridad;
@@ -39,6 +41,7 @@ export interface Reporte {
 export interface CrearReportePayload {
   aulaId: string;
   aulaUbicacion: string;
+  tipoSolicitud?: TipoSolicitud;
   tipoProblema: TipoProblema;
   prioridad: Prioridad;
   descripcion: string;
@@ -50,6 +53,7 @@ export interface CrearReportePayload {
  */
 export interface CrearReporteRequestDTO {
   aulaId: string;
+  tipoSolicitud: TipoSolicitud;
   tipoProblema: TipoProblema;
   descripcion: string;
   prioridad: Prioridad;
@@ -63,6 +67,7 @@ export interface CrearReporteRequestDTO {
 export interface ActualizarReporteRequestDTO {
   descripcion: string;
   servicioAfectado?: string;
+  tipoSolicitud?: TipoSolicitud;
   tipoProblema: TipoProblema;
   prioridad: Prioridad;
   estado: EstadoReporte;

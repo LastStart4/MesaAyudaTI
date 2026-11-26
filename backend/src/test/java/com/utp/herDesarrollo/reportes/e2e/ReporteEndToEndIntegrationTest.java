@@ -92,6 +92,7 @@ class ReporteEndToEndIntegrationTest {
         String crearReporteJson = """
                 {
                     "aulaId": "A-101",
+                    "tipoSolicitud": "INCIDENTE",
                     "tipoProblema": "PLATAFORMAS",
                     "servicioAfectado": "Plataforma académica",
                     "descripcion": "La plataforma académica no permite iniciar sesión durante las evaluaciones.",
@@ -106,6 +107,7 @@ class ReporteEndToEndIntegrationTest {
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.aulaId", is("A-101")))
                 .andExpect(jsonPath("$.aulaUbicacion", is("Pabellón A • Piso 1")))
+                .andExpect(jsonPath("$.tipoSolicitud", is("INCIDENTE")))
                 .andExpect(jsonPath("$.estado", is("PENDIENTE")))
                 .andExpect(jsonPath("$.prioridad", is("ALTA")))
                 .andReturn();
@@ -121,7 +123,23 @@ class ReporteEndToEndIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(crearReporteJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsString("Ya existe un reporte activo")));
+                .andExpect(jsonPath("$.message", containsString("ticket de incidente activo")));
+
+        String crearSolicitudServicioJson = """
+                {
+                    "aulaId": "A-101",
+                    "tipoSolicitud": "SOLICITUD_SERVICIO",
+                    "tipoProblema": "PLATAFORMAS",
+                    "servicioAfectado": "Plataforma académica",
+                    "descripcion": "Se solicita habilitar una función de la plataforma.",
+                    "prioridad": "MEDIA"
+                }
+                """;
+        mockMvc.perform(post("/api/tickets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(crearSolicitudServicioJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.tipoSolicitud", is("SOLICITUD_SERVICIO")));
 
         // 5. Autenticar como TECNICO y avanzar a Etapa 2: EN_ATENCION
         String tokenTecnico = obtenerTokenJwt("tecnico", "tecnico123");

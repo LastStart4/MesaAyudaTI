@@ -1,6 +1,8 @@
 # Mesa de Ayuda TI Universitaria
 
-Aplicación web para registrar, priorizar y dar seguimiento a incidentes y solicitudes tecnológicas de estudiantes, docentes y personal administrativo de la UTP. La propuesta contempla categorías como autenticación, plataformas académicas, redes, cuentas institucionales, software, correo y equipos, con flujo de atención y control de acceso por roles.
+Demostración funcional de una Mesa de Ayuda TI Universitaria para recibir y centralizar incidentes, solicitudes de servicio y consultas de estudiantes, docentes y personal administrativo de la UTP. Permite registrar solicitudes, consultar su avance y resultado, y documentar la atención técnica con acceso según roles.
+
+La demostración mantiene un flujo sencillo de atención. No implementa niveles formales N0–N3, un motor avanzado de SLA ni automatización de escalamiento; esos procesos forman parte de la propuesta organizacional del informe.
 
 ## Arquitectura
 

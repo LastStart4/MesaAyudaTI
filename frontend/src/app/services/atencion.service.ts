@@ -137,6 +137,7 @@ export class AtencionService {
           .map(r => ({
             id: r.id,
             aulaId: r.aulaId || '',
+            tipoSolicitud: r.tipoSolicitud || 'INCIDENTE',
             tipoProblema: r.tipoProblema || 'General',
             prioridad: r.prioridad || 'MEDIA',
             descripcion: r.descripcion || 'Ticket registrado para atención de soporte TI.',
@@ -343,7 +344,9 @@ export class AtencionService {
           resultado = {
             ...item,
             estado: nuevoEstado,
-            observaciones: observaciones || item.observaciones,
+            observaciones: observaciones
+              ? [item.observaciones, observaciones].filter(Boolean).join('\n')
+              : item.observaciones,
             fechaResolucion: nuevoEstado === 'RESUELTO' ? new Date().toISOString() : item.fechaResolucion
           };
           return resultado;

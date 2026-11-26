@@ -88,6 +88,7 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     expect(reporteService.cargando()).toBe(false);
     expect(reporteService.reportes().length).toBe(2);
     expect(reporteService.reportes()[0].aulaId).toBe('A-101');
+    expect(reporteService.reportes()[0].tipoSolicitud).toBe('INCIDENTE');
   });
 
   it('debe registrar un nuevo ticket vía POST /api/tickets y actualizar la señal reactiva', () => {
@@ -97,6 +98,7 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
       .crearReporte({
         aulaId: 'b-204',
         aulaUbicacion: 'Pabellón B • Piso 2',
+        tipoSolicitud: 'SOLICITUD_SERVICIO',
         tipoProblema: 'REDES',
         servicioAfectado: 'Red Wi-Fi',
         prioridad: 'MEDIA',
@@ -107,12 +109,14 @@ describe('Semana 15 - Verificación E2E Frontend (ReporteService + AuthService +
     const postReq = httpMock.expectOne('/api/tickets');
     expect(postReq.request.method).toBe('POST');
     expect(postReq.request.body.aulaId).toBe('B-204');
+    expect(postReq.request.body.tipoSolicitud).toBe('SOLICITUD_SERVICIO');
     expect(postReq.request.body.servicioAfectado).toBe('Red Wi-Fi');
 
     postReq.flush({
       id: 3,
       aulaId: 'B-204',
       aulaUbicacion: 'Pabellón B • Piso 2',
+      tipoSolicitud: 'SOLICITUD_SERVICIO',
       tipoProblema: 'REDES',
       servicioAfectado: 'Red Wi-Fi',
       prioridad: 'MEDIA',

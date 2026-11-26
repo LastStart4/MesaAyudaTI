@@ -9,6 +9,7 @@ import {
   EstadoReporte,
   Prioridad,
   Reporte,
+  TipoSolicitud,
   TipoProblema
 } from '../models/reporte.model';
 import { AuthService } from './auth.service';
@@ -28,6 +29,7 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'A-101',
     aulaInternoId: 1,
     aulaUbicacion: 'Pabellón A • Piso 1',
+    tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'PLATAFORMAS',
     servicioAfectado: 'Plataforma académica',
     prioridad: 'ALTA',
@@ -40,6 +42,7 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'LAB-302',
     aulaInternoId: 2,
     aulaUbicacion: 'Pabellón C • Piso 3',
+    tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'REDES',
     servicioAfectado: 'Red Wi-Fi',
     prioridad: 'ALTA',
@@ -52,6 +55,7 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'B-204',
     aulaInternoId: 3,
     aulaUbicacion: 'Pabellón B • Piso 2',
+    tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'CUENTAS',
     servicioAfectado: 'Cuenta institucional',
     prioridad: 'MEDIA',
@@ -64,6 +68,7 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'A-305',
     aulaInternoId: 4,
     aulaUbicacion: 'Pabellón A • Piso 3',
+    tipoSolicitud: 'SOLICITUD_SERVICIO',
     tipoProblema: 'SOFTWARE',
     servicioAfectado: 'Software autorizado',
     prioridad: 'MEDIA',
@@ -76,6 +81,7 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'LAB-104',
     aulaInternoId: 5,
     aulaUbicacion: 'Pabellón C • Piso 1',
+    tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'AUTENTICACION',
     servicioAfectado: 'Autenticación institucional',
     prioridad: 'BAJA',
@@ -88,12 +94,26 @@ const REPORTES_INICIALES: Reporte[] = [
     aulaId: 'D-401',
     aulaInternoId: 6,
     aulaUbicacion: 'Pabellón D • Piso 4',
+    tipoSolicitud: 'INCIDENTE',
     tipoProblema: 'CORREO',
     servicioAfectado: 'Correo institucional',
     prioridad: 'BAJA',
     estado: 'RESUELTO',
     descripcion: 'Se recuperó el acceso al correo institucional y se confirmó su funcionamiento.',
     fechaRegistro: '2026-10-26T10:00:00'
+  },
+  {
+    id: 7,
+    aulaId: 'C-201',
+    aulaInternoId: 7,
+    aulaUbicacion: 'Pabellón C • Piso 2',
+    tipoSolicitud: 'CONSULTA',
+    tipoProblema: 'PLATAFORMAS',
+    servicioAfectado: 'Plataforma académica',
+    prioridad: 'BAJA',
+    estado: 'PENDIENTE',
+    descripcion: 'Se solicita orientación para acceder a los recursos de la plataforma académica.',
+    fechaRegistro: '2026-10-25T09:00:00'
   }
 ];
 
@@ -245,6 +265,7 @@ export class ReporteService {
 
     const requestDto: CrearReporteRequestDTO = {
       aulaId: codigoNormalizado,
+      tipoSolicitud: payload.tipoSolicitud || 'INCIDENTE',
       tipoProblema: payload.tipoProblema,
       descripcion: payload.descripcion.trim(),
       prioridad: payload.prioridad,
@@ -272,6 +293,7 @@ export class ReporteService {
           id: nextId,
           aulaId: codigoNormalizado,
           aulaUbicacion: ubicacionCalculada,
+          tipoSolicitud: payload.tipoSolicitud || 'INCIDENTE',
           tipoProblema: payload.tipoProblema,
           servicioAfectado: (payload.servicioAfectado || 'Servicio general').trim(),
           prioridad: payload.prioridad,
@@ -299,6 +321,7 @@ export class ReporteService {
     const requestDto: ActualizarReporteRequestDTO = {
       descripcion: actual.descripcion,
       servicioAfectado: actual.servicioAfectado || 'Servicio general',
+      tipoSolicitud: actual.tipoSolicitud || 'INCIDENTE',
       tipoProblema: actual.tipoProblema,
       prioridad: actual.prioridad,
       estado: nuevoEstado
@@ -345,7 +368,13 @@ export class ReporteService {
    */
   actualizarDetallesReporte(
     id: number,
-    cambios: { tipoProblema: TipoProblema; prioridad: Prioridad; descripcion: string; servicioAfectado?: string }
+    cambios: {
+      tipoSolicitud?: TipoSolicitud;
+      tipoProblema: TipoProblema;
+      prioridad: Prioridad;
+      descripcion: string;
+      servicioAfectado?: string;
+    }
   ): Observable<Reporte> {
     const actual = this.obtenerPorId(id);
     if (!actual) {
@@ -355,6 +384,7 @@ export class ReporteService {
     const requestDto: ActualizarReporteRequestDTO = {
       descripcion: cambios.descripcion.trim(),
       servicioAfectado: (cambios.servicioAfectado || actual.servicioAfectado || 'Servicio general').trim(),
+      tipoSolicitud: cambios.tipoSolicitud || actual.tipoSolicitud || 'INCIDENTE',
       tipoProblema: cambios.tipoProblema,
       prioridad: cambios.prioridad,
       estado: actual.estado
@@ -383,6 +413,7 @@ export class ReporteService {
         const actualizadoLocal: Reporte = {
           ...actual,
           servicioAfectado: (cambios.servicioAfectado || actual.servicioAfectado || 'Servicio general').trim(),
+          tipoSolicitud: cambios.tipoSolicitud || actual.tipoSolicitud || 'INCIDENTE',
           tipoProblema: cambios.tipoProblema,
           prioridad: cambios.prioridad,
           descripcion: cambios.descripcion.trim()
@@ -428,6 +459,7 @@ export class ReporteService {
     return {
       ...item,
       servicioAfectado: item.servicioAfectado || 'Servicio general',
+      tipoSolicitud: item.tipoSolicitud || 'INCIDENTE',
       aulaId: (item.aulaId ?? '').trim().toUpperCase(),
       aulaUbicacion:
         item.aulaUbicacion ||

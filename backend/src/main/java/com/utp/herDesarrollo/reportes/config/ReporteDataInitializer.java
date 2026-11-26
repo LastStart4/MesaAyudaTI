@@ -6,6 +6,7 @@ import com.utp.herDesarrollo.reportes.domain.model.EstadoReporte;
 import com.utp.herDesarrollo.reportes.domain.model.Prioridad;
 import com.utp.herDesarrollo.reportes.domain.model.Reporte;
 import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
+import com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud;
 import com.utp.herDesarrollo.reportes.domain.repository.ReporteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
         asegurarReporte(
                 a101,
+                TipoSolicitud.INCIDENTE,
                 TipoProblema.PLATAFORMAS,
                 Prioridad.ALTA,
                 EstadoReporte.PENDIENTE,
@@ -55,6 +57,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
         asegurarReporte(
                 lab302,
+                TipoSolicitud.INCIDENTE,
                 TipoProblema.REDES,
                 Prioridad.ALTA,
                 EstadoReporte.EN_ATENCION,
@@ -64,6 +67,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
         asegurarReporte(
                 b204,
+                TipoSolicitud.INCIDENTE,
                 TipoProblema.CUENTAS,
                 Prioridad.MEDIA,
                 EstadoReporte.PENDIENTE,
@@ -73,6 +77,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
         asegurarReporte(
                 a305,
+                TipoSolicitud.SOLICITUD_SERVICIO,
                 TipoProblema.SOFTWARE,
                 Prioridad.MEDIA,
                 EstadoReporte.EN_ATENCION,
@@ -82,6 +87,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
         asegurarReporte(
                 lab104,
+                TipoSolicitud.INCIDENTE,
                 TipoProblema.AUTENTICACION,
                 Prioridad.BAJA,
                 EstadoReporte.RESUELTO,
@@ -91,11 +97,22 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
         asegurarReporte(
                 d401,
+                TipoSolicitud.INCIDENTE,
                 TipoProblema.CORREO,
                 Prioridad.BAJA,
                 EstadoReporte.RESUELTO,
                 "Se recuperó el acceso al correo institucional y se confirmó su funcionamiento.",
                 LocalDateTime.of(2026, 10, 26, 10, 0)
+        );
+
+        asegurarReporte(
+                c201,
+                TipoSolicitud.CONSULTA,
+                TipoProblema.PLATAFORMAS,
+                Prioridad.BAJA,
+                EstadoReporte.PENDIENTE,
+                "Se solicita orientación para acceder a los recursos de la plataforma académica.",
+                LocalDateTime.of(2026, 10, 25, 9, 0)
         );
 
         log.info("Mesa de Ayuda TI: ubicaciones y tickets de soporte iniciales verificados correctamente.");
@@ -126,6 +143,7 @@ public class ReporteDataInitializer implements CommandLineRunner {
 
     private void asegurarReporte(
             Aula aula,
+            TipoSolicitud tipoSolicitud,
             TipoProblema tipoProblema,
             Prioridad prioridad,
             EstadoReporte estado,
@@ -133,10 +151,13 @@ public class ReporteDataInitializer implements CommandLineRunner {
             LocalDateTime fechaRegistro) {
         List<Reporte> existentesEnAula = reporteRepository.findByAulaId(aula.getCodigo());
         boolean yaExiste = existentesEnAula.stream()
-                .anyMatch(r -> r.getTipoProblema() == tipoProblema && r.getDescripcion().equalsIgnoreCase(descripcion));
+                .anyMatch(r -> r.getTipoSolicitud() == tipoSolicitud
+                        && r.getTipoProblema() == tipoProblema
+                        && r.getDescripcion().equalsIgnoreCase(descripcion));
 
         if (!yaExiste) {
             Reporte nuevo = new Reporte(aula, tipoProblema, descripcion, prioridad, estado, fechaRegistro);
+            nuevo.setTipoSolicitud(tipoSolicitud);
             nuevo.setServicioAfectado(nombreServicio(tipoProblema));
             reporteRepository.save(nuevo);
         }

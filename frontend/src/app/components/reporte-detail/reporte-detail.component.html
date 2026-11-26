@@ -30,7 +30,7 @@
         </div>
         <div class="print-doc-code">
           <strong>TICKET DE SOPORTE N.° {{ formatCount(item.id) }}</strong>
-          <span>INCIDENTE O SOLICITUD DE SERVICIO</span>
+          <span>{{ getTipoSolicitudLabel(item.tipoSolicitud || 'INCIDENTE') }}</span>
         </div>
       </header>
 
@@ -51,7 +51,7 @@
               <td>{{ getPrioridadLabel(item.prioridad) }}</td>
             </tr>
             <tr>
-              <th>Estado Real del Expediente:</th>
+              <th>Estado de atención:</th>
               <td colspan="3"><strong>{{ getEstadoFormalActa(item.estado) }}</strong></td>
             </tr>
             <tr>
@@ -157,7 +157,7 @@
             <div>
               <span class="room-location">{{ item.servicioAfectado || 'Servicio general' }} · {{ item.aulaUbicacion || 'Ubicación no especificada' }}</span>
               <h2 class="detail-title">
-              Ticket de {{ getCategoriaLabel(item.tipoProblema) }}
+              {{ getTipoSolicitudLabel(item.tipoSolicitud || 'INCIDENTE') }} · {{ getCategoriaLabel(item.tipoProblema) }}
               </h2>
             </div>
           </div>

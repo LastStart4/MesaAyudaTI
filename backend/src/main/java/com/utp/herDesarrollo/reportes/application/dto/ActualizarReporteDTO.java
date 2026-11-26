@@ -2,6 +2,7 @@ package com.utp.herDesarrollo.reportes.application.dto;
 
 import com.utp.herDesarrollo.reportes.domain.model.EstadoReporte;
 import com.utp.herDesarrollo.reportes.domain.model.Prioridad;
+import com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud;
 import com.utp.herDesarrollo.reportes.domain.model.TipoProblema;
 
 /**
@@ -11,6 +12,7 @@ public class ActualizarReporteDTO {
 
     private String descripcion;
     private String servicioAfectado;
+    private TipoSolicitud tipoSolicitud;
     private TipoProblema tipoProblema;
     private Prioridad prioridad;
     private EstadoReporte estado;
@@ -39,6 +41,14 @@ public class ActualizarReporteDTO {
 
     public void setServicioAfectado(String servicioAfectado) {
         this.servicioAfectado = servicioAfectado;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
     }
 
     public TipoProblema getTipoProblema() {

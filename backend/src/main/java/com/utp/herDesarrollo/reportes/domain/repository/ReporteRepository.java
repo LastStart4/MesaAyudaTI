@@ -68,13 +68,33 @@ public interface ReporteRepository extends JpaRepository<Reporte, Long> {
      */
     long countByAula_IdAndEstadoNot(Long aulaId, EstadoReporte estado);
 
-    /**
-     * Verifica si ya existe un reporte activo (no resuelto) en la misma aula para la misma categoría técnica.
-     */
-    boolean existsByAula_IdAndTipoProblemaAndEstadoNot(Long aulaId, TipoProblema tipoProblema, EstadoReporte estado);
+    @Query("""
+            SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
+            FROM Reporte r
+            WHERE r.aula.id = :aulaId
+              AND r.tipoProblema = :tipoProblema
+              AND r.estado <> :estado
+              AND (r.tipoSolicitud = com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud.INCIDENTE
+                   OR r.tipoSolicitud IS NULL)
+            """)
+    boolean existsActiveIncidentByLocation(
+            @Param("aulaId") Long aulaId,
+            @Param("tipoProblema") TipoProblema tipoProblema,
+            @Param("estado") EstadoReporte estado);
 
-    /**
-     * Verifica si ya existe otro reporte activo en la misma aula para la misma categoría excluyendo un ID (modo edición).
-     */
-    boolean existsByAula_IdAndTipoProblemaAndEstadoNotAndIdNot(Long aulaId, TipoProblema tipoProblema, EstadoReporte estado, Long id);
+    @Query("""
+            SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
+            FROM Reporte r
+            WHERE r.aula.id = :aulaId
+              AND r.tipoProblema = :tipoProblema
+              AND r.estado <> :estado
+              AND r.id <> :id
+              AND (r.tipoSolicitud = com.utp.herDesarrollo.reportes.domain.model.TipoSolicitud.INCIDENTE
+                   OR r.tipoSolicitud IS NULL)
+            """)
+    boolean existsActiveIncidentByLocationAndNotId(
+            @Param("aulaId") Long aulaId,
+            @Param("tipoProblema") TipoProblema tipoProblema,
+            @Param("estado") EstadoReporte estado,
+            @Param("id") Long id);
 }

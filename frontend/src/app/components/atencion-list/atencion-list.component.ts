@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Atencion, EstadoAtencion, ReportePendienteAsignacion, TipoMantenimiento } from '../../models/atencion.model';
+import { TipoSolicitud } from '../../models/reporte.model';
 import { AtencionService } from '../../services/atencion.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -397,6 +398,14 @@ export class AtencionListComponent {
 
   getMantenimientoLabel(tipo?: TipoMantenimiento): string {
     return tipo === 'PREVENTIVO' ? 'Preventivo' : 'Correctivo';
+  }
+
+  getTipoSolicitudLabel(tipo?: TipoSolicitud): string {
+    switch (tipo || 'INCIDENTE') {
+      case 'INCIDENTE': return 'Incidente';
+      case 'SOLICITUD_SERVICIO': return 'Solicitud de servicio';
+      case 'CONSULTA': return 'Consulta';
+    }
   }
 
   // --- Modal de Ficha Técnica / Acta de Conformidad (Opción 2) ---

@@ -35,6 +35,10 @@ public class Reporte {
     @Column(name = "tipo_problema", nullable = false, length = 30)
     private TipoProblema tipoProblema;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_solicitud", length = 30)
+    private TipoSolicitud tipoSolicitud = TipoSolicitud.INCIDENTE;
+
     @Column(name = "descripcion", nullable = false, length = 255)
     private String descripcion;
 
@@ -98,6 +102,14 @@ public class Reporte {
 
     public void setTipoProblema(TipoProblema tipoProblema) {
         this.tipoProblema = tipoProblema;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud != null ? tipoSolicitud : TipoSolicitud.INCIDENTE;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
     }
 
     public String getDescripcion() {
@@ -166,6 +178,7 @@ public class Reporte {
         return "Reporte{" +
                 "id=" + id +
                 ", aula=" + (aula != null ? aula.getCodigo() : "null") +
+                ", tipoSolicitud=" + getTipoSolicitud() +
                 ", tipoProblema=" + tipoProblema +
                 ", servicioAfectado='" + servicioAfectado + '\'' +
                 ", descripcion='" + descripcion + '\'' +
